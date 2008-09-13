@@ -47,6 +47,10 @@ class Router
     @routes << [request_method.to_s.upcase, transform(matcher), handler]
   end
 
+  def clear
+    @routes = []
+  end
+
   def match(request)
     @routes.each do |request_method, matcher, handler|
       next unless request.request_method == request_method
