@@ -7,7 +7,7 @@ module Rack
 
     private
     def request_method_in_params?
-      @env["REQUEST_METHOD"] == "POST" && %w(PUT DELETE).include?(params['_method'].upcase)
+      @env["REQUEST_METHOD"] == "POST" && %w(PUT DELETE).include?((params['_method'] || "").upcase)
     end
   end
 end
@@ -38,6 +38,7 @@ class Router
     register(:put, matcher, &handler)
   end
 
+  # Matches a DELETE request
   def delete(matcher, &handler)
     register(:delete, matcher, &handler)
   end
@@ -50,8 +51,10 @@ class Router
     @routes.each do |request_method, matcher, handler|
       next unless request.request_method == request_method
       next unless matcher.call(request)
-      break handler
+      return handler
     end
+    # No routes matched, so return false
+    false
   end
 
   private
