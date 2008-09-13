@@ -30,7 +30,7 @@ RBench.run(TIMES) do
 
   router.clear
   # We define 100 routes, and then append "/" to the end
-  (TIMES / 10).times do |i|
+  100.times do |i|
     router.get("/#{i}") {}
     get("/#{i}") {}
   end
