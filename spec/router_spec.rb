@@ -2,7 +2,7 @@ require "rubygems"
 require "spec"
 require "pathname"
 require "rack/request"
-require Pathname(__FILE__).dirname.parent + "lib/router"
+require Pathname(__FILE__).dirname.parent + "lib/framework"
 
 module Rack
   class Request
@@ -13,6 +13,19 @@ module Rack
 end
 
 describe "Router" do
+
+  describe "#initialize" do
+    it "should set @routes to []" do
+      Router.new.routes.should == []
+    end
+
+    it "should accept a block of routes" do
+      router = Router.new do
+        get("/") {}
+      end
+      router.routes.size.should == 1
+    end
+  end
 
   describe "#register" do
     before :all do

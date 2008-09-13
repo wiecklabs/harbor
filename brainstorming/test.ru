@@ -1,14 +1,19 @@
-require "yaml"
+require "pathname"
+require Pathname(__FILE__).dirname.parent + "lib/router"
+
+router = Router.new do
+  get("/") { "Hello World" }
+end
 
 app = lambda do |env|
-  body = ["<pre>" + Rack::Request.new(env).to_yaml + "</pre>"]
+  response = router.match(Rack::Request.new(env)).call
   [
     200,
     {
-      'Content-Type' => 'text/html',            # Reponse headers
-      'Content-Length' => body.join.size.to_s
+      "Content-Type" => "text/plain",
+      "Content-Length" => response.size.to_s
     },
-    body
+    [response]
   ]
 end
 

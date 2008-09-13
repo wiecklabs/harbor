@@ -1,3 +1,5 @@
+require "stringio"
+
 module Rack
   class Request
     def request_method
@@ -19,8 +21,9 @@ class Router
 
   attr_accessor :routes
 
-  def initialize
+  def initialize(&routes)
     @routes = []
+    instance_eval(&routes) if block_given?
   end
 
   # Matches a GET request
@@ -79,4 +82,21 @@ class Router
     end
   end
 
+end
+
+class Response < StringIO
+  def initialize(application)
+    @application = application
+  end
+end
+
+class Application
+  def initialize(router)
+    @router = router
+  end
+
+  def call(env)
+    request = Rack::Request.new(env)
+    response = Response.new(self)
+  end
 end
