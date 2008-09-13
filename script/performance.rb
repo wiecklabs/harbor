@@ -28,18 +28,20 @@ RBench.run(TIMES) do
     sinatra { get("/") {} }
   end
 
-  router.clear
-  # We define 100 routes, and then append "/" to the end
-  100.times do |i|
-    router.get("/#{i}") {}
-    get("/#{i}") {}
-  end
-  router.get("/") {}
-  get("/") {}
-
   request = Rack::Request.new("PATH_INFO" => "/", "REQUEST_METHOD" => "GET")
 
   report "Match the last route" do
+    Sinatra.application.events.clear
+    router.clear
+
+    # We define 100 routes, and then append "/" to the end
+    100.times do |i|
+      router.get("/#{i}") {}
+      get("/#{i}") {}
+    end
+    router.get("/") {}
+    get("/") {}
+
     wieck { router.match(request) }
     sinatra { Sinatra.application.lookup(request) }
   end
