@@ -48,7 +48,12 @@ describe "Router" do
     end
 
     describe "with a string" do
-      it "should transform it to a regular expression" do
+      it "should match normal strings" do
+        @router.register(:get, "/users") { "Index" }
+        @router.match(@request).call.should == "Index"
+      end
+
+      it "should strings with named paramaters" do
         @router.register(:get, "/:controller") { "Index" }
         @router.match(@request).call.should == "Index"
       end
