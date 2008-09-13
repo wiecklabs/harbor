@@ -1,8 +1,5 @@
-require "rubygems"
-require "spec"
 require "pathname"
-require "rack/request"
-require Pathname(__FILE__).dirname.parent + "lib/framework"
+require Pathname(__FILE__).dirname + "helper"
 
 module Rack
   class Request
