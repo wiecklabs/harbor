@@ -1,5 +1,6 @@
 require "rubygems"
 require "erubis"
+require "yaml"
 require "stringio"
 require "rack/request"
 
@@ -137,6 +138,7 @@ class Application
     response.status = 500
     response.puts error
     response.puts error.backtrace
+    response.puts request.to_yaml
     [response.status, response.headers, response.string.to_a]
   end
 
