@@ -26,6 +26,7 @@ class Router
 
   def initialize(&routes)
     @routes = []
+    @route_match_cache = {}
     instance_eval(&routes) if block_given?
   end
 
@@ -58,13 +59,12 @@ class Router
   end
 
   def match(request)
-    @routes.each do |request_method, matcher, handler|
+    # TODO: this cache key probably needs to be beefed up
+    @route_match_cache["#{request.request_method}_#{request.path_info}"] ||= (route = @routes.detect do |request_method, matcher, handler|
       next unless request.request_method == request_method
       next unless matcher.call(request)
-      return handler
-    end
-    # No routes matched, so return false
-    false
+      handler
+    end ) ? route[2] : false
   end
 
   private
@@ -79,7 +79,7 @@ class Router
       regex = /^#{regex}$/
       lambda do |request|
         if request.path_info =~ regex
-          request.params.update(Hash[param_keys.zip($~.captures)])
+          request.params.update(Hash[*param_keys.zip($~.captures).flatten])
         end
       end
     end

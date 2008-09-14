@@ -1,0 +1,1 @@
+Routes need to not cache id's and such. Only relatively static parameters like :controller and :action, and should only add to the cache after a successful match so that "/some_garbage/new" for example doesn't force our cache to grow infinitely.
