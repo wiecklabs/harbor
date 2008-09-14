@@ -1,14 +1,6 @@
 require "pathname"
 require Pathname(__FILE__).dirname + "helper"
 
-module Rack
-  class Request
-    def params
-      @params ||= {}
-    end
-  end
-end
-
 describe "Router" do
 
   describe "#initialize" do
