@@ -1,7 +1,7 @@
 $KCODE = 'UTF8'
 
-ENV['MERB_ENV'] = 'production' 
-require 'rubygems' 
+ENV['MERB_ENV'] = 'production'
+require 'rubygems'
 
 gem 'merb-core'
 require 'merb-core'

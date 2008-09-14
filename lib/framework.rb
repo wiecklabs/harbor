@@ -138,15 +138,15 @@ class Application
     response = Response.new(self)
     handler = @router.match(request)
     return not_found(request, response) if handler == false
-    
+
     dispatcher = Thread.new do
       handler.call(request, response)
     end
-    
+
     dispatcher.join
     [response.status, response.headers, response.string.to_a]
   rescue
     server_error($!, request, response)
   end
-  
+
 end

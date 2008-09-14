@@ -3,12 +3,12 @@ require Pathname(__FILE__).dirname.parent + "lib/framework"
 
 class Hello
   attr_reader :request, :response
-  
+
   def initialize(request, response)
     @request = request
     @response = response
   end
-  
+
   def world
     response.puts "Hello World"
   end
