@@ -77,7 +77,7 @@ class Router
     when Array
       regex = matcher.shift
       lambda do |request|
-        if request.path_info =~ regex && $~.captures.size > 0
+        if request.path_info =~ regex
           request.params.update(Hash[*matcher.zip($~.captures).flatten])
         end
       end
