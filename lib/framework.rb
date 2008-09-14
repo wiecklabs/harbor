@@ -1,3 +1,5 @@
+require "rubygems"
+require "erubis"
 require "stringio"
 require "rack/request"
 
@@ -102,6 +104,10 @@ class Response < StringIO
       "Content-Type" => self.content_type,
       "Content-Length" => self.size.to_s
     })
+  end
+
+  def render(file, context = nil)
+    self << Erubis::FastEruby.new(File.read(file)).evaluate(context)
   end
 end
 

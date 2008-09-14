@@ -19,8 +19,7 @@ describe "Response" do
     @response.puts "Hello World"
     @response << "Hello World\n"
     @response.write("Hello World\n")
-    @response.rewind
-    @response.readlines.should == ["Hello World\n"]*3
+    @response.string.to_a.should == ["Hello World\n"]*3
   end
 
   it "should have a default status of 200" do
@@ -35,6 +34,14 @@ describe "Response" do
     @response.write "Hello World"
     @response.rewind
     @response.headers.should == { "Content-Type" => "text/html", "Content-Length" => "Hello World".size.to_s }
+  end
+
+  describe "#render" do
+    it "should render in a given context" do
+      @test = "Test"
+      @response.render(Pathname(__FILE__).dirname + "views/index.html.erb", self)
+      @response.string.to_a.should == ["Test"]
+    end
   end
 
 end
