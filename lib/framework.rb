@@ -1,3 +1,6 @@
+require "stringio"
+require "rack/request"
+
 module Rack
   class Request
     def request_method
@@ -19,8 +22,10 @@ class Router
 
   attr_accessor :routes
 
-  def initialize
+  def initialize(&routes)
     @routes = []
+    @route_match_cache = {}
+    instance_eval(&routes) if block_given?
   end
 
   # Matches a GET request
@@ -47,14 +52,17 @@ class Router
     @routes << [request_method.to_s.upcase, transform(matcher), handler]
   end
 
+  def clear
+    @routes = []
+  end
+
   def match(request)
-    @routes.each do |request_method, matcher, handler|
+    # TODO: this cache key probably needs to be beefed up
+    @route_match_cache["#{request.request_method}_#{request.path_info}"] ||= (route = @routes.detect do |request_method, matcher, handler|
       next unless request.request_method == request_method
       next unless matcher.call(request)
-      return handler
-    end
-    # No routes matched, so return false
-    false
+      handler
+    end ) ? route[2] : false
   end
 
   private
@@ -69,10 +77,44 @@ class Router
       regex = /#{regex}/
       lambda do |request|
         if request.path_info =~ regex
-          request.params.update(Hash[param_keys.zip($~.captures)])
+          request.params.update(Hash[*param_keys.zip($~.captures).flatten])
         end
       end
     end
   end
 
+end
+
+class Response < StringIO
+
+  attr_accessor :application, :status, :content_type, :headers
+
+  def initialize(application)
+    @application = application
+    @headers = {}
+    @content_type = "text/html"
+    @status = 200
+    super("")
+  end
+
+  def headers
+    @headers.merge({
+      "Content-Type" => self.content_type,
+      "Content-Length" => self.size.to_s
+    })
+  end
+end
+
+class Application
+  def initialize(router)
+    @router = router
+  end
+
+  def call(env)
+    request = Rack::Request.new(env)
+    response = Response.new(self)
+    @router.match(request).call(request, response)
+    response.rewind
+    [response.status, response.headers, response.readlines]
+  end
 end

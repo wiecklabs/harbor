@@ -1,8 +1,5 @@
-require "rubygems"
-require "spec"
 require "pathname"
-require "rack/request"
-require Pathname(__FILE__).dirname.parent + "lib/router"
+require Pathname(__FILE__).dirname + "helper"
 
 module Rack
   class Request
@@ -13,6 +10,19 @@ module Rack
 end
 
 describe "Router" do
+
+  describe "#initialize" do
+    it "should set @routes to []" do
+      Router.new.routes.should == []
+    end
+
+    it "should accept a block of routes" do
+      router = Router.new do
+        get("/") {}
+      end
+      router.routes.size.should == 1
+    end
+  end
 
   describe "#register" do
     before :all do
@@ -48,7 +58,12 @@ describe "Router" do
     end
 
     describe "with a string" do
-      it "should transform it to a regular expression" do
+      it "should match normal strings" do
+        @router.register(:get, "/users") { "Index" }
+        @router.match(@request).call.should == "Index"
+      end
+
+      it "should strings with named paramaters" do
         @router.register(:get, "/:controller") { "Index" }
         @router.match(@request).call.should == "Index"
       end

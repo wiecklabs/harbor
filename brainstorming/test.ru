@@ -1,15 +1,8 @@
-require "yaml"
+require "pathname"
+require Pathname(__FILE__).dirname.parent + "lib/framework"
 
-app = lambda do |env|
-  body = ["<pre>" + Rack::Request.new(env).to_yaml + "</pre>"]
-  [
-    200,
-    {
-      'Content-Type' => 'text/html',            # Reponse headers
-      'Content-Length' => body.join.size.to_s
-    },
-    body
-  ]
+router = Router.new do
+  get("/") { |request, response| response.puts "Hello World" }
 end
 
-run app
+run Application.new(router)

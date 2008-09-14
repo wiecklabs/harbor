@@ -58,36 +58,36 @@ end
 # This is a Controller. It's just a plain old Ruby object that
 # consumes a Request and a Response
 class Users
-  
+
   attr_reader :request, :response
-  
+
   def initialize(request, response)
     @request = request
     @response = response
   end
-  
+
   include Extlib::Hook
-  
+
   before :show do
     @session = Wieck::Authorization::Session.get(request.session_id)
   end
-  
+
   after :show do
     @session.save! if @session
   end
-  
+
   def show(id)
     @user = User.get(id)
     response.render("show", binding)
   end
-  
+
   def update(id, user)
     @user = User.get(id)
     @user.attributes = user
     @user.save
     response.redirect("edit", @user.id)
   end
-  
+
   def default_template_root
     Pathname.new(__FILE__).dirname
   end
@@ -103,15 +103,15 @@ class Response < IO
     @default_template_path = application.root / "app" / "views"
     super
   end
-  
+
   def render(template_name, binding)
     @to_s = Erb.new(find_template(template_name, binding)).render(binding)
   end
-  
+
   def to_s
     @to_s || render(nil)
   end
-  
+
   private
   # This method is garbage right now. But basically it should return
   # the base template in a relative path to the controller (possibly in a gem),
@@ -134,7 +134,7 @@ class Application
   def initialize(router)
     @routes = router
   end
-  
+
   def call(env)
     # figure out what route we're at.
     response = Response.new
@@ -154,7 +154,7 @@ class Application
   rescue
     [500, "", 0]
   end
-  
+
   def route(matcher, &handler)
     @routes.register(matcher, &handler)
   end
