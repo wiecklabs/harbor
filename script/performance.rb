@@ -3,7 +3,6 @@ $KCODE = 'UTF8'
 require "rubygems"
 require "rbench"
 require "sinatra"
-require "rack/request"
 require Pathname(__FILE__).dirname.parent + "lib/framework"
 
 module Rack
