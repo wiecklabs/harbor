@@ -136,11 +136,10 @@ class Application
     response = Response.new(self)
     handler = @router.match(request)
     return not_found(request, response) if handler == false
-    begin
-      handler.call(request, response)
-      [response.status, response.headers, response.string.to_a]
-    rescue
-      server_error($!, request, response)
+    handler.call(request, response)
+    [response.status, response.headers, response.string.to_a]
+  rescue
+    server_error($!, request, response)
     end
   end
 end
