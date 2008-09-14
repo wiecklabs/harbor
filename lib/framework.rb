@@ -105,6 +105,8 @@ class Response < StringIO
   end
 end
 
+require 'thread'
+
 class Application
   def initialize(router)
     @router = router
@@ -113,7 +115,9 @@ class Application
   def call(env)
     request = Rack::Request.new(env)
     response = Response.new(self)
-    @router.match(request).call(request, response)
+    Thread.new do
+      @router.match(request).call(request, response)
+    end
     response.rewind
     [response.status, response.headers, response.readlines]
   end

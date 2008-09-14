@@ -61,3 +61,6 @@ thin -R brainstorming/controller.ru start: 4115.38
 # Notes:
 # The overhead of the "Wieck (controller)" variation is minimal,
 # not enough to reliably measure through Apache-benchmark.
+
+# With Threading enabled around Route matching and dispatch:
+thin -R brainstorming/controller.ru start: 3125.59
