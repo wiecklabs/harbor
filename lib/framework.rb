@@ -140,6 +140,5 @@ class Application
     [response.status, response.headers, response.string.to_a]
   rescue
     server_error($!, request, response)
-    end
   end
 end
