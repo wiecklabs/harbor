@@ -73,6 +73,13 @@ class Router
     case matcher
     when Proc then matcher
     when Regexp then lambda { |request| request.path_info =~ matcher }
+    when Array
+      regex = matcher.shift
+      lambda do |request|
+        if request.path_info =~ regex && $~.captures.size > 0
+          request.params.update(Hash[*matcher.zip($~.captures).flatten])
+        end
+      end
     when String
       param_keys = []
       regex = matcher.gsub(PARAM) { param_keys << $2; "(#{URI_CHAR}+)" }

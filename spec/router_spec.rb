@@ -49,6 +49,15 @@ describe "Router" do
       end
     end
 
+    describe "with an array" do
+      it "should update the request params" do
+        @request.env["PATH_INFO"] = "/users/1"
+        @router.register(:get, [/\/users\/([\d]+)/, "id"]) {}
+        @router.match(@request)
+        @request.params["id"].should == "1"
+      end
+    end
+
     describe "with a string" do
       it "should match normal strings" do
         @router.register(:get, "/users") { "Index" }
