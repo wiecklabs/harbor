@@ -14,6 +14,7 @@ class Hello
   def world
     # We register our partials
     @view.register(:content, "hello/world.html.erb")
+    @view.register(:form, "hello/_form.html.erb")
 
     # And then we call render, which is our kicker method, and take
     # the primary file to render.
