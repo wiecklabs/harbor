@@ -1,3 +1,5 @@
+$KCODE = 'UTF8'
+
 require "rubygems"
 require "rbench"
 require "sinatra"
@@ -46,3 +48,15 @@ RBench.run(TIMES) do
   end
 
 end
+
+__END__
+# Requests per second for a "Hello World" application:
+thin -R brainstorming/merb.ru start => 935.80
+
+# Note that no logging is present in the Wieck::Framework
+thin -R brainstorming/inline.ru start: 4107.35
+thin -R brainstorming/controller.ru start: 4115.38
+
+# Notes:
+# The overhead of the "Wieck (controller)" variation is minimal,
+# not enough to reliably measure through Apache-benchmark.
