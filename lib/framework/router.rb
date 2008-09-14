@@ -56,19 +56,19 @@ class Router
     when Regexp then lambda { |request| request.path_info =~ matcher }
     when Array
       regex = matcher.shift
-      lambda do |request|
-        if request.path_info =~ regex
-          request.params.update(Hash[*matcher.zip($~.captures).flatten])
-        end
-      end
+      generate_param_matcher(regex, matcher)
     when String
       param_keys = []
       regex = matcher.gsub(PARAM) { param_keys << $2; "(#{URI_CHAR}+)" }
       regex = /^#{regex}$/
-      lambda do |request|
-        if request.path_info =~ regex
-          request.params.update(Hash[*param_keys.zip($~.captures).flatten])
-        end
+      generate_param_matcher(regex, param_keys)
+    end
+  end
+
+  def generate_param_matcher(regex, param_keys)
+    lambda do |request|
+      if request.path_info =~ regex
+        request.params.update(Hash[*param_keys.zip($~.captures).flatten])
       end
     end
   end
