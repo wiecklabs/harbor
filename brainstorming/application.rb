@@ -1,33 +1,57 @@
 ## config.ru
 
-# An application is instance based. This means configuration
-# is per-instance. Routes are per-instance. The framework
-# is completely thread-safe.
-app = Application.new
+# Instantiate a set of routes:
+routes = Router.new
 
 # Routes are explicit. No crazy route-helper API to learn.
-app.route("/") do |request, response|
+routes.get("/") do |request, response|
   response.puts "Hello World"
 end
 
 # There is no mechanism to instantiate your controllers for you.
 # This can be added with a more generic handler. We're placing
 # an emphasis on loose coupling at the expense of a few keystrokes.
-app.route "/users/show/:id" do |request, response|
+routes.get "/users/show/:id" do |request, response|
   Users.new(request, response).show(request.params["id"])
 end
-
-run app
 
 # Sample external gem slice incorporation.
 # Note, the "slice" is declarative, the "wiring"
 # of including it in the +application+ is external so
 # there's no coupling.
-# Wieck::Authorization::routes.each do |matcher, handler|
-#   app.route(matcher, &handler)
-# end
+#
+#   Wieck::Authorization::routes.each do |matcher, handler|
+#     routes.get(matcher, &handler)
+#   end
+#
+# or:
+#   routes.merge(Wieck::Authorization::routes)
 
-Wieck::Authorization::Session.get(request.session_id)
+run Application.new(routes)
+
+## generic_handler.rb
+# Example of what a GenericHandler would look like:
+module GenericHandler
+  
+  def self.controllers
+    @controllers ||= Hash.new { |h,k| h[k.to_s.downcase] = k }
+  end
+  
+  def self.dispatch(request, response)
+    controller = controllers[request.controller].new(request, response)
+    if controller.class.public_methods.include?(request.params[:action])
+      controller.send(request.params[:action])
+    else
+      raise Net::HTTP::NotAuthorized.new("This action is not available")
+    end
+  end
+end
+
+GenericHandler.controllers['users'] = User
+
+routes.get "/:controller/:action/:id" do |request, response|
+  GenericHandler.dispatch(request, response)
+end
 
 ## users.rb
 
@@ -89,6 +113,9 @@ class Response < IO
   end
   
   private
+  # This method is garbage right now. But basically it should return
+  # the base template in a relative path to the controller (possibly in a gem),
+  # or an overriden one, relative to the application.
   def find_template(template_name, default_template_root)
     overridden_path = @default_template_path / "#{template_name}.html.erb"
     if File.exists?(overridden_path)
@@ -104,8 +131,8 @@ end
 # This is our Application / Dispatcher.
 class Application
   
-  def initialize
-    @routes = Router.new
+  def initialize(router)
+    @routes = router
   end
   
   def call(env)
