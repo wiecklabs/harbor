@@ -4,12 +4,14 @@ require "pathname"
 
 class Erubis::Context
   attr_accessor :view
-  def initialize(view, hash)
+  def initialize(view, ivars)
     @view = view
-    super(hash) unless hash.nil?
+    @ivars = ivars
+    super(ivars) unless ivars.nil?
   end
+
   def puts(partial)
-    view.partials.delete(partial)
+    view.render(view.partials.delete(partial), @ivars)
   end
 end
 
@@ -22,31 +24,14 @@ class View < Erubis::FastEruby
   end
 
   # This just maps a file name to a symbol for later use.
-  def register(name, file)
+  def []=(name, file)
     @partials[name] = file
   end
 
   # Render is the kicker method.
-  def render(file, context = nil)
-    partials.each do |key, partial|
-      path = self.path.detect { |dir| File.exists?(dir + partial) }
-      next unless path
-      path = path + partial
-
-      # We go ahead and render the partial that was registered
-      # and put its value back into the partials hash
-      partials[key] = _render_erubis(path, context)
-    end
-    path = self.path.detect { |dir| File.exists?(dir + file) }
-
-    # Now we render the main file
-    _render_erubis(path + file, context)
-  end
-
-  private
-
-  def _render_erubis(file, context)
-    self.convert!(File.read(file))
+  def render(view, context = nil)
+    path = self.path.detect { |dir| File.exists?(dir + view) }
+    self.convert!(File.read(path + view))
     evaluate(Erubis::Context.new(self, context))
   end
 end
