@@ -2,13 +2,23 @@ require "rubygems"
 require "erubis"
 require "pathname"
 
+class Erubis::Context
+  attr_accessor :view
+  def initialize(view, hash)
+    @view = view
+    super(hash) unless hash.nil?
+  end
+  def puts(partial)
+    view.partials.delete(partial)
+  end
+end
+
 class View < Erubis::FastEruby
   attr_accessor :path, :partials, :context
 
-  def initialize(path, context = nil)
+  def initialize(path)
     @path = [path]
     @partials = {}
-    @context = context
   end
 
   # This just maps a file name to a symbol for later use.
@@ -17,7 +27,7 @@ class View < Erubis::FastEruby
   end
 
   # Render is the kicker method.
-  def render(file)
+  def render(file, context = nil)
     partials.each do |key, partial|
       path = self.path.detect { |dir| File.exists?(dir + partial) }
       next unless path
@@ -25,24 +35,19 @@ class View < Erubis::FastEruby
 
       # We go ahead and render the partial that was registered
       # and put its value back into the partials hash
-      partials[key] = _render_erubis(path)
+      partials[key] = _render_erubis(path, context)
     end
     path = self.path.detect { |dir| File.exists?(dir + file) }
 
     # Now we render the main file
-    _render_erubis(path + file)
-  end
-
-  # This method will retrieve the content of a named partial.
-  def get(handle)
-    @partials.delete(handle)
+    _render_erubis(path + file, context)
   end
 
   private
 
-  def _render_erubis(file)
+  def _render_erubis(file, context)
     self.convert!(File.read(file))
-    evaluate(context)
+    evaluate(Erubis::Context.new(self, context))
   end
 end
 

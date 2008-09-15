@@ -4,7 +4,7 @@ class Hello
     @response = response
     # We initialize a view object with the path to search
     # for views in, and with the object to bind to.
-    @view = View.new(Pathname(__FILE__).dirname.parent + "views", self)
+    @view = View.new(Pathname(__FILE__).dirname.parent + "views")
 
     # This is just an example. We'd only have to do this for
     # controllers who could have their layout overridden.
