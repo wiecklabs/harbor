@@ -17,4 +17,10 @@ class Response < StringIO
       "Content-Length" => self.size.to_s
     })
   end
+
+  def puts(content)
+    self.content_type = content.content_type if content.respond_to?(:content_type)
+    super(content.to_s)
+  end
+
 end
