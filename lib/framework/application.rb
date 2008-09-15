@@ -1,7 +1,7 @@
 require "yaml"
 require 'thread'
-require "lib/framework/request"
-require "lib/framework/response"
+require "framework/request"
+require "framework/response"
 
 class Application
   def initialize(router)
@@ -26,7 +26,7 @@ class Application
 
   def call(env)
     request = Rack::Request.new(env)
-    response = Response.new(self)
+    response = Response.new
     handler = @router.match(request)
     return not_found(request, response) if handler == false
 

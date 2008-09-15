@@ -1,18 +1,9 @@
 require "pathname"
 require Pathname(__FILE__).dirname + "helper"
 
-class StubApplication
-end
-
 describe "Response" do
   before do
-    application = StubApplication.new
-    @response = Response.new(application)
-  end
-
-  it "should accept an application object on initialize" do
-    application = StubApplication.new
-    Response.new(application).application.should == application
+    @response = Response.new
   end
 
   it "should buffer content" do
@@ -34,14 +25,6 @@ describe "Response" do
     @response.write "Hello World"
     @response.rewind
     @response.headers.should == { "Content-Type" => "text/html", "Content-Length" => "Hello World".size.to_s }
-  end
-
-  describe "#render" do
-    it "should render in a given context" do
-      @test = "Test"
-      @response.render(Pathname(__FILE__).dirname + "views/index.html.erb", self)
-      @response.string.to_a.should == ["Test"]
-    end
   end
 
 end
