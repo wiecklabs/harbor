@@ -1,7 +1,7 @@
 require "yaml"
-require 'thread'
-require "framework/request"
-require "framework/response"
+require "thread"
+require Pathname(__FILE__).dirname + "request"
+require Pathname(__FILE__).dirname + "response"
 
 class Application
   def initialize(router)

@@ -1,6 +1,16 @@
 require "pathname"
 require Pathname(__FILE__).dirname + "helper"
 
+class StubView
+  def content_type
+    "text/plain"
+  end
+
+  def to_s
+    "Content"
+  end
+end
+
 describe "Response" do
   before do
     @response = Response.new
@@ -23,8 +33,13 @@ describe "Response" do
 
   it "should generate basic headers automatically" do
     @response.write "Hello World"
-    @response.rewind
     @response.headers.should == { "Content-Type" => "text/html", "Content-Length" => "Hello World".size.to_s }
+  end
+
+  it "should accept a view for #render" do
+    @response.render StubView.new
+    @response.string.should == "Content\n"
+    @response.headers["Content-Type"].should == "text/plain"
   end
 
 end

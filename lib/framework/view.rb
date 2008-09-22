@@ -8,6 +8,7 @@ class ViewContext < Erubis::Context
   def initialize(view, variables)
     @view = view
     @variables = variables
+    super(variables)
   end
 
   def puts(partial)
@@ -21,7 +22,7 @@ class View
     @path ||= []
   end
 
-  attr_accessor :content_type
+  attr_accessor :content_type, :partials, :cache
 
   def initialize(view, partials = {})
     @content_type = "text/html"
