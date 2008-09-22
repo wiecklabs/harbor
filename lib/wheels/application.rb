@@ -1,7 +1,7 @@
 require "yaml"
 require 'thread'
-require "framework/request"
-require "framework/response"
+require "wheels/request"
+require "wheels/response"
 
 class Application
   def initialize(router)

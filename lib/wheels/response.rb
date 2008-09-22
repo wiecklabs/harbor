@@ -1,5 +1,5 @@
 require "stringio"
-require "lib/framework/view"
+require "lib/wheels/view"
 
 class Response < StringIO
 
