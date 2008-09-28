@@ -1,3 +1,6 @@
+# It looks like we don't even need this. There's a Rack::Cascade which works
+# the same way: run Rack::Cascade.new [MyApp.new, YourApp.new].
+
 class Cluster
   attr_accessor :applications
   def initialize(*applications)
