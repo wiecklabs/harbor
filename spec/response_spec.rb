@@ -36,10 +36,4 @@ describe "Response" do
     @response.headers.should == { "Content-Type" => "text/html", "Content-Length" => "Hello World".size.to_s }
   end
 
-  it "should accept a view for #render" do
-    @response.render StubView.new
-    @response.string.should == "Content\n"
-    @response.headers["Content-Type"].should == "text/plain"
-  end
-
 end
