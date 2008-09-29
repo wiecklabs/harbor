@@ -24,7 +24,7 @@ class View
 
   attr_accessor :content_type, :context
 
-  def initialize(view, context = nil)
+  def initialize(view, context = {})
     @content_type = "text/html"
     @view = view
     @context = context
@@ -32,12 +32,12 @@ class View
 
   def to_s(layout = nil)
     content = _erubis_render(@view, @context)
-    layout ? View.new(layout, @context.merge(:content => content)) : content
+    layout ? View.new(layout, @context.merge(:content => content)).to_s : content
   end
 
   private
 
-  def _erubis_render(filename, context = nil)
+  def _erubis_render(filename, context = {})
     path = self.class.path.detect { |dir| File.exists?(dir + filename) }
     raise "Could not find '#{filename}' in #{self.class.path.inspect}" if path.nil?
 
