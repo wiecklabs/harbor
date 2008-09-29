@@ -19,16 +19,16 @@ class Response < StringIO
     })
   end
 
-  def puts(content)
-    raise ArgumentError.new("#{content.class} does not respond to #to_s") unless content.respond_to?(:to_s)
-    raise ArgumentError.new("Views should be rendered with Response#render") if content.is_a?(View)
-    super(content.to_s)
+  def render(view, context = {})
+    layout = context.fetch(:layout, "layouts/application.html.erb")
+
+    view = View.new(view, context)
+    content_type = view.content_type
+    puts view.to_s(layout)
   end
 
-  def render(view)
-    raise ArgumentError.new("Objects passed to #render must response to #content_type.") unless view.respond_to?(:content_type)
-    self.content_type = view.content_type
-    self.puts(view.to_s)
+  def inspect
+    "<#{self.class} headers=#{headers.inspect} content_type=#{content_type.inspect} status=#{status.inspect} body=#{string.inspect}>"
   end
 
 end

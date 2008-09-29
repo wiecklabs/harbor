@@ -11,8 +11,8 @@ class ViewContext < Erubis::Context
     super(variables)
   end
 
-  def puts(partial)
-    view.send(:_erubis_render, view.partials.delete(partial), self)
+  def render(partial)
+    View.new(partial, self)
   end
 
 end
@@ -22,26 +22,17 @@ class View
     @path ||= []
   end
 
-  attr_accessor :content_type, :partials, :cache
+  attr_accessor :content_type, :context
 
-  def initialize(view, partials = {})
+  def initialize(view, context = nil)
     @content_type = "text/html"
     @view = view
-    @partials = partials
-    @cache = ""
+    @context = context
   end
 
-  def []=(name, file)
-    @partials[name] = file
-  end
-
-  def render(context = nil)
-    @cache = _erubis_render(@view, context)
-    self
-  end
-
-  def to_s
-    @cache || _erubis_render(@view)
+  def to_s(layout = nil)
+    content = _erubis_render(@view, @context)
+    layout ? View.new(layout, @context.merge(:content => content)) : content
   end
 
   private
