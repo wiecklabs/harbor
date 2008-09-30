@@ -27,6 +27,13 @@ class Response < StringIO
     puts view.to_s(layout)
   end
 
+  def redirect(url)
+    self.status = 303
+    self.headers = { "Location" => url }
+    self.string = ""
+    self
+  end
+
   def inspect
     "<#{self.class} headers=#{headers.inspect} content_type=#{content_type.inspect} status=#{status.inspect} body=#{string.inspect}>"
   end
