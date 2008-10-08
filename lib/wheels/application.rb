@@ -1,5 +1,8 @@
+require "rack"
 require "yaml"
 require "thread"
+
+require Pathname(__FILE__).dirname + "rack/utils"
 require Pathname(__FILE__).dirname + "request"
 require Pathname(__FILE__).dirname + "response"
 
