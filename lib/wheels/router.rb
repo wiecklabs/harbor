@@ -40,12 +40,14 @@ class Router
   end
 
   def match(request)
-    # TODO: this cache key probably needs to be beefed up
-    @route_match_cache["#{request.request_method}_#{request.path_info}"] ||= (route = @routes.detect do |request_method, matcher, handler|
+    @routes.each do |request_method, matcher, handler|
       next unless request.request_method == request_method
       next unless matcher.call(request)
-      handler
-    end ) ? route[2] : false
+      return handler
+    end
+
+    # No routes matched, so return false
+    false
   end
 
   private
