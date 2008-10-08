@@ -15,15 +15,6 @@ class Application
     [response.status, response.headers, response.string.to_a]
   end
 
-  def server_error(error, request, response)
-    response.flush
-    response.status = 500
-    response.puts error
-    response.puts error.backtrace
-    response.puts request.to_yaml
-    [response.status, response.headers, response.string.to_a]
-  end
-
   def call(env)
     request = Rack::Request.new(env)
     response = Response.new
@@ -32,8 +23,6 @@ class Application
 
     handler.call(request, response)
     [response.status, response.headers, response.string.to_a]
-  rescue
-    server_error($!, request, response)
   end
 
 end
