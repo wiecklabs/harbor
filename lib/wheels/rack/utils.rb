@@ -18,5 +18,6 @@ module Rack
       end
       params
     end
+    module_function :parse_query
   end
 end

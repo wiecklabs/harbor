@@ -10,4 +10,8 @@ class Session
   def []=(key, value)
     @request.env["rack.session"][key] = value
   end
+
+  def delete(key)
+    @request.env["rack.session"].delete(key)
+  end
 end
