@@ -22,9 +22,4 @@ describe "Application" do
     result[0].should == 404
   end
 
-  it "should return a 500 if an error occurs in the handler" do
-    result = @application.call({ "PATH_INFO" => "/error", "REQUEST_METHOD" => "GET" })
-    result[0].should == 500
-  end
-
 end
