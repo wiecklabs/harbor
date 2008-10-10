@@ -28,9 +28,9 @@ class Response < StringIO
     puts view.to_s(layout)
   end
 
-  def redirect(url)
+  def redirect(url, params = nil)
     self.status = 303
-    self.headers = { "Location" => url }
+    self.headers = { "Location" => (params ? "#{url}?#{Rack::Utils::build_query(params)}" : url) }
     self.string = ""
     self
   end
