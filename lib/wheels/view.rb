@@ -14,6 +14,14 @@ class ViewContext < Erubis::Context
   def render(partial)
     View.new(partial, self)
   end
+  
+  def q(value)
+    Rack::Utils::escape(value)
+  end
+  
+  def h(value)
+    Rack::Utils::escape_html(value)
+  end
 
 end
 
