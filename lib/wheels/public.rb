@@ -12,7 +12,7 @@ module Wheels
       path = env['PATH_INFO'].chomp('/')
       method = env['REQUEST_METHOD']
 
-      if FILE_METHODS.include?(method) && file_exists?(path)
+      if path != "" && FILE_METHODS.include?(method) && file_exists?(path)
         Rack::File.new(@root + "public").call(env)
       else
         @app.call(env)
