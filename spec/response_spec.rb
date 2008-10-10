@@ -13,7 +13,7 @@ end
 
 describe "Response" do
   before do
-    @response = Response.new
+    @response = Response.new({})
   end
 
   it "should buffer content" do

@@ -5,7 +5,8 @@ class Response < StringIO
 
   attr_accessor :status, :content_type, :headers
 
-  def initialize
+  def initialize(request)
+    @request = request
     @headers = {}
     @content_type = "text/html"
     @status = 200

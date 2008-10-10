@@ -25,7 +25,7 @@ class Application
   def call(env)
     env["APP_ENVIRONMENT"] = environment
     request = Rack::Request.new(env)
-    response = Response.new
+    response = Response.new(request)
     handler = @router.match(request)
     return not_found(request, response) if handler == false
 
