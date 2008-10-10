@@ -10,6 +10,10 @@ describe "Application" do
     @application = Application.new(router)
   end
 
+  it "should default to a development environment" do
+    @application.environment.should == "development"
+  end
+  
   it "should return an array for Rack" do
     result = @application.call({ "PATH_INFO" => "/", "REQUEST_METHOD" => "GET" })
     result[0].should == 200

@@ -13,6 +13,10 @@ module Rack
       @env['REQUEST_METHOD']
     end
 
+    def environment
+      @env['APP_ENVIRONMENT']
+    end
+    
     private
     def request_method_in_params?
       @env["REQUEST_METHOD"] == "POST" && %w(PUT DELETE).include?((params['_method'] || "").upcase)

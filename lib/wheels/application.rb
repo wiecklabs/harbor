@@ -7,8 +7,12 @@ require Pathname(__FILE__).dirname + "request"
 require Pathname(__FILE__).dirname + "response"
 
 class Application
-  def initialize(router)
+
+  attr_reader :environment
+  
+  def initialize(router, environment = "development")
     @router = router
+    @environment = environment.to_s
   end
 
   def not_found(request, response)
@@ -19,6 +23,7 @@ class Application
   end
 
   def call(env)
+    env["APP_ENVIRONMENT"] = environment
     request = Rack::Request.new(env)
     response = Response.new
     handler = @router.match(request)
