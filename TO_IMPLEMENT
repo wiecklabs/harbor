@@ -1,0 +1,35 @@
+STDERR.reopen "log/app.log"
+class Wheels::Logger
+  def initialize(app)
+    @app = app
+  end
+
+  def call(env)
+    if Wheels::Request.new(env).environment == "development"
+      STDOUT.reopen STDERR
+    else
+      STDOUT.reopen "/dev/null"
+    end
+    @app.call(env)
+  end
+end
+
+class Wheels::ExceptionHandler < Rack::ShowExceptions
+  def initialize(app)
+    @app = app
+  end
+
+  def call(env)
+    @app.call(env)
+  rescue StandardError, LoadError, SyntaxError => e
+    if Wheels::Request.new(env).environment == "development"
+      [500, {"Content-Type" => "text/html"}, pretty(env, e)]
+    else
+      Wheels::Response.new.render "errors/server_error"
+    end
+  end
+end
+
+use Wheels::Logger
+use Wheels::ExceptionHandler
+run MyApp.new

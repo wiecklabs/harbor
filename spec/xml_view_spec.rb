@@ -14,4 +14,9 @@ describe "XMLView" do
     view = XMLView.new("list.rxml")
     view.to_s.should == "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<site>\n  <name>Bob</name>\n</site>\n"
   end
+
+  it "should render an xml view with a context" do
+    view = XMLView.new("show.rxml", :name => "John")
+    view.to_s.should == "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<site>\n  <name>John</name>\n</site>\n"
+  end
 end
