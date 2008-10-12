@@ -14,6 +14,11 @@ end
 describe "Response" do
   before do
     @response = Response.new({})
+    View::path.unshift Pathname(__FILE__).dirname + "views"
+  end
+
+  after :all do
+    View::path.clear
   end
 
   it "should buffer content" do
@@ -34,6 +39,18 @@ describe "Response" do
   it "should generate basic headers automatically" do
     @response.write "Hello World"
     @response.headers.should == { "Content-Type" => "text/html", "Content-Length" => "Hello World".size.to_s }
+  end
+
+  describe "#render" do
+    it "should render an html view" do
+      @response.render "index.html.erb", :text => "test"
+      @response.string.should == "LAYOUT\ntest\n"
+    end
+
+    it "should render a view object" do
+      @response.render XMLView.new("list.rxml")
+      @response.string.should == "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<site>\n  <name>Bob</name>\n</site>\n"
+    end
   end
 
 end

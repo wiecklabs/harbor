@@ -21,9 +21,11 @@ class Response < StringIO
   end
 
   def render(view, context = {})
-    layout = context.fetch(:layout, "layouts/application.html.erb")
+    unless view.is_a?(View)
+      layout = context.fetch(:layout, "layouts/application.html.erb")
+      view = View.new(view, context)
+    end
 
-    view = View.new(view, context)
     content_type = view.content_type
     puts view.to_s(layout)
   end
