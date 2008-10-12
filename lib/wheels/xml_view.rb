@@ -1,6 +1,9 @@
 require "builder"
 
 class XMLView < View
+
+  def content_type() "text/xml" end
+
   def to_s(layout = nil)
     warn "Layouts are not supported for XMLView objects." if layout
 

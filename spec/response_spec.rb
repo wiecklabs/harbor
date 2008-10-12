@@ -50,6 +50,7 @@ describe "Response" do
     it "should render a view object" do
       @response.render XMLView.new("list.rxml")
       @response.string.should == "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<site>\n  <name>Bob</name>\n</site>\n"
+      @response.content_type.should == "text/xml"
     end
   end
 

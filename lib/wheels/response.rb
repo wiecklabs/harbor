@@ -26,7 +26,7 @@ class Response < StringIO
       view = View.new(view, context)
     end
 
-    content_type = view.content_type
+    self.content_type = view.content_type
     puts view.to_s(layout)
   end
 
