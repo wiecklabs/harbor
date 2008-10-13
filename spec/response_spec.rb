@@ -43,12 +43,12 @@ describe "Response" do
 
   describe "#render" do
     it "should render an html view" do
-      @response.render "index.html.erb", :text => "test"
+      @response.render "index", :text => "test"
       @response.string.should == "LAYOUT\ntest\n"
     end
 
     it "should render a view object" do
-      @response.render XMLView.new("list.rxml")
+      @response.render XMLView.new("list")
       @response.string.should == "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<site>\n  <name>Bob</name>\n</site>\n"
       @response.content_type.should == "text/xml"
     end
