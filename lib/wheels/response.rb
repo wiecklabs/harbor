@@ -14,10 +14,11 @@ class Response < StringIO
   end
 
   def headers
-    @headers.merge({
+    @headers.merge!({
       "Content-Type" => self.content_type,
       "Content-Length" => self.size.to_s
     })
+    @headers
   end
 
   def render(view, context = {})
