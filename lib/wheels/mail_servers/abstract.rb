@@ -3,8 +3,8 @@ module Wheels
     def initialize(config = {})
     end
 
-    def send(mail)
-      raise NotImplementedError.new("Classes extending #{self.class.name} must implement #send(mail).")
+    def deliver(mail)
+      raise NotImplementedError.new("Classes extending #{self.class.name} must implement #deliver(mail).")
     end
   end
 end

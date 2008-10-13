@@ -14,7 +14,7 @@ module Wheels
     end
 
     def send!
-      self.server.send(self)
+      self.server.deliver(self)
     end
 
   end

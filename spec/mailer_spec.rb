@@ -4,7 +4,7 @@ require Pathname(__FILE__).dirname + "helper"
 require "wheels/mailer"
 
 class TestServer < Wheels::AbstractMailServer
-  def send(mail)
+  def deliver(mail)
     mail
   end
 end
