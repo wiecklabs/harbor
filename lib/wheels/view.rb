@@ -14,11 +14,11 @@ class ViewContext < Erubis::Context
   def render(partial)
     View.new(partial, self)
   end
-  
+
   def q(value)
     Rack::Utils::escape(value)
   end
-  
+
   def h(value)
     Rack::Utils::escape_html(value)
   end
@@ -30,10 +30,11 @@ class View
     @path ||= []
   end
 
-  attr_accessor :content_type, :context
+  attr_accessor :content_type, :context, :extension
 
   def initialize(view, context = {})
     @content_type = "text/html"
+    @extension = ".html.erb"
     @view = view
     @context = context
   end
@@ -46,6 +47,7 @@ class View
   private
 
   def _erubis_render(filename, context = {})
+    filename += self.extension
     path = self.class.path.detect { |dir| File.exists?(dir + filename) }
     raise "Could not find '#{filename}' in #{self.class.path.inspect}" if path.nil?
 
