@@ -23,7 +23,7 @@ class Response < StringIO
 
   def render(view, context = {})
     unless view.is_a?(View)
-      layout = context.fetch(:layout, "layouts/application.html.erb")
+      layout = context.fetch(:layout, "layouts/application")
       view = View.new(view, context)
     end
 
