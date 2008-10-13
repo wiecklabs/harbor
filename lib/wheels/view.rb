@@ -47,7 +47,9 @@ class View
   private
 
   def _erubis_render(filename, context = {})
-    filename += self.extension
+
+    filename += self.extension if File.extname(filename) == ""
+
     path = self.class.path.detect { |dir| File.exists?(dir + filename) }
     raise "Could not find '#{filename}' in #{self.class.path.inspect}" if path.nil?
 

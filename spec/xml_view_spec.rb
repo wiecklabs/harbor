@@ -24,4 +24,8 @@ describe "XMLView" do
     view = XMLView.new("index")
     view.to_s.should == "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<site>\n  <name>John</name>\n  <name>James</name>\n</site>\n"
   end
+
+  it "should render a file with an extension" do
+    XMLView.new("index.rxml").to_s.should == XMLView.new("index").to_s
+  end
 end

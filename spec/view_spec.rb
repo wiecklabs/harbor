@@ -30,4 +30,8 @@ describe "View" do
     view.to_s("layouts/application").should == "LAYOUT\nEDIT PAGE\nFORM PARTIAL"
   end
 
+  it "should render a file with an extension" do
+    View.new("edit.html.erb").to_s.should == View.new("edit").to_s
+  end
+
 end
