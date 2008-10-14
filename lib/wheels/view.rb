@@ -29,6 +29,15 @@ class View
   def self.path
     @path ||= []
   end
+  
+  @cache_templates = false
+  def self.cache_templates?
+    @cache_templates
+  end
+  
+  def self.cache_templates!
+    @cache_templates = true
+  end
 
   attr_accessor :content_type, :context, :extension
 
@@ -54,7 +63,15 @@ class View
     raise "Could not find '#{filename}' in #{self.class.path.inspect}" if path.nil?
 
     context = ViewContext.new(self, context) unless context.is_a?(ViewContext)
-    Erubis::FastEruby.new(File.read(path + filename)).evaluate(context)
+    
+    if self.class.cache_templates?
+      (self.class.__templates[path + filename] ||= Erubis::FastEruby.new(File.read(path + filename))).evaluate(context)
+    else
+      Erubis::FastEruby.new(File.read(path + filename)).evaluate(context)
+    end
   end
 
+  def self.__templates
+    @__templates ||= {}
+  end
 end
