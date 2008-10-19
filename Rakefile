@@ -49,12 +49,12 @@ Rake::GemPackageTask.new(spec) do |pkg|
   pkg.gem_spec = spec
 end
 
-desc "Install Deployer as a gem"
+desc "Install Wheels as a gem"
 task :install => [:repackage] do
   sh %{gem install pkg/#{NAME}-#{GEM_VERSION}}
 end
 
-desc "Publish Deployer gem"
+desc "Publish Wheels gem"
 task :publish do
   STDOUT.print "Publishing gem... "
   STDOUT.flush
