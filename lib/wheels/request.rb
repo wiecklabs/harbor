@@ -5,7 +5,7 @@ module Rack
   class Request
 
     def session
-      @session ||= ::Session.new(self)
+      @session ||= Wheels::Session.new(self)
     end
 
     def request_method
