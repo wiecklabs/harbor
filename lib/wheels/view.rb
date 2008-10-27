@@ -23,6 +23,10 @@ module Wheels
     def h(value)
       Rack::Utils::escape_html(value)
     end
+
+    def inspect
+      @variables.inspect
+    end
     
     private
     def request
@@ -58,7 +62,7 @@ module Wheels
       content = _erubis_render(@view, @context)
       layout ? View.new(layout, @context.merge(:content => content)).to_s : content
     end
-
+    
     private
 
     def _erubis_render(filename, context = {})
