@@ -5,7 +5,7 @@ module Wheels
     end
 
     def deliver(mail)
-      sendmail = IO.popen("#{@sendmail} #{mail.to}", "w+")
+      sendmail = IO.popen("#{@sendmail} -t", "w+")
       sendmail.puts mail.to_s
       sendmail.close
     end
