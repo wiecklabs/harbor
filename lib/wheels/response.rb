@@ -25,7 +25,7 @@ module Wheels
     def render(view, context = {})
       unless view.is_a?(View)
         layout = context.fetch(:layout, "layouts/application")
-        view = View.new(view, context)
+        view = View.new(view, context.merge({ :request => @request }))
       end
 
       self.content_type = view.content_type

@@ -1,11 +1,19 @@
 require "rack/request"
 require Pathname(__FILE__).dirname + "session"
 
-module Rack
-  class Request
+module Wheels
+  class Request < Rack::Request
+    
+    attr_reader :application
 
+    def initialize(application, env)
+      raise ArgumentError.new("+env+ must be a Rack Environment Hash") unless env.is_a?(Hash)
+      @application = application
+      super(env)
+    end
+    
     def session
-      @session ||= Wheels::Session.new(self)
+      @session ||= Session.new(self)
     end
 
     def request_method
@@ -14,7 +22,7 @@ module Rack
     end
 
     def environment
-      @env['APP_ENVIRONMENT']
+      @env['APP_ENVIRONMENT'] || (@application ? @application.environment : "development")
     end
     
     private

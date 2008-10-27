@@ -1,6 +1,7 @@
 module Wheels
   class Session
     def initialize(request)
+      raise ArgumentError.new("+request+ must be a Wheels::Request") unless request.is_a?(Wheels::Request)
       @request = request
     end
 

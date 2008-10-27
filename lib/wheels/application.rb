@@ -25,11 +25,12 @@ module Wheels
 
     def call(env)
       env["APP_ENVIRONMENT"] = environment
-      request = Rack::Request.new(env)
+      request = Request.new(self, env)
       response = Response.new(request)
-      handler = @router.match(request)
+      
+      handler = @router.match(request)      
       return not_found(request, response) if handler == false
-
+      
       handler.call(request, response)
       [response.status, response.headers, response.string.to_a]
     end

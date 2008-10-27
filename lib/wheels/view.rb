@@ -23,6 +23,11 @@ module Wheels
     def h(value)
       Rack::Utils::escape_html(value)
     end
+    
+    private
+    def request
+      @request
+    end
 
   end
   
