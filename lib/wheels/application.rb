@@ -10,7 +10,7 @@ module Wheels
   class Application
 
     attr_reader :environment
-  
+
     def initialize(router, environment = "development")
       @router = router
       @environment = environment.to_s
@@ -27,10 +27,10 @@ module Wheels
       env["APP_ENVIRONMENT"] = environment
       request = Request.new(self, env)
       response = Response.new(request)
-      
-      handler = @router.match(request)      
+
+      handler = @router.match(request)
       return not_found(request, response) if handler == false
-      
+
       handler.call(request, response)
       [response.status, response.headers, response.string.to_a]
     end
