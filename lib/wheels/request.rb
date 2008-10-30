@@ -3,7 +3,7 @@ require Pathname(__FILE__).dirname + "session"
 
 module Wheels
   class Request < Rack::Request
-    
+
     attr_reader :application
 
     def initialize(application, env)
@@ -11,7 +11,7 @@ module Wheels
       @application = application
       super(env)
     end
-    
+
     def session
       @session ||= Session.new(self)
     end
@@ -24,7 +24,7 @@ module Wheels
     def environment
       @env['APP_ENVIRONMENT'] || (@application ? @application.environment : "development")
     end
-    
+
     private
     def request_method_in_params?
       @env["REQUEST_METHOD"] == "POST" && %w(PUT DELETE).include?((params['_method'] || "").upcase)

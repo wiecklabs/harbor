@@ -1,6 +1,8 @@
 require "pathname"
 require Pathname(__FILE__).dirname + "helper"
 
+include Wheels
+
 describe "Router" do
 
   describe "#initialize" do
@@ -119,7 +121,7 @@ describe "Router" do
     before do
       @router = Router.new
       @router.put("/") { "Index" }
-      @request = Rack::Request.new("PATH_INFO" => "/")
+      @request = Request.new(nil, { "PATH_INFO" => "/" })
     end
 
     it "should match a put request" do
@@ -143,7 +145,7 @@ describe "Router" do
     before do
       @router = Router.new
       @router.delete("/") { "Index" }
-      @request = Rack::Request.new("PATH_INFO" => "/")
+      @request = Request.new(nil, { "PATH_INFO" => "/" })
     end
 
     it "should match a delete request" do
@@ -160,6 +162,31 @@ describe "Router" do
     it "should not match a post request" do
       @request.env["REQUEST_METHOD"] = "POST"
       @router.match(@request).should be_false
+    end
+  end
+
+  describe "#using" do
+    before do
+      class Controller
+        attr_accessor :request, :response
+        def initialize(request, response) @request, @response = request, response end
+      end
+      @router = Router.new
+      @request = Rack::Request.new("PATH_INFO" => "/", "REQUEST_METHOD" => "GET")
+    end
+
+    it "should pass the controller to the block" do
+      @router.using(Controller) do
+        get("/") { |controller| controller }
+      end
+      @router.match(@request).call(@request, nil).is_a?(Controller).should be_true
+    end
+
+    it "should pass the params as an optional second argument" do
+      @router.using(Controller) do
+        get("/") { |controler, params| params }
+      end
+      @router.match(@request).call(@request, nil).is_a?(Hash).should be_true
     end
   end
 

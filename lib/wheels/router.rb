@@ -32,6 +32,29 @@ module Wheels
       register(:delete, matcher, &handler)
     end
 
+    def using(klass, &block)
+      Using.new(self, klass).instance_eval(&block)
+    end
+
+    class Using
+      def initialize(router, klass)
+        @router = router
+        @klass = klass
+      end
+
+      %w(get post put delete).each do |verb|
+        class_eval <<-EOF
+        def #{verb}(matcher, &handler)
+          block = lambda do |request, response|
+            object = @klass.new(request, response)
+            handler.arity == 2 ? handler[object, request.params] : handler[object]
+          end
+          @router.send(#{verb.inspect}, matcher, &block)
+        end
+        EOF
+      end
+    end
+
     def register(request_method, matcher, &handler)
       @routes << [request_method.to_s.upcase, transform(matcher), handler]
     end
