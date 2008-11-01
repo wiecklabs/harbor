@@ -9,6 +9,14 @@ require Pathname(__FILE__).dirname + "response"
 module Wheels
   class Application
 
+    def self.services=(container)
+      @services = container
+    end
+
+    def self.services
+      @services ||= Wheels::Container.new
+    end
+    
     attr_reader :environment
 
     def initialize(router, environment = "development")
