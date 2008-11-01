@@ -32,26 +32,32 @@ module Wheels
       register(:delete, matcher, &handler)
     end
 
-    def using(klass, &block)
-      Using.new(self, klass).instance_eval(&block)
+    def using(container, klass, &block)
+      Using.new(self, container, klass).instance_eval(&block)
     end
 
     class Using
-      def initialize(router, klass)
+      def initialize(router, container, klass)
         @router = router
-        @klass = klass
+        @container = container
+        
+        if klass.is_a?(String)
+          @service_name = klass
+        else
+          @service_name = klass.to_s
+          @container.register(@service_name, klass)
+        end
       end
 
       %w(get post put delete).each do |verb|
-        class_eval <<-EOF
+        class_eval <<-EOS
         def #{verb}(matcher, &handler)
-          block = lambda do |request, response|
-            object = @klass.new(request, response)
-            handler.arity == 2 ? handler[object, request.params] : handler[object]
+          @router.send(#{verb.inspect}, matcher) do |request, response|
+            service = @container.get(@service_name, :request => request, :response => response)
+            handler.arity == 2 ? handler[service, request.params] : handler[service]
           end
-          @router.send(#{verb.inspect}, matcher, &block)
         end
-        EOF
+        EOS
       end
     end
 

@@ -13,7 +13,7 @@ end
 
 describe "Response" do
   before do
-    @response = Response.new({})
+    @response = Response.new(Request.new(Application.new(nil), {}))
     View::path.unshift Pathname(__FILE__).dirname + "views"
   end
 

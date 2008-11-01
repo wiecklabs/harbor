@@ -169,22 +169,30 @@ describe "Router" do
     before do
       class Controller
         attr_accessor :request, :response
-        def initialize(request, response) @request, @response = request, response end
       end
       @router = Router.new
       @request = Rack::Request.new("PATH_INFO" => "/", "REQUEST_METHOD" => "GET")
+      @container = Container.new
     end
 
     it "should pass the controller to the block" do
-      @router.using(Controller) do
+      @router.using(@container, Controller) do
         get("/") { |controller| controller }
       end
       @router.match(@request).call(@request, nil).is_a?(Controller).should be_true
     end
 
     it "should pass the params as an optional second argument" do
-      @router.using(Controller) do
+      @router.using(@container, Controller) do
         get("/") { |controler, params| params }
+      end
+      @router.match(@request).call(@request, nil).is_a?(Hash).should be_true
+    end
+    
+    it "should be able to use a service-name" do
+      @container.register("controller", Controller)
+      @router.using(@container, "controller") do
+        get("/") { |controller, params| params }
       end
       @router.match(@request).call(@request, nil).is_a?(Hash).should be_true
     end

@@ -16,6 +16,10 @@ module Wheels
       @environment = environment.to_s
     end
 
+    def default_layout
+      "layouts/application"
+    end
+    
     def not_found(request, response)
       response.flush
       response.status = 404
