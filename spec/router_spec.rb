@@ -74,7 +74,7 @@ describe "Router" do
       it "should update the request params" do
         @router.register(:get, "/:controller") { "Index" }
         @router.match(@request)
-        @request.params.should include("controller")
+        @request.params.has_key?("controller").should be_true
         @request.params["controller"].should == "users"
       end
     end
