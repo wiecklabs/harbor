@@ -31,7 +31,7 @@ module Wheels
     def delete(matcher, &handler)
       register(:delete, matcher, &handler)
     end
-
+    
     def using(container, klass, &block)
       Using.new(self, container, klass).instance_eval(&block)
     end
@@ -62,7 +62,9 @@ module Wheels
     end
 
     def register(request_method, matcher, &handler)
-      @routes << [request_method.to_s.upcase, transform(matcher), handler]
+      route = [request_method.to_s.upcase, transform(matcher), handler]
+      @routes << route
+      route
     end
 
     def clear
