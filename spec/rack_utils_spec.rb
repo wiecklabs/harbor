@@ -34,3 +34,14 @@ describe "Rack::Utils #parse_query" do
     parse_query("user[name]=John&user[email][addresses][]=one@aol.com&user[email][addresses][]=two@aol.com").should == params_hash
   end
 end
+
+describe "Rack::Utils::Multipart #self.parse_multipart" do
+  before(:all) do
+    @filename = "volcanoUPI_800x531.jpg"
+    @request_params = Multipart.parse_multipart(upload(@filename).env)
+  end
+  
+  it "should parse a deep nested query" do
+    @request_params["video"].has_key?("transcoder").should == true 
+  end
+end
