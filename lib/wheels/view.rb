@@ -12,8 +12,8 @@ module Wheels
       super(variables)
     end
 
-    def render(partial)
-      View.new(partial, self)
+    def render(partial, variables=nil)
+      View.new(partial, variables ? @variables.merge(variables) : self)
     end
 
     def q(value)
