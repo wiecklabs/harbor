@@ -22,7 +22,8 @@ module Wheels
     private
 
     def file_exists?(path)
-      File.exists?(@root + "public" + Rack::Utils.unescape(path)[1..-1])
+      full_path = @root + "public" + Rack::Utils.unescape(path)[1..-1]
+      File.exists?(full_path) && !File.directory?(full_path)
     end
 
   end
