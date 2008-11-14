@@ -21,7 +21,9 @@ module Rack
     module_function :parse_query
     
     module Multipart
+      $VERBOSE, __verbose = nil, $VERBOSE
       EOL = "\r\n"
+      $VERBOSE = __verbose
 
       def self.parse_multipart(env)
         unless env['CONTENT_TYPE'] =~

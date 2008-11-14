@@ -1,23 +1,24 @@
 require "pathname"
-require Pathname(__FILE__).dirname.parent + "lib/framework"
+require Pathname(__FILE__).dirname.parent + "lib/wheels"
+
+services = Wheels::Container.new
+# services.register("mail_server", Wheels::SmtpServer.new)
+# services.register("mailer", Wheels::Mailer)
 
 class Hello
-  attr_reader :request, :response
-
-  def initialize(request, response)
-    @request = request
-    @response = response
-  end
+  attr_accessor :request, :response
 
   def world
     response.puts "Hello World"
   end
 end
 
-router = Router.new do
-  get("/") do |request, response|
-    Hello.new(request, response).world
+router = Wheels::Router.new do
+  using services, Hello do
+    get("/") do |hello|
+      hello.world
+    end
   end
 end
 
-run Application.new(router)
+run Wheels::Application.new(router)
