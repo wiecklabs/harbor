@@ -18,7 +18,7 @@ module Wheels
     end
 
     def layout
-      @layout || application.default_layout
+      defined?(@layout) ? @layout : application.default_layout
     end
 
     def request_method
