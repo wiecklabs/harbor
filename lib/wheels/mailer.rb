@@ -6,15 +6,10 @@ require Pathname(__FILE__).dirname + "mail_servers/sendmail"
 module Wheels
   class Mailer < MailFactory
 
-    attr_accessor :server
-
-    def initialize(server)
-      super()
-      @server = server
-    end
+    attr_accessor :mail_server
 
     def send!
-      self.server.deliver(self)
+      mail_server.deliver(self)
     end
 
   end
