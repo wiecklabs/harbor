@@ -16,7 +16,7 @@ module Wheels
     def self.services
       @services ||= Wheels::Container.new
     end
-    
+
     attr_reader :environment
 
     def initialize(router, environment = "development")
@@ -27,7 +27,7 @@ module Wheels
     def default_layout
       "layouts/application"
     end
-    
+
     def not_found(request, response)
       response.flush
       response.status = 404

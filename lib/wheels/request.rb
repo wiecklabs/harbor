@@ -4,6 +4,7 @@ require Pathname(__FILE__).dirname + "session"
 module Wheels
   class Request < Rack::Request
 
+    attr_accessor :layout
     attr_reader :application
 
     def initialize(application, env)
@@ -14,6 +15,10 @@ module Wheels
 
     def session
       @session ||= Session.new(self)
+    end
+
+    def layout
+      @layout || application.default_layout
     end
 
     def request_method
