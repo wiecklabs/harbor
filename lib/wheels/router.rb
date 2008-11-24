@@ -31,7 +31,7 @@ module Wheels
     def delete(matcher, &handler)
       register(:delete, matcher, &handler)
     end
-    
+
     def using(container, klass, &block)
       Using.new(self, container, klass).instance_eval(&block)
     end
@@ -40,7 +40,7 @@ module Wheels
       def initialize(router, container, klass)
         @router = router
         @container = container
-        
+
         if klass.is_a?(String)
           @service_name = klass
         else

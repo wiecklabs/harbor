@@ -25,10 +25,9 @@ module Wheels
     def render(view, context = {})
 
       layout = nil
-      default_layout = @request.application.default_layout if @request.application.respond_to?(:default_layout)
 
       unless view.is_a?(View)
-        layout = context.fetch(:layout, default_layout)
+        layout = context.fetch(:layout, @request.layout)
         view = View.new(view, context.merge({ :request => @request }))
       end
 
