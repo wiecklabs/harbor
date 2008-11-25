@@ -29,7 +29,7 @@ module Wheels
       type_methods = type.is_a?(Class) ? type.instance_methods.grep(/\=$/) : []
 
       @services.each do |service_name, service_type|
-        if service_type.instance_methods.include?("#{name}=")
+        if service_type.is_a?(Class) && service_type.instance_methods.include?("#{name}=")
           dependencies(service_name) << name
         end
 

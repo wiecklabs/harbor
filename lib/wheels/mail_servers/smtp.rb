@@ -12,7 +12,7 @@ module Wheels
 
     def deliver(mail)
       Net::SMTP.start(@config[:address], @config[:port]) do |smtp|
-        smtp.send(mail.to_s, mail.from, mail.to)
+        smtp.send_message(mail.to_s, mail.from, mail.to)
       end
     end
   end
