@@ -16,5 +16,9 @@ module Wheels
     def delete(key)
       @request.env["rack.session"].delete(key)
     end
+
+    def destroy
+      @request.env["rack.session"] = {}
+    end
   end
 end
