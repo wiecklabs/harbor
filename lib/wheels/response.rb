@@ -51,6 +51,10 @@ module Wheels
     # and not StringIO.
     # 
 
+    def [](key)
+      self.headers[key]
+    end
+
     def []=(key, value)
       self.headers[key] = value
     end
