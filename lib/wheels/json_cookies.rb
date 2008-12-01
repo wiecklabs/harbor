@@ -2,7 +2,7 @@ module Wheels
   class JsonCookies
     def initialize(app, keys = [])
       @app = app
-      @keys = []
+      @keys = keys
     end
 
     def call(env)
