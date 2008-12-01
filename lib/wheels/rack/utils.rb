@@ -3,6 +3,8 @@ module Rack
     def parse_query(qs, d = '&;')
       params = {}
       (qs || '').split(/[#{d}] */n).each do |param|
+        next if param == ''
+
         keys, value = unescape(param).split("=", 2)
         keys = keys.scan /[^\[\]]+|(?=\[\])/
         key = keys.pop

@@ -16,6 +16,10 @@ describe "Rack::Utils #parse_query" do
     parse_query(nil).should == {}
   end
 
+  it "should parse a query that starts with &" do
+    parse_query('&message=sample+message').should == { 'message' => 'sample message' }
+  end
+
   it "should parse a nested query" do
     parse_query("user[name]=John").should == { "user" => { "name" => "John" } }
   end
