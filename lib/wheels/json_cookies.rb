@@ -16,7 +16,7 @@ module Wheels
     def read_cookies(env)
       request = Rack::Request.new(env)
       (request.cookies.keys & @keys).each do |key|
-        env["key"] = JSON.parse(request.cookies[key]) rescue nil
+        env[key] = JSON.parse(request.cookies[key]) rescue nil
       end
     end
 
