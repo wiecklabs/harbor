@@ -68,7 +68,7 @@ module Wheels
       end
       value = [value]  unless Array === value
       cookie = Rack::Utils.escape(key) + "=" +
-        value.map { |v| Utils.escape v }.join("&") +
+        value.map { |v| Rack::Utils.escape v }.join("&") +
         "#{domain}#{path}#{expires}"
 
       case self["Set-Cookie"]
