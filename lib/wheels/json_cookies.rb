@@ -23,7 +23,7 @@ module Wheels
     def write_cookies(env, status, headers, body)
       response = Rack::Response.new(body, status, headers)
       @keys.each do |key|
-        response.set_cookie(key, :value => env[key].to_json)
+        response.set_cookie(key, :value => env[key].to_json, :path => "/")
       end
       response.to_a
     end
