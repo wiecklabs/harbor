@@ -12,6 +12,13 @@ module Wheels
       super(variables)
     end
 
+    def merge(variables)
+      variables.each_pair do |name,value|
+        instance_variable_set("@#{name}", value)
+      end
+      self
+    end
+    
     def render(partial, variables=nil)
       View.new(partial, variables ? @variables.merge(variables) : self)
     end
@@ -55,7 +62,7 @@ module Wheels
       @content_type = "text/html"
       @extension = ".html.erb"
       @view = view
-      @context = context
+      @context = context.is_a?(ViewContext) ? context : ViewContext.new(self, context)
     end
 
     def to_s(layout = nil)
@@ -65,14 +72,12 @@ module Wheels
     
     private
 
-    def _erubis_render(filename, context = {})
+    def _erubis_render(filename, context)
 
       filename += self.extension if File.extname(filename) == ""
 
       path = self.class.path.detect { |dir| File.exists?(dir + filename) }
       raise "Could not find '#{filename}' in #{self.class.path.inspect}" if path.nil?
-
-      context = ViewContext.new(self, context) unless context.is_a?(ViewContext)
     
       if self.class.cache_templates?
         (self.class.__templates[path + filename] ||= Erubis::FastEruby.new(File.read(path + filename))).evaluate(context)
