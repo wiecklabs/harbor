@@ -35,9 +35,37 @@ module Wheels
       @variables.inspect
     end
 
+    def capture(*args, &block)
+      # get the buffer from the block's binding
+      buffer = _erb_buffer( block.binding ) rescue nil
+
+      # If there is no buffer, just call the block and get the contents
+      if buffer.nil?
+        block.call(*args)
+      # If there is a buffer, execute the block, then extract its contents
+      else
+        pos = buffer.length
+
+        block.call(*args)
+
+        # extract the block
+        data = buffer[pos..-1]
+
+        # replace it in the original with empty string
+        buffer[pos..-1] = ''
+
+        data
+      end
+    end
+
     private
+
     def request
       @request
+    end
+
+    def _erb_buffer( the_binding ) # :nodoc:
+      eval( "_buf", the_binding, __FILE__, __LINE__)
     end
 
   end
