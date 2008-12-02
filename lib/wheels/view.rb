@@ -18,7 +18,7 @@ module Wheels
       end
       self
     end
-    
+
     def render(partial, variables=nil)
       View.new(partial, variables ? @variables.merge(variables) : self)
     end
@@ -34,24 +34,24 @@ module Wheels
     def inspect
       @variables.inspect
     end
-    
+
     private
     def request
       @request
     end
 
   end
-  
+
   class View
     def self.path
       @path ||= []
     end
-  
+
     @cache_templates = false
     def self.cache_templates?
       @cache_templates
     end
-  
+
     def self.cache_templates!
       @cache_templates = true
     end
@@ -69,7 +69,7 @@ module Wheels
       content = _erubis_render(@view, @context)
       layout ? View.new(layout, @context.merge(:content => content)).to_s : content
     end
-    
+
     private
 
     def _erubis_render(filename, context)
@@ -78,7 +78,7 @@ module Wheels
 
       path = self.class.path.detect { |dir| File.exists?(dir + filename) }
       raise "Could not find '#{filename}' in #{self.class.path.inspect}" if path.nil?
-    
+
       if self.class.cache_templates?
         (self.class.__templates[path + filename] ||= Erubis::FastEruby.new(File.read(path + filename))).evaluate(context)
       else
