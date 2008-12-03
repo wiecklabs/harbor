@@ -19,6 +19,7 @@ module Wheels
 
     def destroy
       @request.env["rack.session"] = {}
+      @request.cookies["_session_id"] = nil
     end
   end
 end
