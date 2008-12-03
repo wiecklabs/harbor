@@ -35,7 +35,7 @@ module Wheels
         m.mail_server = Wheels::SendmailServer.new
         m.from = "exceptions@wieck.com"
         m.to = "dev@wieck.com"
-        m.subject = "[ERROR] [#{ENV["USER"]}] #{e}"
+        m.subject = "[ERROR] [#{ENV["USER"]}] [#{@environment}] #{e}"
         m.text = trace
         m.set_header("X-Priority", 1)
         m.set_header("X-MSMail-Priority", "High")
