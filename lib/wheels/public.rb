@@ -13,7 +13,7 @@ module Wheels
       method = env['REQUEST_METHOD']
 
       if path != "" && FILE_METHODS.include?(method) && file_exists?(path)
-        Rack::File.new(@root + "public").call(env)
+        Rack::File.new(@root).call(env)
       else
         @app.call(env)
       end
@@ -22,7 +22,7 @@ module Wheels
     private
 
     def file_exists?(path)
-      full_path = @root + "public" + Rack::Utils.unescape(path)[1..-1]
+      full_path = @root + Rack::Utils.unescape(path)[1..-1]
       File.exists?(full_path) && !File.directory?(full_path)
     end
 
