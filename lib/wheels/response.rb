@@ -21,7 +21,15 @@ module Wheels
       })
       @headers
     end
-
+    
+    def stream(io)
+      @io = io
+    end
+    
+    def to_s
+      @io || super
+    end
+    
     def render(view, context = {})
 
       layout = nil
