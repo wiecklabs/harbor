@@ -20,7 +20,7 @@ module Wheels
     end
 
     def render(partial, variables=nil)
-      View.new(partial, variables ? @variables.merge(variables) : self)
+      View.new(partial, variables ? merge(variables) : self)
     end
 
     def q(value)
