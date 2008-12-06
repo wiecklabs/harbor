@@ -8,19 +8,21 @@ module Wheels
 
     def initialize(view, variables)
       @view = view
-      @variables = variables
+      @variable_frames = []
+      push_variables(variables)
       super(variables)
     end
 
     def merge(variables)
-      variables.each_pair do |name,value|
-        instance_variable_set("@#{name}", value)
-      end
+      push_variables(variables)
       self
     end
 
     def render(partial, variables=nil)
-      View.new(partial, variables ? merge(variables) : self)
+      push_variables(variables)
+      result = View.new(partial, self).to_s
+      pop_variables
+      result
     end
 
     def q(value)
@@ -60,6 +62,45 @@ module Wheels
 
     private
 
+    def push_variables(variables)
+      if !variables.blank?
+        named_variables = {}
+        variables.each do |name, value|
+          if name.to_s[0,1] == "@"
+            named_variables[name] = value
+          else
+            named_variables["@#{name}"] = value
+          end
+        end
+        
+        variable_frames.push(named_variables)
+      
+        named_variables.each do |name, value|
+          instance_variable_set(name, value)
+        end
+      else
+        variable_frames.push({})
+      end
+    end
+    
+    def pop_variables
+      if frame = variable_frames.pop
+        frame.each do |name, value|
+          instance_variable_set(name, nil)
+        end
+      end
+        
+      if frame = variable_frames.last
+        frame.each do |name, value|
+          instance_variable_set(name, value)
+        end
+      end
+    end
+    
+    def variable_frames
+      @variables ||= []
+    end
+    
     def request
       @request
     end
