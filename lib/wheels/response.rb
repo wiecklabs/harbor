@@ -38,7 +38,11 @@ module Wheels
     end
     
     def buffer
-      @io || ""
+      if @io.is_a?(StringIO)
+        @io.string
+      else
+        @io || ""
+      end
     end
     
     def send_file(name, path, content_type)

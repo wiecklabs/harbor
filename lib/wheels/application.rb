@@ -18,11 +18,12 @@ module Wheels
       @services ||= Wheels::Container.new
     end
 
-    attr_reader :environment
+    attr_reader :environment, :logger
 
     def initialize(router, environment = "development")
       @router = router
       @environment = environment.to_s
+      @logger = self.class.services.get("logger") rescue nil
     end
 
     def default_layout
@@ -43,9 +44,9 @@ module Wheels
 
       handler = @router.match(request)
       return not_found(request, response) if handler == false
-
+      
       handler.call(request, response)
-      [response.status, response.headers, response.buffer]
+      [response.status, response.headers, response.buffer]      
     end
 
   end
