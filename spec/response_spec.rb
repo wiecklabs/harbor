@@ -24,7 +24,7 @@ describe "Response" do
   it "should buffer content" do
     @response.puts "Hello World"
     @response.print("Hello World\n")
-    @response.buffer.string.to_a.should == (["Hello World\n"] * 2)
+    @response.buffer.to_a.should == (["Hello World\n"] * 2)
   end
 
   it "should have a default status of 200" do
@@ -43,12 +43,12 @@ describe "Response" do
   describe "#render" do
     it "should render an html view" do
       @response.render "index", :text => "test"
-      @response.buffer.string.should == "LAYOUT\ntest\n"
+      @response.buffer.should == "LAYOUT\ntest\n"
     end
 
     it "should render a view object" do
       @response.render XMLView.new("list")
-      @response.buffer.string.should == "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<site>\n  <name>Bob</name>\n</site>\n"
+      @response.buffer.should == "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<site>\n  <name>Bob</name>\n</site>\n"
       @response.content_type.should == "text/xml"
     end
   end

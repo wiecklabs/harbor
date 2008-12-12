@@ -16,7 +16,9 @@ module Wheels
     
     def each
       File::open(@path, "r") do |file|
-        yield file.read(Wheels::BlockIO::BLOCK_SIZE)
+        while data = file.read(Wheels::BlockIO::BLOCK_SIZE) do
+          yield data
+        end
       end
     end
   end  

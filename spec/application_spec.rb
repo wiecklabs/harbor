@@ -18,7 +18,7 @@ describe "Application" do
     result = @application.call({ "PATH_INFO" => "/", "REQUEST_METHOD" => "GET" })
     result[0].should == 200
     result[1].should == { "Content-Type" => "text/html", "Content-Length" => ("Hello World".size + 1).to_s }
-    result[2].string.should == "Hello World\n"
+    result[2].should == "Hello World\n"
   end
 
   it "should return a 404 for non-existent routes" do

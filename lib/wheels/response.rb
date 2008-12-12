@@ -45,7 +45,7 @@ module Wheels
       end
     end
     
-    def send_file(name, path, content_type)
+    def send_file(name, path, content_type = Rack::File::MIME_TYPES.fetch(File.extname(path)[1..-1], "binary/octet-stream"))
       @io = BlockIO.new(path)
       @headers["Content-Length"] = @io.size
       @headers["Content-Disposition"] = "attachment; filename=\"#{name}\""

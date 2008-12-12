@@ -2,6 +2,20 @@ require "pathname"
 require Pathname(__FILE__).dirname + "helper"
 
 describe "BlockIO" do
+  
+  before :all do
+    @original_block_size = Wheels::BlockIO::BLOCK_SIZE
+    $VERBOSE, verbose = nil, $VERBOSE
+    Wheels::BlockIO::BLOCK_SIZE = 50
+    $VERBOSE = verbose
+  end
+  
+  after :all do
+    $VERBOSE, verbose = nil, $VERBOSE
+    Wheels::BlockIO::BLOCK_SIZE = @original_block_size
+    $VERBOSE = verbose
+  end
+  
   it "should read a file" do
     io = Wheels::BlockIO.new(__FILE__)
     io.to_s.should =~ /should read a file/
@@ -34,4 +48,5 @@ describe "BlockIO" do
     
     FileUtils::rm(block_io_txt)
   end
+  
 end
