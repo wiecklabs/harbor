@@ -5,6 +5,7 @@ require "thread"
 require Pathname(__FILE__).dirname + "rack/utils"
 require Pathname(__FILE__).dirname + "request"
 require Pathname(__FILE__).dirname + "response"
+require Pathname(__FILE__).dirname + "block_io"
 
 module Wheels
   class Application
@@ -44,7 +45,7 @@ module Wheels
       return not_found(request, response) if handler == false
 
       handler.call(request, response)
-      [response.status, response.headers, response.string.to_a]
+      [response.status, response.headers, response]
     end
 
   end

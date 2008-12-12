@@ -11,6 +11,7 @@ module Wheels
       @headers = {}
       @content_type = "text/html"
       @status = 200
+      @io
       super("")
     end
 
@@ -22,9 +23,17 @@ module Wheels
       @headers
     end
     
+    def each
+      if @io
+        @io.each { |chunk| yield chunk }
+      else
+        super
+      end
+    end
+    
     def send_file(name, path, content_type)
-      puts File.read(path)
-      @headers["Content-Length"] = self.size
+      @io = BlockIO.new(path)
+      @headers["Content-Length"] = @io.size
       @headers["Content-Disposition"] = "attachment; filename=\"#{name}\""
       @content_type = content_type
       nil
