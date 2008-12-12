@@ -1,4 +1,6 @@
+gem "rack", "~> 0.4.0"
 require "rack"
+
 require "yaml"
 require "thread"
 
@@ -41,7 +43,7 @@ module Wheels
       env["APP_ENVIRONMENT"] = environment
       request = Request.new(self, env)
       response = Response.new(request)
-
+      
       handler = @router.match(request)
       return not_found(request, response) if handler == false
       
