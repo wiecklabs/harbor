@@ -33,7 +33,7 @@ module Wheels
       response.flush
       response.status = 404
       response.puts "The page you requested could not be found"
-      [response.status, response.headers, response.string.to_a]
+      [response.status, response.headers, response]
     end
 
     def call(env)
