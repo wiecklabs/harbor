@@ -33,7 +33,7 @@ module Wheels
       response.flush
       response.status = 404
       response.puts "The page you requested could not be found"
-      [response.status, response.headers, response]
+      [response.status, response.headers, response.buffer]
     end
 
     def call(env)
@@ -45,7 +45,7 @@ module Wheels
       return not_found(request, response) if handler == false
 
       handler.call(request, response)
-      [response.status, response.headers, response]
+      [response.status, response.headers, response.buffer]
     end
 
   end

@@ -23,9 +23,8 @@ describe "Response" do
 
   it "should buffer content" do
     @response.puts "Hello World"
-    @response << "Hello World\n"
-    @response.write("Hello World\n")
-    @response.string.to_a.should == ["Hello World\n"]*3
+    @response.print("Hello World\n")
+    @response.buffer.string.to_a.should == (["Hello World\n"] * 2)
   end
 
   it "should have a default status of 200" do
@@ -37,19 +36,19 @@ describe "Response" do
   end
 
   it "should generate basic headers automatically" do
-    @response.write "Hello World"
+    @response.print "Hello World"
     @response.headers.should == { "Content-Type" => "text/html", "Content-Length" => "Hello World".size.to_s }
   end
 
   describe "#render" do
     it "should render an html view" do
       @response.render "index", :text => "test"
-      @response.string.should == "LAYOUT\ntest\n"
+      @response.buffer.string.should == "LAYOUT\ntest\n"
     end
 
     it "should render a view object" do
       @response.render XMLView.new("list")
-      @response.string.should == "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<site>\n  <name>Bob</name>\n</site>\n"
+      @response.buffer.string.should == "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<site>\n  <name>Bob</name>\n</site>\n"
       @response.content_type.should == "text/xml"
     end
   end

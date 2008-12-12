@@ -3,10 +3,13 @@ require "builder"
 module Wheels
   class XMLViewContext < ViewContext
 
-    def render(partial)
-      XMLView.new(partial, self).to_s
+    def render(partial, variables=nil)
+      push_variables(variables)
+      result = XMLView.new(partial, self).to_s
+      pop_variables
+      result
     end
-
+    
     def xml
       @view.xml
     end
@@ -23,6 +26,7 @@ module Wheels
       @extension = ".rxml"
       @output = ""
       @xml = Builder::XmlMarkup.new(:indent => 2, :target => output)
+      @context = context.is_a?(ViewContext) ? context : XMLViewContext.new(self, context)
     end
 
     def to_s(layout = nil)

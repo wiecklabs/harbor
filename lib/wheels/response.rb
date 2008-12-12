@@ -21,38 +21,24 @@ module Wheels
       @headers
     end
     
-    def each
-      if @io
-        @io.each { |chunk| yield chunk }
-      else
-        yield ""
-      end
-    end
-    
     def flush
       @io = nil
     end
     
     def size
-      if @io
-        @io.size
-      else
-        0
-      end
+      buffer.size
     end
 
     def puts(value)
-      (@io ||= StringIO.new).puts(value)
+      string.puts(value)
     end
     
-    def to_s
-      if @io.is_a?(StringIO)
-        @io.string
-      else
-        buffer = StringIO.new("")
-        self.each { |chunk| buffer << chunk }
-        buffer
-      end
+    def print(value)
+      string.print(value)
+    end
+    
+    def buffer
+      @io || ""
     end
     
     def send_file(name, path, content_type)
@@ -79,12 +65,17 @@ module Wheels
     def redirect(url, params = nil)
       self.status = 303
       self.headers = { "Location" => (params ? "#{url}?#{Rack::Utils::build_query(params)}" : url) }
-      @io = StringIO.new("")
+      @io = nil
       self
     end
 
     def inspect
-      "<#{self.class} headers=#{headers.inspect} content_type=#{content_type.inspect} status=#{status.inspect} body=#{to_s.inspect}>"
+      "<#{self.class} headers=#{headers.inspect} content_type=#{content_type.inspect} status=#{status.inspect} body=#{buffer.inspect}>"
+    end
+    
+    private
+    def string
+      @io ||= StringIO.new("")
     end
 
   end

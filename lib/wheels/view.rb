@@ -8,7 +8,6 @@ module Wheels
 
     def initialize(view, variables)
       @view = view
-      @variable_frames = []
       push_variables(variables)
       super(variables)
     end
@@ -63,7 +62,7 @@ module Wheels
     private
 
     def push_variables(variables)
-      if !variables.blank?
+      if variables.is_a?(Hash)
         named_variables = {}
         variables.each do |name, value|
           if name.to_s[0,1] == "@"
@@ -98,7 +97,7 @@ module Wheels
     end
     
     def variable_frames
-      @variables ||= []
+      @variable_frames ||= []
     end
     
     def request

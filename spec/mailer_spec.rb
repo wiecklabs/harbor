@@ -15,7 +15,8 @@ describe "Wheels::Mailer" do
   end
 
   it "should pass itself to the server on send!" do
-    mail = Wheels::Mailer.new(@server)
+    mail = Wheels::Mailer.new
+    mail.mail_server = @server
     mail.send!.should == mail
   end
 end
