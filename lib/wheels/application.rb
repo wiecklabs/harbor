@@ -46,7 +46,7 @@ module Wheels
       return not_found(request, response) if handler == false
       
       handler.call(request, response)
-      [response.status, response.headers, response.buffer]      
+      [response.status, response.headers, response.buffer]    
     end
 
   end

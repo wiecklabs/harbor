@@ -12,9 +12,12 @@ class StubView
 end
 
 describe "Response" do
+  before :all do
+    View::path.unshift Pathname(__FILE__).dirname + "views"
+  end
+  
   before do
     @response = Response.new(Request.new(Application.new(nil), {}))
-    View::path.unshift Pathname(__FILE__).dirname + "views"
   end
 
   after :all do
