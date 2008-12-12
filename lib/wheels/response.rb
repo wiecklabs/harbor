@@ -2,7 +2,7 @@ require "stringio"
 require Pathname(__FILE__).dirname + "view"
 
 module Wheels
-  class Response < StringIO
+  class Response
 
     attr_accessor :status, :content_type, :headers
 
@@ -11,8 +11,6 @@ module Wheels
       @headers = {}
       @content_type = "text/html"
       @status = 200
-      @io
-      super("")
     end
 
     def headers
@@ -27,7 +25,33 @@ module Wheels
       if @io
         @io.each { |chunk| yield chunk }
       else
-        super
+        yield ""
+      end
+    end
+    
+    def flush
+      @io = nil
+    end
+    
+    def size
+      if @io
+        @io.size
+      else
+        0
+      end
+    end
+
+    def puts(value)
+      (@io ||= StringIO.new).puts(value)
+    end
+    
+    def to_s
+      if @io.is_a?(StringIO)
+        @io.string
+      else
+        buffer = StringIO.new("")
+        self.each { |chunk| buffer << chunk }
+        buffer
       end
     end
     
@@ -55,12 +79,12 @@ module Wheels
     def redirect(url, params = nil)
       self.status = 303
       self.headers = { "Location" => (params ? "#{url}?#{Rack::Utils::build_query(params)}" : url) }
-      self.string = ""
+      @io = StringIO.new("")
       self
     end
 
     def inspect
-      "<#{self.class} headers=#{headers.inspect} content_type=#{content_type.inspect} status=#{status.inspect} body=#{string.inspect}>"
+      "<#{self.class} headers=#{headers.inspect} content_type=#{content_type.inspect} status=#{status.inspect} body=#{to_s.inspect}>"
     end
 
   end
