@@ -22,12 +22,12 @@ module Wheels
       @headers
     end
     
-    def stream(io)
-      @io = io
-    end
-    
-    def to_s
-      @io || super
+    def send_file(name, path, content_type)
+      puts File.read(path)
+      @headers["Content-Length"] = self.size
+      @headers["Content-Disposition"] = "attachment; filename=\"#{@file.video.filename}#{@file.file_extension}\""
+      @content_type = content_type
+      nil
     end
     
     def render(view, context = {})
