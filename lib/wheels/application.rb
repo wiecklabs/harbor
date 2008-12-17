@@ -22,9 +22,9 @@ module Wheels
 
     attr_reader :environment, :logger
 
-    def initialize(router, environment = "development")
+    def initialize(router, environment = ENV["ENVIRONMENT"])
       @router = router
-      @environment = environment.to_s
+      @environment = (environment || "development").to_s
       @logger = self.class.services.get("logger") rescue nil
     end
 
