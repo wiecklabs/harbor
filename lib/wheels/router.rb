@@ -1,7 +1,7 @@
 module Wheels
   class Router
 
-    URI_CHAR = '[^/?:,&#\.]'.freeze unless defined?(URI_CHAR)
+    URI_CHAR = '[^/?:,&#\.\[\]]'.freeze unless defined?(URI_CHAR)
     PARAM = /(:(#{URI_CHAR}+))/.freeze unless defined?(PARAM)
 
     attr_accessor :routes
@@ -93,7 +93,7 @@ module Wheels
         generate_param_matcher(regex, matcher)
       when String
         param_keys = []
-        regex = matcher.gsub(".", "\.").gsub(PARAM) { param_keys << $2; "(#{URI_CHAR}+)" }
+        regex = matcher.gsub('.', '[\.]').gsub(PARAM) { param_keys << $2; "(#{URI_CHAR}+)" }
         regex = /^#{regex}$/
         generate_param_matcher(regex, param_keys)
       end
