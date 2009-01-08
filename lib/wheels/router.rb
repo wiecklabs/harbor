@@ -93,7 +93,7 @@ module Wheels
         generate_param_matcher(regex, matcher)
       when String
         param_keys = []
-        regex = matcher.gsub(PARAM) { param_keys << $2; "(#{URI_CHAR}+)" }
+        regex = matcher.gsub(".", "\.").gsub(PARAM) { param_keys << $2; "(#{URI_CHAR}+)" }
         regex = /^#{regex}$/
         generate_param_matcher(regex, param_keys)
       end
