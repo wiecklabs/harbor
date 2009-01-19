@@ -72,6 +72,10 @@ module Wheels
       @io = nil
       self
     end
+    
+    def redirect!(url, params = nil)
+      redirect(url, params) and throw(:abort_request)
+    end
 
     def inspect
       "<#{self.class} headers=#{headers.inspect} content_type=#{content_type.inspect} status=#{status.inspect} body=#{buffer.inspect}>"
