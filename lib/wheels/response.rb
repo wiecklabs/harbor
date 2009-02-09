@@ -58,7 +58,7 @@ module Wheels
       layout = nil
 
       unless view.is_a?(View)
-        layout = context.fetch(:layout, @request.layout)
+        layout = context.fetch(:layout, @request.layout) unless @request.xhr?
         view = View.new(view, context.merge({ :request => @request }))
       end
 
