@@ -2,12 +2,18 @@ module Rack
   module Utils
     def parse_query(qs, d = '&;')
       params = {}
+
       (qs || '').split(/[#{d}] */n).each do |param|
         next if param == ''
 
         keys, value = unescape(param).split("=", 2)
         keys = keys.scan /[^\[\]]+|(?=\[\])/
         key = keys.pop
+
+        # If an input has no key, Firefox will not send it, but
+        # Safari will, so we ignore key-less form values.
+        next unless key
+
         if key.empty?
           key = keys.pop
           hash = keys.inject(params) { |h, k| h[k] ||= {} }
@@ -21,7 +27,7 @@ module Rack
       params
     end
     module_function :parse_query
-    
+
     module Multipart
       $VERBOSE, __verbose = nil, $VERBOSE
       EOL = "\r\n"
