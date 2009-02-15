@@ -1,0 +1,11 @@
+#!/usr/bin/env ruby
+
+# wheels generator
+#
+#   usage: wheels setup app-name
+
+require 'wheels/generator'
+
+command = ARGV.shift
+
+Wheels::Generator.run(command, ARGV)

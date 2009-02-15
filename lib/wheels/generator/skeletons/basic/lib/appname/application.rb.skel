@@ -1,0 +1,20 @@
+class ##>=app_class<## < Wheels::Application
+
+  def default_layout
+    "layouts/application"
+  end
+
+  def self.default_routes(services)
+    Wheels::Router.new do
+
+      using services, Default do
+        get("/") { |default| default.index }
+      end
+
+    end
+  end
+
+  def initialize(services = self.class.services, environment = "development")
+    super(self.class.default_routes(services), environment)
+  end
+end
