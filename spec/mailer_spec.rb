@@ -19,4 +19,5 @@ describe "Wheels::Mailer" do
     mail.mail_server = @server
     mail.send!.should == mail
   end
+
 end
