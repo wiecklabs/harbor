@@ -10,8 +10,10 @@ module Wheels
 
     def get(name, optional_properties = {})
       raise ArgumentError.new("#{name} is not a registered service name") unless @services.key?(name)
-      registration = @services[name]
+      registration, setup = @services[name]
+
       service = registration.is_a?(Class) ? registration.new : registration
+
       dependencies(name).each do |dependency|
         service.send("#{dependency}=", get(dependency, optional_properties))
       end
@@ -21,14 +23,17 @@ module Wheels
         service.send(writer, v.is_a?(Class) ? v.new : v) if service.respond_to?(writer)
       end
 
+      setup.call(service) if setup
+
       service
     end
 
-    def register(name, type)
+    def register(name, type, &setup)
       type_dependencies = dependencies(name)
       type_methods = type.is_a?(Class) ? type.instance_methods.grep(/\=$/) : []
 
-      @services.each do |service_name, service_type|
+      @services.each do |service_name, service|
+        service_type, service_setup = service
         if service_type.is_a?(Class) && service_type.instance_methods.include?("#{name}=")
           dependencies(service_name) << name
         end
@@ -38,7 +43,7 @@ module Wheels
         end
       end
 
-      @services[name] = type
+      @services[name] = [type, setup]
 
       self
     end

@@ -15,26 +15,26 @@ describe "Container" do
     service = Class.new do
       attr_accessor :component
     end
-    container.register("service", service.new)    
+    container.register("service", service.new)
     container.get("service").should be_a_kind_of(service)
   end
-  
+
   it "should create a registered class with components" do
     container = Wheels::Container.new
-    
+
     service = Class.new do
       attr_accessor :component
     end
     component = Class.new
-    
+
     container.register("service", service)
     container.register("component", component)
-    
+
     instance = container.get("service")
     instance.should be_a_kind_of(service)
     instance.component.should be_a_kind_of(component)
   end
-  
+
   it "should create a registered service with optional arguments" do
     container = Wheels::Container.new
 
@@ -49,7 +49,7 @@ describe "Container" do
     instance.should be_a_kind_of(service)
     instance.component.should be_a_kind_of(component)
   end
-  
+
   it "should return a registered service instance" do
     container = Wheels::Container.new
 
@@ -73,20 +73,38 @@ describe "Container" do
     instance.component.should be_a_kind_of(component)
     instance.component.mailer.should == mailer
   end
-  
+
   it "should create a registerd service with optional arguments in Class form" do
     container = Wheels::Container.new
-    
+
     service = Class.new do
       attr_accessor :component
     end
     component = Class.new
-    
+
     container.register("service", service)
-    
+
     instance = container.get("service", :component => component)
     instance.should be_a_kind_of(service)
     instance.component.should be_a_kind_of(component)
+  end
+
+  it "should execute a setup block when provided" do
+    container = Wheels::Container.new
+
+    service = Class.new do
+      attr_accessor :component, :setup
+    end
+
+    component = Class.new
+    container.register("component", component)
+    container.register("service", service) do |s|
+      s.setup = true
+    end
+
+    instance = container.get("service")
+    instance.component.should be_a_kind_of(component)
+    instance.setup.should be_true
   end
 
 end
