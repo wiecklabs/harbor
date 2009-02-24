@@ -84,6 +84,8 @@ module Wheels
     end
 
     def tokenize_urls!(mail_server_url)
+      mail_server_url = "http://#{mail_server_url}" unless mail_server_url =~ /^http/
+
       [:@html, :@text].each do |ivar|
         if content = instance_variable_get(ivar)
           new_content = content.gsub(/(http(s)?:\/\/.+?)(?=[" ]|$)/) do |url|
