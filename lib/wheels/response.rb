@@ -74,7 +74,7 @@ module Wheels
     def redirect(url, params = nil)
       self.status = 303
       self.headers = { "Location" => (params ? "#{url}?#{Rack::Utils::build_query(params)}" : url) }
-      @io = nil
+      self.flush
       self
     end
     
