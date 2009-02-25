@@ -82,6 +82,14 @@ module Wheels
       redirect(url, params) and throw(:abort_request)
     end
 
+    def unauthorized
+      self.status = 401
+    end
+
+    def unauthorized!
+      unauthorized and throw(:abort_request)
+    end
+
     def inspect
       "<#{self.class} headers=#{headers.inspect} content_type=#{content_type.inspect} status=#{status.inspect} body=#{buffer.inspect}>"
     end
