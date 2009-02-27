@@ -63,7 +63,7 @@ task :publish do
   `git push --tags &> /dev/null`
 
   commands = [
-    "if [ ! -d '#{NAME}' ]; then git clone /home/git/#{NAME}; fi",
+    "if [ ! -d '#{NAME}' ]; then git clone git://github.com/wiecklabs/wheels.git; fi",
     "cd #{NAME}",
     "git pull &> /dev/null",
     "rake repackage &> /dev/null",
