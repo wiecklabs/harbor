@@ -1,4 +1,4 @@
-gem "rack", "~> 0.9.1"
+gem "rack", "~> 0.4.0"
 require "rack"
 
 require "yaml"

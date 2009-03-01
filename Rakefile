@@ -1,13 +1,20 @@
 require "rubygems"
 require "pathname"
 require "rake"
+require "rake/testtask"
 require "spec/rake/spectask"
 
 # Specs
-task :default => :spec
+task :default => [:spec, :test]
 Spec::Rake::SpecTask.new("spec") do |t|
   t.spec_opts << "--colour" << "--loadby" << "random"
   t.spec_files = Dir["spec/**/*_spec.rb"]
+end
+
+Rake::TestTask.new do |t|
+  t.libs << "test"
+  t.test_files = FileList["test/**/*_test.rb"]
+  t.verbose = true
 end
 
 # rcov
@@ -32,7 +39,7 @@ require "rake/gempackagetask"
 
 NAME = "wheels"
 SUMMARY = "Wheels Framework"
-GEM_VERSION = "0.3.2"
+GEM_VERSION = "0.3.3"
 
 spec = Gem::Specification.new do |s|
   s.name = NAME
