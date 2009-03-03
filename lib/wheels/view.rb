@@ -111,6 +111,7 @@ module Wheels
   end
 
   class View
+
     def self.path
       @path ||= []
     end
