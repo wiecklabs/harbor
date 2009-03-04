@@ -102,7 +102,7 @@ module Wheels
 
       [:@html, :@text].each do |ivar|
         if content = instance_variable_get(ivar)
-          new_content = content.to_s.gsub(/(http(s)?:\/\/.+?)(?=[" ]|$)/) do |url|
+          new_content = content.to_s.gsub(/(http(s)?:\/\/.+?(?=[" <]|$))/) do |url|
             "#{mail_server_url}/m/#{envelope_id}?r=#{CGI.escape([url].pack("m"))}"
           end
           instance_variable_set(ivar, new_content)
