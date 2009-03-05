@@ -53,7 +53,7 @@ module Wheels
         @io = BlockIO.new(path)
         @headers["Content-Length"] = @io.size
       end
-      @headers["Content-Disposition"] = "attachment; filename=\"#{name}\""
+      @headers["Content-Disposition"] = "attachment; filename=\"#{escape_filename_for_http_header(name)}\""
       @content_type = content_type
       nil
     end
@@ -97,6 +97,10 @@ module Wheels
     private
     def string
       @io ||= StringIO.new("")
+    end
+
+    def escape_filename_for_http_header(filename)
+      filename.gsub(/["\\\x0]/,'\\\\\0')
     end
 
   end
