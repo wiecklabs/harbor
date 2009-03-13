@@ -44,20 +44,20 @@ module Wheels
         @io || ""
       end
     end
-    
-    def send_file(name, path, content_type = Rack::File::MIME_TYPES.fetch(File.extname(path)[1..-1], "binary/octet-stream"))
-      if @request.env.has_key?("HTTP_X_SENDFILE_TYPE")
-        @headers["X-Sendfile"] = path.to_s
-        @headers["Content-Length"] = File.size(path)
+
+    def send_file(name, path_or_io, content_type = Rack::File::MIME_TYPES.fetch(File.extname(path)[1..-1], "binary/octet-stream"))
+      if @request.env.has_key?("HTTP_X_SENDFILE_TYPE") && (!path_or_io.is_a?(StringIO) || !path_or_io.is_a?(IO))
+        @headers["X-Sendfile"] = path_or_io.to_s
+        @headers["Content-Length"] = File.size(path_or_io)
       else
-        @io = BlockIO.new(path)
+        @io = BlockIO.new(path_or_io)
         @headers["Content-Length"] = @io.size
       end
       @headers["Content-Disposition"] = "attachment; filename=\"#{escape_filename_for_http_header(name)}\""
       @content_type = content_type
       nil
     end
-    
+
     def render(view, context = {})
 
       layout = nil
@@ -99,8 +99,13 @@ module Wheels
       @io ||= StringIO.new("")
     end
 
+    # 
     def escape_filename_for_http_header(filename)
-      filename.gsub(/["\\\x0]/,'\\\\\0')
+      # This would work great if IE6 could unescape the Content-Disposition filename field properly,
+      # but it can't, so we use the terribly weak version instead, until IE6 dies off...
+      #filename.gsub(/["\\\x0]/,'\\\\\0')
+
+      filename.gsub(/[^\w\.]/, '_')
     end
 
   end

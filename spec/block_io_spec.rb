@@ -49,4 +49,27 @@ describe "BlockIO" do
     FileUtils::rm(block_io_txt)
   end
   
+  it "should iterate over a StringIO instance in chunks" do
+    meaningless_data = File.read(__FILE__)
+    block_io_txt = Pathname(__FILE__).dirname + "samples" + "block_io.txt"
+    
+    File::open(block_io_txt, "w+") do |file|
+      100.times do
+        file << meaningless_data
+        file << rand()
+      end
+    end
+    
+    byte_size = 0
+    
+    Wheels::BlockIO.new(StringIO.new(File.read(block_io_txt))).each do |chunk|
+      chunk.size.should_not > Wheels::BlockIO::BLOCK_SIZE
+      byte_size += chunk.size
+    end
+    
+    byte_size.should == File.size(block_io_txt)
+    
+    FileUtils::rm(block_io_txt)
+  end
+  
 end
