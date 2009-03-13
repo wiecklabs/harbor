@@ -46,12 +46,17 @@ module Wheels
     end
 
     def send_file(name, path_or_io, content_type = Rack::File::MIME_TYPES.fetch(File.extname(path)[1..-1], "binary/octet-stream"))
-      if @request.env.has_key?("HTTP_X_SENDFILE_TYPE") && !(path_or_io.is_a?(StringIO) || path_or_io.is_a?(IO))
-        @headers["X-Sendfile"] = path_or_io.to_s
-        @headers["Content-Length"] = File.size(path_or_io)
-      else
+      if path_or_io.is_a?(StringIO) || path_or_io.is_a?(IO)
         @io = BlockIO.new(path_or_io)
         @headers["Content-Length"] = @io.size
+      else
+        if @request.env.has_key?("HTTP_X_SENDFILE_TYPE")
+          @headers["X-Sendfile"] = path_or_io.to_s
+          @headers["Content-Length"] = File.size(path_or_io)
+        else
+          @io = BlockIO.new(path_or_io)
+          @headers["Content-Length"] = @io.size
+        end
       end
       @headers["Content-Disposition"] = "attachment; filename=\"#{escape_filename_for_http_header(name)}\""
       @content_type = content_type
