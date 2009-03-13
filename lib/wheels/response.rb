@@ -46,7 +46,7 @@ module Wheels
     end
 
     def send_file(name, path_or_io, content_type = Rack::File::MIME_TYPES.fetch(File.extname(path)[1..-1], "binary/octet-stream"))
-      if @request.env.has_key?("HTTP_X_SENDFILE_TYPE") && (!path_or_io.is_a?(StringIO) || !path_or_io.is_a?(IO))
+      if @request.env.has_key?("HTTP_X_SENDFILE_TYPE") && !(path_or_io.is_a?(StringIO) || path_or_io.is_a?(IO))
         @headers["X-Sendfile"] = path_or_io.to_s
         @headers["Content-Length"] = File.size(path_or_io)
       else
