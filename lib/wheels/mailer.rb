@@ -8,6 +8,14 @@ require Pathname(__FILE__).dirname + "mail_servers/smtp"
 module Wheels
   class Mailer < MailFactory
 
+    def self.layout=(layout)
+      @@layout = layout
+    end
+
+    def self.layout
+      @@layout rescue nil
+    end
+
     attr_accessor :mail_server
 
     ##
@@ -71,7 +79,13 @@ module Wheels
         if value.is_a?(Wheels::View)
           value.context.merge(:mailer => self)
         end
-        super
+
+        if layout = self.class.layout.dup
+          layout.sub!(/(\.html\.erb$)|$/, ".txt.erb") if method == "text="
+          value = Wheels::View.new(layout, :content => value)
+        end
+
+        super(value)
       end
     end
 
@@ -88,7 +102,7 @@ module Wheels
 
       [:@html, :@text].each do |ivar|
         if content = instance_variable_get(ivar)
-          new_content = content.to_s.gsub(/(http(s)?:\/\/.+?)(?=[" ]|$)/) do |url|
+          new_content = content.to_s.gsub(/(http(s)?:\/\/.+?(?=[" <]|$))/) do |url|
             "#{mail_server_url}/m/#{envelope_id}?r=#{CGI.escape([url].pack("m"))}"
           end
           instance_variable_set(ivar, new_content)

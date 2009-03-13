@@ -131,7 +131,7 @@ describe "Router" do
 
     it "should match a put request (with _method)" do
       @request.env["REQUEST_METHOD"] = "POST"
-      @request.params.update("_method" => "put")
+      @request.env["rack.request.form_hash"] = { "_method" => "put" }
       @router.match(@request).call.should == "Index"
     end
 
@@ -155,7 +155,8 @@ describe "Router" do
 
     it "should match a delete request (with _method)" do
       @request.env["REQUEST_METHOD"] = "POST"
-      @request.params.update("_method" => "delete")
+      @request.env["rack.request.form_hash"] = { "_method" => "delete" }
+
       @router.match(@request).call.should == "Index"
     end
 
