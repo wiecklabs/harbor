@@ -9,7 +9,7 @@ module Wheels
       pop_variables
       result
     end
-    
+
     def xml
       @view.xml
     end

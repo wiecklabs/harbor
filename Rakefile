@@ -39,7 +39,7 @@ require "rake/gempackagetask"
 
 NAME = "wheels"
 SUMMARY = "Wheels Framework"
-GEM_VERSION = "0.3.7"
+GEM_VERSION = "0.3.8"
 
 spec = Gem::Specification.new do |s|
   s.name = NAME

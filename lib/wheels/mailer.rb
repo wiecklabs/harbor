@@ -80,7 +80,7 @@ module Wheels
           value.context.merge(:mailer => self)
         end
 
-        if layout = self.class.layout.dup
+        if self.class.layout && layout = self.class.layout.dup
           layout.sub!(/(\.html\.erb$)|$/, ".txt.erb") if method == "text="
           value = Wheels::View.new(layout, :content => value)
         end
