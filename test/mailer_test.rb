@@ -43,4 +43,20 @@ class MailerTest < Test::Unit::TestCase
     assert_equal("<a href=\"#{url}\">#{url}</a>", mailer.html)
   end
 
+  def test_lazy_attachments
+    mailer_1 = Wheels::Mailer.new
+    mailer_2 = Wheels::Mailer.new
+
+    file = (Pathname(__FILE__).dirname + "helper.rb").to_s
+
+    wheels_attachment = mailer_1.attach(file)
+    mailer_2.attach_as(file, "helper.rb")
+
+    assert_equal(mailer_1.attachments, mailer_2.attachments)
+
+    mailfactory_attachment = mailer_1.mailfactory_add_attachment(file)
+
+    assert_equal(mailfactory_attachment.to_s, wheels_attachment.to_s)
+  end
+
 end

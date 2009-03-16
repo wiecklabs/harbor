@@ -114,5 +114,58 @@ module Wheels
       mail_server.deliver(self)
     end
 
+    ##
+    # Remove code duplication from mailfactory's add_attachment method,
+    # so that we can over-ride add_attachment_as to work lazily.
+    ##
+
+    alias :mailfactory_add_attachment :add_attachment
+    alias :mailfactory_add_attachment_as :add_attachment_as
+
+    def add_attachment(filename, type = nil, attachment_headers = nil)
+      add_attachment_as(filename, Pathname.new(filename).basename, type, attachment_headers)
+    end
+
+    def add_attachment_as(file, email_filename, type, attachment_headers)
+      attachment = {}
+      attachment['filename'] = email_filename
+      attachment['attachment'] = Attachment.new(file)
+
+      # taken from MailFactory#add_attachment_as
+      if(type != nil)
+        attachment['mimetype'] = type.to_s()
+      elsif(file.kind_of?(String) or file.kind_of?(Pathname))
+        attachment['mimetype'] = MIME::Types.type_for(file.to_s()).to_s
+      else
+        attachment['mimetype'] = ''
+      end
+
+      # taken from MailFactory#add_attachment_as
+      if(attachmentheaders != nil)
+        if(!attachmentheaders.kind_of?(Array))
+          attachmentheaders = attachmentheaders.split(/\r?\n/)
+        end
+        attachment['headers'] = attachmentheaders
+      end
+
+      @attachments << attachment
+    end
+
+    class Attachment
+      attr_accessor :file, :body
+
+      def initialize(file)
+        @file = file
+
+        # If we have a File/IO object, read it. Otherwise, we'll read it lazily.
+        @body = file.read() if !file.kind_of?(Pathname) && file.respond_to?(:read)
+      end
+
+      def to_s
+        @body ||= File.open(file.to_s(), "rb") { |f| f.read() }
+        [@body].pack("m")
+      end
+    end
+
   end
 end
