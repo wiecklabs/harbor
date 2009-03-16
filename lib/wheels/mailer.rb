@@ -126,7 +126,9 @@ module Wheels
       add_attachment_as(filename, Pathname.new(filename).basename, type, attachment_headers)
     end
 
-    def add_attachment_as(file, email_filename, type, attachment_headers)
+    alias :attach :add_attachment
+
+    def add_attachment_as(file, email_filename, type = nil, attachment_headers = nil)
       attachment = {}
       attachment['filename'] = email_filename
       attachment['attachment'] = Attachment.new(file)
@@ -151,6 +153,8 @@ module Wheels
       @attachments << attachment
     end
 
+    alias :attach_as :add_attachment_as
+
     class Attachment
       attr_accessor :file, :body
 
@@ -164,6 +168,10 @@ module Wheels
       def to_s
         @body ||= File.open(file.to_s(), "rb") { |f| f.read() }
         [@body].pack("m")
+      end
+
+      def inspect
+        "#<Wheels::Mail::Attachment @file=#{file.inspect}>"
       end
     end
 
