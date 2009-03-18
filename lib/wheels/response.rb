@@ -20,11 +20,11 @@ module Wheels
       })
       @headers
     end
-    
+
     def flush
       @io = nil
     end
-    
+
     def size
       buffer.size
     end
@@ -32,11 +32,11 @@ module Wheels
     def puts(value)
       string.puts(value)
     end
-    
+
     def print(value)
       string.print(value)
     end
-    
+
     def buffer
       if @io.is_a?(StringIO)
         @io.string
@@ -45,11 +45,12 @@ module Wheels
       end
     end
 
-    def send_file(name, path_or_io, content_type = Rack::File::MIME_TYPES.fetch(File.extname(path)[1..-1], "binary/octet-stream"))
+    def stream_file(path_or_io, content_type = nil)
       if path_or_io.is_a?(StringIO) || path_or_io.is_a?(IO)
         @io = BlockIO.new(path_or_io)
         @headers["Content-Length"] = @io.size
       else
+        content_type ||= Rack::File::MIME_TYPES.fetch(File.extname(path_or_io)[1..-1], "binary/octet-stream")
         if @request.env.has_key?("HTTP_X_SENDFILE_TYPE")
           @headers["X-Sendfile"] = path_or_io.to_s
           @headers["Content-Length"] = File.size(path_or_io)
@@ -58,8 +59,15 @@ module Wheels
           @headers["Content-Length"] = @io.size
         end
       end
-      @headers["Content-Disposition"] = "attachment; filename=\"#{escape_filename_for_http_header(name)}\""
+
       @content_type = content_type
+      nil
+    end
+
+    def send_file(name, path_or_io, content_type = nil)
+      stream_file(path_or_io, content_type)
+
+      @headers["Content-Disposition"] = "attachment; filename=\"#{escape_filename_for_http_header(name)}\""
       nil
     end
 
@@ -82,7 +90,7 @@ module Wheels
       self.flush
       self
     end
-    
+
     def redirect!(url, params = nil)
       redirect(url, params) and throw(:abort_request)
     end
@@ -98,7 +106,11 @@ module Wheels
     def inspect
       "<#{self.class} headers=#{headers.inspect} content_type=#{content_type.inspect} status=#{status.inspect} body=#{buffer.inspect}>"
     end
-    
+
+    def to_a
+      [self.status, self.headers, self.buffer]
+    end
+
     private
     def string
       @io ||= StringIO.new("")

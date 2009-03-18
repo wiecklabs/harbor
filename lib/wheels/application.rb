@@ -48,6 +48,11 @@ module Wheels
       request = Request.new(self, env)
       response = Response.new(request)
 
+      if file = find_public_file(request.path_info[1..-1])
+        response.stream_file(file)
+        return response.to_a
+      end
+
       handler = @router.match(request)
       return not_found(request, response) if handler == false
 
@@ -55,11 +60,18 @@ module Wheels
         dispatch_request(handler, request, response)
       end
 
-      [response.status, response.headers, response.buffer]
+      response.to_a
     end
 
     def dispatch_request(handler, request, response)
       handler.call(request, response)
+    end
+
+    def find_public_file(file)
+      public_path = Pathname(self.class.respond_to?(:public_path) ? self.class.public_path : "public")
+      path = public_path + file
+
+      path.exist? ? path : nil
     end
 
   end
