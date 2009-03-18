@@ -43,17 +43,17 @@ module Wheels
       env["APP_ENVIRONMENT"] = environment
       request = Request.new(self, env)
       response = Response.new(request)
-      
+
       handler = @router.match(request)
       return not_found(request, response) if handler == false
-      
+
       catch(:abort_request) do
         dispatch_request(handler, request, response)
       end
-      
+
       [response.status, response.headers, response.buffer]
     end
-    
+
     def dispatch_request(handler, request, response)
       handler.call(request, response)
     end
