@@ -20,11 +20,11 @@ class Wheels::Cascade < Wheels::Application
       next unless application.respond_to?(:public_path)
 
       path = Pathname(application.public_path) + file
-      return path if path.exist?
+      return path if path.file?
     end
 
     path = Pathname("public") + file
-    path.exist? ? path : nil
+    path.file? ? path : nil
   end
 
 end

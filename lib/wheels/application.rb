@@ -71,7 +71,7 @@ module Wheels
       public_path = Pathname(self.class.respond_to?(:public_path) ? self.class.public_path : "public")
       path = public_path + file
 
-      path.exist? ? path : nil
+      path.file? ? path : nil
     end
 
   end
