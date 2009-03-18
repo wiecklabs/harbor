@@ -37,26 +37,10 @@ describe "Router" do
       @request = Rack::Request.new("PATH_INFO" => "/users", "REQUEST_METHOD" => "GET")
     end
 
-    describe "with a proc" do
-      it "should do nothing" do
-        @router.register(:get, lambda { |r| r.path_info == "/users" }) { "Index" }
-        @router.match(@request).call.should == "Index"
-      end
-    end
-
     describe "with a regular expression" do
       it "should match the expression on request.path_info" do
         @router.register(:get, /^\/users$/) { "Index" }
         @router.match(@request).call.should == "Index"
-      end
-    end
-
-    describe "with an array" do
-      it "should update the request params" do
-        @request.env["PATH_INFO"] = "/users/1"
-        @router.register(:get, [/\/users\/([\d]+)/, "id"]) {}
-        @router.match(@request)
-        @request.params["id"].should == "1"
       end
     end
 

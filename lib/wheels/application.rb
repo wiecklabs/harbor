@@ -12,6 +12,10 @@ require Pathname(__FILE__).dirname + "block_io"
 module Wheels
   class Application
 
+    def self.routes(services = self.class.services)
+      raise NotImplementedError.new("Your application must redefine #{self}#routes.")
+    end
+
     def self.services=(container)
       @services = container
     end
@@ -22,7 +26,7 @@ module Wheels
 
     attr_reader :environment, :logger
 
-    def initialize(router, environment = ENV["ENVIRONMENT"])
+    def initialize(router = self.class.routes, environment = ENV["ENVIRONMENT"])
       @router = router
       @environment = (environment || "development").to_s
       @logger = self.class.services.get("logger") rescue nil

@@ -12,6 +12,10 @@ module Wheels
       instance_eval(&routes) if block_given?
     end
 
+    def merge!(other)
+      self.routes |= other.routes
+    end
+
     # Matches a GET request
     def get(matcher, &handler)
       register(:get, matcher, &handler)
@@ -62,7 +66,8 @@ module Wheels
     end
 
     def register(request_method, matcher, &handler)
-      route = [request_method.to_s.upcase, transform(matcher), handler]
+      matcher, param_keys = transform(matcher)
+      route = [request_method.to_s.upcase, matcher, param_keys, handler]
       @routes << route
       route
     end
@@ -72,9 +77,11 @@ module Wheels
     end
 
     def match(request)
-      @routes.each do |request_method, matcher, handler|
+      @routes.each do |request_method, matcher, param_keys, handler|
         next unless request.request_method == request_method
-        next unless matcher.call(request)
+        next unless request.path_info =~ matcher
+
+        request.params.update(Hash[*param_keys.zip($~.captures).flatten])
         return handler
       end
 
@@ -85,26 +92,13 @@ module Wheels
     private
 
     def transform(matcher)
-      case matcher
-      when Proc then matcher
-      when Regexp then lambda { |request| request.path_info =~ matcher }
-      when Array
-        regex = matcher.shift
-        generate_param_matcher(regex, matcher)
-      when String
-        param_keys = []
-        regex = matcher.gsub('.', '[\.]').gsub(PARAM) { param_keys << $2; "(#{URI_CHAR}+)" }
-        regex = /^#{regex}$/
-        generate_param_matcher(regex, param_keys)
-      end
-    end
+      param_keys = []
 
-    def generate_param_matcher(regex, param_keys)
-      lambda do |request|
-        if request.path_info =~ regex
-          request.params.update(Hash[*param_keys.zip($~.captures).flatten])
-        end
+      if matcher.is_a?(String)
+        matcher = /^#{matcher.gsub('.', '[\.]').gsub(PARAM) { param_keys << $2; "(#{URI_CHAR}+)" }}$/
       end
+
+      [matcher, param_keys]
     end
 
   end
