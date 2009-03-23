@@ -21,16 +21,14 @@ module Wheels::ViewContext::Helpers::Form
       buffer << "<form action=\"#{action}\" method=\"#{get ? "get" : "post"}\""
       buffer << " enctype=\"#{enctype}\"" if enctype
       buffer << " #{options.map { |k, v| "#{k}=\"#{v}\"" }.join(" ")}" unless options.empty?
-      buffer << ">"
-      buffer.puts
+      buffer << ">\n"
 
       unless get || post
-        buffer.puts "  <input type=\"hidden\" name=\"_method\" value=\"#{method}\">"
+        buffer << "  <input type=\"hidden\" name=\"_method\" value=\"#{method}\">\n"
       end
 
       buffer << body
-      buffer.puts "</form>"
+      buffer << "</form>\n"
     end
-
   end
 end

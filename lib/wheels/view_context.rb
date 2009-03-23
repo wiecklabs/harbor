@@ -118,7 +118,7 @@ module Wheels
     #   end
     ##
     def with_buffer(block)
-      yield(StringIO.new(_erb_buffer(block.binding)))
+      yield(_erb_buffer(block.binding))
     end
 
   end

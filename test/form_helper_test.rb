@@ -73,6 +73,23 @@ class FormHelperTest < Test::Unit::TestCase
     ERB
   end
 
+  def test_form_with_content_before_it
+    form = <<-HTML
+Content
+<form action="/users" method="post" class="form">
+  this is eval'd
+  <input type="submit">
+</form>
+    HTML
+    assert_equal(form, evaluate(<<-ERB))
+Content
+<% form "/users", :method => :post, :class => "form" do %>
+  <%= "this is eval'd" %>
+  <input type="submit">
+<% end %>
+    ERB
+  end
+
   def evaluate(erubis_data)
     Erubis::FastEruby.new(erubis_data).evaluate(Wheels::ViewContext.new(nil, {}))
   end
