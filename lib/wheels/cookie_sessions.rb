@@ -1,9 +1,13 @@
 module Wheels
+  ##
+  # Middleware which extends Rack::Session::Cookie to set
+  # a session id.
+  ##
   class CookieSessions < Rack::Session::Cookie
 
     private
 
-    def commit_session(env, status, headers, body)
+    def commit_session(env, status, headers, body) #:doc:
       # Commit session variables
       status, headers, body = super
 
