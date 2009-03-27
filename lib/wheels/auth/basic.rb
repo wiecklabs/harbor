@@ -1,12 +1,25 @@
 module Wheels
   module Auth
+    ##
+    # Simple mechanism for implementing HTTP basic authentication.
+    # 
+    #   get("/secret-page") do |request, response|
+    #     Wheels::Auth::Basic.authenticate(request, response) { |username, password| username == "wieck" }
+    # 
+    #     response.puts "Secret Stuff"
+    #   end
+    ##
     class Basic
 
       AUTHORIZATION_KEYS = ['HTTP_AUTHORIZATION', 'X-HTTP_AUTHORIZATION', 'X_HTTP_AUTHORIZATION']
 
       attr_accessor :realm
 
-      def self.authenticate(request, response)
+      ##
+      # Checks the credentials provided in the request against the provided
+      # block. If the block returns false, the request aborted.
+      ##
+      def self.authenticate(request, response) #:yields: username, password
         auth = new(request)
 
         unless auth.provided? && yield(auth.credentials)

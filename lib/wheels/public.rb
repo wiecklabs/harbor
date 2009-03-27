@@ -1,4 +1,9 @@
 module Wheels
+  ##
+  # Rack Middleware for serving up public files.
+  # 
+  #   use Wheels::Public, MyApp.public_path, OtherApp.public_path
+  ##
   class Public
 
     FILE_METHODS = %w(GET HEAD).freeze

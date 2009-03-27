@@ -1,4 +1,7 @@
 module Wheels
+  ##
+  # Simple object wrapper around rack's Rack::CookieSession
+  ##
   class Session
     def initialize(request)
       raise ArgumentError.new("+request+ must be a Wheels::Request") unless request.is_a?(Wheels::Request)

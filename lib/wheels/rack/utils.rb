@@ -1,4 +1,7 @@
 module Rack
+  ##
+  # Extensions to Rack::Utils to support nested param hashes and arrays.
+  ##
   module Utils
     def parse_query(qs, d = '&;')
       params = {}
@@ -103,7 +106,7 @@ module Rack
             else
               data = body
             end
-            
+
             if name
               keys = name.scan(/[^\[\]]+|(?=\[\])/)
               key = keys.pop
@@ -125,6 +128,6 @@ module Rack
         end
       end
     end
-    
+
   end
 end

@@ -1,11 +1,13 @@
 require "rubygems"
 require "pathname"
 require "rake"
+require "rake/rdoctask"
 require "rake/testtask"
 require "spec/rake/spectask"
 
 # Specs
 task :default => [:spec, :test]
+
 Spec::Rake::SpecTask.new("spec") do |t|
   t.spec_opts << "--colour" << "--loadby" << "random"
   t.spec_files = Dir["spec/**/*_spec.rb"]
@@ -15,6 +17,32 @@ Rake::TestTask.new do |t|
   t.libs << "test"
   t.test_files = FileList["test/**/*_test.rb"]
   t.verbose = true
+end
+
+# rdoc
+
+# desc "Generate RDoc documentation"
+# Rake::RDocTask.new(:rdoc) do |rdoc|
+#   rdoc.options << '--line-numbers' << '--inline-source' <<
+#     '--main' << 'README' <<
+#     '--title' << 'Wheels Documentation' <<
+#     '--charset' << 'utf-8' << "--exclude" << "lib/wheels/generator/"
+#   rdoc.rdoc_dir = "doc"
+#   rdoc.rdoc_files.include 'README'
+#   rdoc.
+#   rdoc.rdoc_files.include('lib/rack.rb')
+#   rdoc.rdoc_files.include('lib/rack/*.rb')
+#   rdoc.rdoc_files.include('lib/rack/*/*.rb')
+# end
+
+task :rdoc do
+  sh 'rm -r doc' if File.directory?('doc')
+  begin
+    sh 'sdoc --line-numbers --inline-source --main "README" --title "Wheels Documentation" --exclude lib/wheels/generator/* README lib'
+  rescue
+    puts "sdoc not installed:"
+    puts "  gem install voloko-sdoc --source http://gems.github.com"
+  end
 end
 
 # rcov
