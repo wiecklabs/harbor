@@ -21,6 +21,10 @@ module Wheels
       defined?(@layout) ? @layout : application.default_layout
     end
 
+    def remote_ip
+      env["REMOTE_ADDR"] || env["HTTP_CLIENT_IP"] || env["HTTP_X_FORWARDED_FOR"]
+    end
+
     def request_method
       @env['REQUEST_METHOD'] = self.POST['_method'].upcase if request_method_in_params?
       @env['REQUEST_METHOD']

@@ -1,14 +1,7 @@
 module Wheels
   ##
-  # Extension to Rack's ShowExceptions middleware, displaying detailed error
-  # messages in development, while sending error emails and friendly views
-  # in other environments.
-  # 
-  # Your application should define a layout (default: layouts/exception.html.erb),
-  # as well as friendly views for production (exceptions/404.html.erb, and 
-  # exceptions/500.html.erb).
-  # 
-  #   use Wheels::Exception
+  # DEPRECATED. This is here only pending a "ExceptionMailer" plugin to
+  # the now handle_exception method on Application.
   ##
   class Exception < Rack::ShowExceptions
     def initialize(app, layout = "layouts/exception")
