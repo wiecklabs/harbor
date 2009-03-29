@@ -58,10 +58,10 @@ end
 
 module Wheels
   class Cascade
-    include Wheels::ExceptionMailer
+    include Wheels::ExceptionNotifier
   end
 
   class Application
-    include Wheels::ExceptionMailer
+    include Wheels::ExceptionNotifier
   end
 end
