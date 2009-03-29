@@ -36,6 +36,13 @@ module Wheels
       "layouts/application"
     end
 
+    ##
+    # Request entry point called by Rack. It creates a request and response
+    # object based on the incoming request environment, checks for public
+    # files, and dispatches the request.
+    # 
+    # It returns a rack response hash.
+    ##
     def call(env)
       env["APP_ENVIRONMENT"] = environment
       request = Request.new(self, env)
@@ -55,6 +62,10 @@ module Wheels
       response.to_a
     end
 
+    ##
+    # Request dispatch function, which handles 404's, exceptions,
+    # and logs requests.
+    ##
     def dispatch_request(handler, request, response)
       start = Time.now
 
@@ -67,6 +78,14 @@ module Wheels
       log_request(request, response, start, Time.now)
     end
 
+    ##
+    # Logs requests and their params the logger registered in the
+    # application's services, or to stdout.
+    # 
+    # Format:
+    # 
+    #   [64.134.226.23] [GET] /products (200)     {"order" => "desc"}
+    ##
     def log_request(request, response, start_time, end_time)
       message = "[#{request.remote_ip}] [#{request.request_method}] #{request.path_info} (#{response.status})"
       message << "\t#{request.params.inspect}" unless request.params.empty?
@@ -78,6 +97,15 @@ module Wheels
       end
     end
 
+    ##
+    # Method used to nicely handle cases where no routes or public files
+    # match the incoming request.
+    # 
+    # By default, it will render "The page you requested could not be found".
+    # 
+    # To use a custom 404 message, create a view "exceptions/404.html.erb", and
+    # optionally create a view "layouts/exception.html.erb" to style it.
+    ##
     def handle_not_found(request, response)
       response.flush
       response.status = 404
@@ -91,6 +119,15 @@ module Wheels
       end
     end
 
+    ##
+    # Method used to nicely handle cases where no routes or public files
+    # match the incoming request.
+    # 
+    # By default, it will render "We're sorry, but something went wrong."
+    # 
+    # To use a custom 500 message, create a view "exceptions/500.html.erb", and
+    # optionally create a view "layouts/exception.html.erb" to style it.
+    ##
     def handle_exception(exception, request, response)
       response.flush
       response.status = 500
@@ -117,7 +154,7 @@ module Wheels
 
     end
 
-    def find_public_file(file)
+    def find_public_file(file) #:nodoc:
       public_path = Pathname(self.class.respond_to?(:public_path) ? self.class.public_path : "public")
       path = public_path + file
 
