@@ -3,7 +3,7 @@ require Pathname(__FILE__).dirname + "helper"
 
 require "wheels/mailer"
 
-class TestServer < Wheels::AbstractMailServer
+class TestServer < Wheels::MailServers::Abstract
   def deliver(mail)
     mail
   end
