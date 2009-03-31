@@ -14,7 +14,11 @@ module Wheels
     end
 
     def session
-      @session ||= Session.new(self)
+      @session ||= Wheels::Session.new(self)
+    end
+
+    def session?
+      @session
     end
 
     def layout
