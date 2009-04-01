@@ -4,6 +4,7 @@
 #
 #   usage: wheels setup app-name
 
+require 'rubygems'
 require 'wheels/generator'
 
 command = ARGV.shift

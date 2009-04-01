@@ -14,11 +14,6 @@ if $0 == __FILE__
   require "wheels/console"
   Wheels::Console.start
 elsif $0['thin']
-  use Wheels::Public #, Spoke::public_path
-  use Rack::Session::Cookie
-  use Wheels::ParameterLogger
-  use Rack::ShowExceptions
-
   run ##>=app_class<##.new
 else
   # Require rake tasks here
