@@ -24,6 +24,7 @@ module Wheels
       @services ||= Wheels::Container.new
     end
 
+    attr_accessor :router
     attr_reader :environment, :logger
 
     def initialize(router = self.class.routes, environment = ENV["ENVIRONMENT"])
@@ -88,7 +89,7 @@ module Wheels
     #   [0.12s]     [64.134.226.23] [GET]    /products (200)     {"order" => "desc"}
     ##
     def log_request(request, response, start_time, end_time)
-      message = "[#{"%2.2fs" % (end_time - start_time)}] [#{request.remote_ip}] [#{request.request_method}] #{request.path_info} (#{response.status})"
+      message = "[#{self.class}] [#{"%2.2fs" % (end_time - start_time)}] [#{request.remote_ip}] [#{request.request_method}] #{request.path_info} (#{response.status})"
       message << "\t#{request.params.inspect}" unless request.params.empty?
 
       if @logger
