@@ -67,7 +67,7 @@ require "rake/gempackagetask"
 
 NAME = "wheels"
 SUMMARY = "Wheels Framework"
-GEM_VERSION = "0.6.2"
+GEM_VERSION = "0.6.3"
 
 spec = Gem::Specification.new do |s|
   s.name = NAME
@@ -79,6 +79,8 @@ spec = Gem::Specification.new do |s|
   s.require_path = 'lib'
   s.files = %w(Rakefile) + Dir.glob("lib/**/*")
   s.executables = ['wheels']
+
+  s.add_dependency 'logging'
 end
 
 Rake::GemPackageTask.new(spec) do |pkg|
