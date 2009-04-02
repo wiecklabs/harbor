@@ -4,7 +4,7 @@ class ##>=app_class<## < Wheels::Application
     "layouts/application"
   end
 
-  def self.default_routes(services)
+  def self.routes(services = self.services)
     Wheels::Router.new do
 
       using services, Default do
@@ -14,7 +14,4 @@ class ##>=app_class<## < Wheels::Application
     end
   end
 
-  def initialize(services = self.class.services, environment = "development")
-    super(self.class.default_routes(services), environment)
-  end
 end

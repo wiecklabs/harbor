@@ -18,6 +18,10 @@ module Wheels
       @cache_templates = true
     end
 
+    def self.exists?(filename)
+      self.path.detect { |dir| File.file?(dir + filename) }
+    end
+
     attr_accessor :content_type, :context, :extension
 
     def initialize(view, context = {})
@@ -38,8 +42,8 @@ module Wheels
 
       filename += self.extension if File.extname(filename) == ""
 
-      path = self.class.path.detect { |dir| File.exists?(dir + filename) }
-      raise "Could not find '#{filename}' in #{self.class.path.inspect}" if path.nil?
+      path = self.class.exists?(filename)
+      raise "Could not find '#{filename}' in #{self.class.path.inspect}" unless path
 
       if self.class.cache_templates?
         (self.class.__templates[path + filename] ||= Erubis::FastEruby.new(File.read(path + filename))).evaluate(context)

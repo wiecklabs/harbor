@@ -1,30 +1,37 @@
-class Wheels::Cascade < Wheels::Application
+module Wheels
+  class Cascade < Wheels::Application
 
-  ##
-  # We merge the routes for additional applications into the primary router
-  # using the primary application's spoke.
-  ##
-  def initialize(application, *spokes)
-    @applications = [application, *spokes]
+    ##
+    # We merge the routes for additional applications into the primary router
+    # using the primary application's spoke.
+    ##
+    def initialize(application, *spokes)
+      @applications = [application, *spokes]
 
-    @services = application.services
-    routes = application.routes
+      self.class.services = application.services
+      routes = application.routes
 
-    spokes.each { |spoke| routes.merge!(spoke.routes(@services)) }
+      @public_paths = []
+      @public_paths << Pathname(application.public_path) if application.respond_to?(:public_path)
 
-    super(routes)
-  end
+      spokes.each do |spoke|
+        routes.merge!(spoke.routes(self.class.services))
+        @public_paths << Pathname(spoke.public_path) if spoke.respond_to?(:public_path)
+      end
 
-  def find_public_file(file)
-    @applications.each do |application|
-      next unless application.respond_to?(:public_path)
+      @public_paths << Pathname("public")
 
-      path = Pathname(application.public_path) + file
-      return path if path.file?
+      super(routes)
     end
 
-    path = Pathname("public") + file
-    path.file? ? path : nil
-  end
+    def find_public_file(file)
+      @public_paths.each do |public_path|
+        path = public_path + file
+        return path if path.file?
+      end
 
+      nil
+    end
+
+  end
 end

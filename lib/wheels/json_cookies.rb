@@ -1,4 +1,10 @@
 module Wheels
+  ##
+  # Middleware for storing data in a cookie using JSON, for later access
+  # via javascript.
+  # 
+  #   use Wheels::JsonCookies, "key_to_serialize", "other_key"
+  ##
   class JsonCookies
     def initialize(app, keys = [])
       @app = app
