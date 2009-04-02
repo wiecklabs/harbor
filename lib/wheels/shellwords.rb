@@ -22,5 +22,7 @@ unless Shellwords.respond_to?(:escape)
 
       return str
     end
+
+    module_function :escape
   end
 end
