@@ -34,7 +34,12 @@ module Wheels
       application, handler = nil
 
       @applications.each do |application|
-        break if handler = application.router.match(request)
+        # begin
+          break if handler = application.router.match(request)
+        # rescue StandardError => se
+        #   puts application.class.name, application.router.inspect, se.message, *se.backtrace
+        #   raise
+        # end
       end
 
       application = @applications.first unless handler

@@ -25,7 +25,7 @@ module Wheels
 
       @services = services
 
-      @router = (!args.empty? && args[0].respond_to?(:match)) ? args[0] : self.class.routes(@services)
+      @router = (!args.empty? && !args[0].is_a?(String) && args[0].respond_to?(:match)) ? args[0] : self.class.routes(@services)
       @environment = args.last || "development"
     end
 
