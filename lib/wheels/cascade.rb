@@ -1,10 +1,14 @@
 module Wheels
   class Cascade
 
-    def initialize(application, *spokes)
+    def initialize(services, application, *spokes)
+      unless services.is_a?(Wheels::Container)
+        raise ArgumentError.new("Wheels::Cascade#initialize[services] must be a Wheels::Container")
+      end
+
+      @services = services
       @applications = []
       @public_paths = []
-      @services = application.services
 
       @applications << application.new
       @public_paths << Pathname(application.public_path) if application.respond_to?(:public_path)

@@ -12,24 +12,21 @@ require Pathname(__FILE__).dirname + "block_io"
 module Wheels
   class Application
 
-    def self.routes(services = self.class.services)
-      raise NotImplementedError.new("Your application must redefine #{self}#routes.")
+    def self.routes(services)
+      raise NotImplementedError.new("Your application must redefine #{self}::routes.")
     end
 
-    def self.services=(container)
-      @services = container
-    end
+    attr_reader :router, :environment, :services
 
-    def self.services
-      @services ||= Wheels::Container.new
-    end
+    def initialize(services, *args)
+      unless services.is_a?(Wheels::Container)
+        raise ArgumentError.new("Wheels::Application#services must be a Wheels::Container")
+      end
 
-    attr_accessor :router
-    attr_reader :environment
+      @services = services
 
-    def initialize(router = self.class.routes, environment = ENV["ENVIRONMENT"])
-      @router = router
-      @environment = (environment || "development").to_s
+      @router = (!args.empty? && args[0].respond_to?(:match)) ? args[0] : self.class.routes(@services)
+      @environment = args.last || "development"
     end
 
     def default_layout
@@ -98,7 +95,9 @@ module Wheels
       message << "\t #{request.params.inspect}" unless request.params.empty?
       message << "\n"
 
-      Logging::Logger['request'] << message if Logging::Logger['request'].info?
+      if (request_logger = Logging::Logger["request"]).info?
+        request_logger << message
+      end
     end
 
     ##
