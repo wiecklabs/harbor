@@ -1,27 +1,55 @@
 module Wheels
-  class Cascade < Wheels::Application
+  class Cascade
 
-    ##
-    # We merge the routes for additional applications into the primary router
-    # using the primary application's spoke.
-    ##
-    def initialize(application, *spokes)
-      @applications = [application, *spokes]
+    def initialize(environment, services, application, *spokes)
+      unless services.is_a?(Wheels::Container)
+        raise ArgumentError.new("Wheels::Cascade#initialize[services] must be a Wheels::Container")
+      end
 
-      self.class.services = application.services
-      routes = application.routes
-
+      @services = services
+      @applications = []
       @public_paths = []
+
+      @applications << application.new(services, environment)
       @public_paths << Pathname(application.public_path) if application.respond_to?(:public_path)
 
       spokes.each do |spoke|
-        routes.merge!(spoke.routes(self.class.services))
+        @applications << spoke.new(services, environment)
+
         @public_paths << Pathname(spoke.public_path) if spoke.respond_to?(:public_path)
       end
 
       @public_paths << Pathname("public")
+    end
 
-      super(routes)
+    def call(env)
+      request = Request.new(self, env)
+      response = Response.new(request)
+
+      if file = find_public_file(request.path_info[1..-1])
+        response.stream_file(file)
+        return response.to_a
+      end
+
+      application, handler = nil
+
+      @applications.each do |application|
+        # begin
+          break if handler = application.router.match(request)
+        # rescue StandardError => se
+        #   puts application.class.name, application.router.inspect, se.message, *se.backtrace
+        #   raise
+        # end
+      end
+
+      application = @applications.first unless handler
+      request.application = application
+
+      catch(:abort_request) do
+        application.dispatch_request(handler, request, response)
+      end
+
+      response.to_a
     end
 
     def find_public_file(file)

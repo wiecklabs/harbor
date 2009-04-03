@@ -12,24 +12,21 @@ require Pathname(__FILE__).dirname + "block_io"
 module Wheels
   class Application
 
-    def self.routes(services = self.class.services)
-      raise NotImplementedError.new("Your application must redefine #{self}#routes.")
+    def self.routes(services)
+      raise NotImplementedError.new("Your application must redefine #{self}::routes.")
     end
 
-    def self.services=(container)
-      @services = container
-    end
+    attr_reader :router, :environment, :services
 
-    def self.services
-      @services ||= Wheels::Container.new
-    end
+    def initialize(services, *args)
+      unless services.is_a?(Wheels::Container)
+        raise ArgumentError.new("Wheels::Application#services must be a Wheels::Container")
+      end
 
-    attr_reader :environment, :logger
+      @services = services
 
-    def initialize(router = self.class.routes, environment = ENV["ENVIRONMENT"])
-      @router = router
-      @environment = (environment || "development").to_s
-      @logger = self.class.services.get("logger") rescue nil
+      @router = (!args.empty? && !args[0].is_a?(String) && args[0].respond_to?(:match)) ? args[0] : self.class.routes(@services)
+      @environment = args.last || "development"
     end
 
     def default_layout
@@ -79,22 +76,27 @@ module Wheels
     end
 
     ##
-    # Logs requests and their params the logger registered in the
-    # application's services, or to stdout.
+    # Logs requests and their params the configured request logger.
     # 
     # Format:
     # 
-    #   # duration #ip              #method #uri      #status   #params
-    #   [0.12s]     [64.134.226.23] [GET]    /products (200)     {"order" => "desc"}
+    #   #application      #time                   #duration   #ip              #method #uri      #status   #params
+    #   [PhotoManagement] [04-02-2009 @ 14:22:40] [0.12s]     [64.134.226.23] [GET]    /products (200)     {"order" => "desc"}
     ##
     def log_request(request, response, start_time, end_time)
-      message = "[#{"%2.2fs" % (end_time - start_time)}] [#{request.remote_ip}] [#{request.request_method}] #{request.path_info} (#{response.status})"
-      message << "\t#{request.params.inspect}" unless request.params.empty?
 
-      if @logger
-        logger.info message
-      else
-        $stdout.puts "[#{start_time.strftime('%m-%d-%Y @ %H:%M:%S')}] #{message}"
+      case
+      when response.status >= 500 then status = "\033[0;31m#{response.status}\033[0m"
+      when response.status >= 400 then status = "\033[0;33m#{response.status}\033[0m"
+      else status = "\033[0;32m#{response.status}\033[0m"
+      end
+
+      message = "[#{self.class}] [#{start_time.strftime('%m-%d-%Y @ %H:%M:%S')}] [#{"%2.2fs" % (end_time - start_time)}] [#{request.remote_ip}] [#{request.request_method}] #{request.path_info} (#{status})"
+      message << "\t #{request.params.inspect}" unless request.params.empty?
+      message << "\n"
+
+      if (request_logger = Logging::Logger["request"]).info?
+        request_logger << message
       end
     end
 
@@ -121,8 +123,9 @@ module Wheels
     end
 
     ##
-    # Method used to nicely handle cases where no routes or public files
-    # match the incoming request.
+    # Method used to nicely handle uncaught exceptions.
+    # 
+    # Logs full error messages to the configured 'error' logger.
     # 
     # By default, it will render "We're sorry, but something went wrong."
     # 
@@ -135,11 +138,7 @@ module Wheels
 
       trace = build_exception_trace(exception, request)
 
-      if @logger
-        logger.error trace
-      else
-        $stderr.puts trace
-      end
+      Logging::Logger['error'] << trace
 
       if environment == "development"
         response.puts(Rack::ShowExceptions.new(nil).pretty(request.env, exception))
@@ -168,7 +167,7 @@ module Wheels
       trace = ""
       trace << "="*80
       trace << "\n"
-      trace << "== [ #{exception} @ #{Time.now} ] =="
+      trace << "== [ #{self.class}: #{exception} @ #{Time.now} ] =="
       trace << "\n"
       trace << exception.backtrace.join("\n")
       trace << "\n"

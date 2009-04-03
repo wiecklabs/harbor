@@ -58,6 +58,9 @@ module Wheels
         def #{verb}(matcher, &handler)
           @router.send(#{verb.inspect}, matcher) do |request, response|
             service = @container.get(@service_name, :request => request, :response => response)
+
+            service.logger = Logging::Logger[service] if service.respond_to?(:logger=)
+
             handler.arity == 2 ? handler[service, request.params] : handler[service]
           end
         end

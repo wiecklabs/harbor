@@ -1,3 +1,7 @@
+require "pathname"
+require "fileutils"
+FileUtils::mkdir_p(Pathname(Dir::pwd) + "log")
+
 require "rubygems"
 require "spec"
 require Pathname(__FILE__).dirname.parent + "lib/wheels"

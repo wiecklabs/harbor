@@ -15,9 +15,20 @@ describe "Response" do
   before :all do
     View::path.unshift Pathname(__FILE__).dirname + "views"
   end
-  
+
   before do
-    @response = Response.new(Request.new(Application.new(nil), {}))
+    request_stub = Object.new
+    class << request_stub
+      def xhr?
+        false
+      end
+
+      def layout
+        "layouts/application"
+      end
+    end
+
+    @response = Response.new(request_stub)
   end
 
   after :all do

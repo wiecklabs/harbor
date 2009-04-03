@@ -5,7 +5,7 @@ module Wheels
   class Request < Rack::Request
 
     attr_accessor :layout
-    attr_reader :application
+    attr_accessor :application
 
     def initialize(application, env)
       raise ArgumentError.new("+env+ must be a Rack Environment Hash") unless env.is_a?(Hash)

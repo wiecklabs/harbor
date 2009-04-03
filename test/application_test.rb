@@ -16,18 +16,21 @@ class ApplicationTest < Test::Unit::TestCase
       post("/") {}
     end
 
-    @old_stderr = $stderr
-    $stderr = StringIO.new
+    @request_log = StringIO.new
+    @error_log = StringIO.new
 
-    @old_stdout = $stdout
-    $stdout = StringIO.new
+    logger = Logging::Logger['request']
+    logger.clear_appenders
+    logger.add_appenders Logging::Appenders::IO.new('request', @request_log)
 
-    @application = MyApplication.new(@router)
+    logger = Logging::Logger['error']
+    logger.clear_appenders
+    logger.add_appenders Logging::Appenders::IO.new('error', @error_log)
+
+    @application = MyApplication.new(Wheels::Container.new, @router)
   end
 
   def teardown
-    $stderr = @old_stderr
-    $stdout = @old_stdout
   end
 
   def test_call_returns_rack_response_array
@@ -41,8 +44,7 @@ class ApplicationTest < Test::Unit::TestCase
     status, = @application.call({ "PATH_INFO" => "/", "REQUEST_METHOD" => "DELETE"})
     assert_equal(404, status)
 
-    $stdout.seek(0)
-    assert_match(/\(404\)/, $stdout.read)
+    assert_match(/\(.*404.*\)/, @request_log.string)
   end
 
   def test_exception
@@ -55,8 +57,7 @@ class ApplicationTest < Test::Unit::TestCase
     })
     assert_equal(500, status)
 
-    $stderr.seek(0)
-    assert_match(/Error in \/exception/, $stderr.read)
+    assert_match(/Error in \/exception/, @error_log.string)
   end
 
   def test_find_public_file
