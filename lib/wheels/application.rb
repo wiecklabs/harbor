@@ -16,6 +16,10 @@ module Wheels
       raise NotImplementedError.new("Your application must redefine #{self}::routes.")
     end
 
+    def self.error_handlers
+      @@error_handlers ||= Set.new
+    end
+
     attr_reader :router, :environment, :services
 
     def initialize(services, *args)
@@ -152,6 +156,9 @@ module Wheels
         end
       end
 
+      self.class.error_handlers.each { |handler| handler.call(exception, request, response, trace) }
+
+      nil
     end
 
     def find_public_file(file) #:nodoc:

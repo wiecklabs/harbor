@@ -3,11 +3,12 @@ module Wheels
   # Utility class for receiving email notifications of exceptions in
   # non-development environments.
   # 
-  #   MyApplication.services.register("mailer", Wheels::Mailer)
-  #   MyApplication.services.register("mail_server", Wheels::SendmailServer)
+  #   services.register("mailer", Wheels::Mailer)
+  #   services.register("mail_server", Wheels::SendmailServer)
   #   
   #   require 'wheels/exception_notifier'
   #   Wheels::ExceptionNotifier.notification_address = "admin@site.com"
+  #   Wheels::Application.error_handlers << Wheels::ExceptionNotifier
   # 
   # You will then receive email alerts for all 500 errors in the format of:
   # 
@@ -27,16 +28,11 @@ module Wheels
       raise "Wheels::ExceptionMailer.notification_address not set."
     end
 
-    ##
-    # 
-    ##
-    def handle_exception(exception, request, response)
-      super
+    def self.call(exception, request, response, trace)
+      return if request.environment == "development"
 
-      return if environment == "development"
-
-      mailer = self.class.services.get("mailer")
-      mailer.to = Wheels::ExceptionNotifier.notification_address
+      mailer = request.application.services.get("mailer")
+      mailer.to = notification_address
       mailer.from = "errors@#{request.host}"
 
       subject = exception.to_s
@@ -46,22 +42,12 @@ module Wheels
         subject = subject.split($/, 2)[0] + "..."
       end
 
-      mailer.subject = "[ERROR] [#{request.host}] [#{environment}] #{subject}"
-      mailer.text = build_exception_trace(exception, request)
+      mailer.subject = "[ERROR] [#{request.host}] [#{request.environment}] #{subject}"
+      mailer.text = trace
       mailer.set_header("X-Priority", 1)
       mailer.set_header("X-MSMail-Priority", "High")
       mailer.send!
     end
 
-  end
-end
-
-module Wheels
-  class Cascade
-    include Wheels::ExceptionNotifier
-  end
-
-  class Application
-    include Wheels::ExceptionNotifier
   end
 end

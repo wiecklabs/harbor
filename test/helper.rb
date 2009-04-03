@@ -3,6 +3,7 @@ require "pathname"
 require "test/unit"
 require Pathname(__FILE__).dirname.parent + "lib/wheels"
 require "wheels/xml_view"
+require "wheels/mailer"
 
 module Rack
   class Request
