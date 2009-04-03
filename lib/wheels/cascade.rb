@@ -1,7 +1,7 @@
 module Wheels
   class Cascade
 
-    def initialize(services, application, *spokes)
+    def initialize(environment, services, application, *spokes)
       unless services.is_a?(Wheels::Container)
         raise ArgumentError.new("Wheels::Cascade#initialize[services] must be a Wheels::Container")
       end
@@ -10,12 +10,11 @@ module Wheels
       @applications = []
       @public_paths = []
 
-      @applications << application.new
+      @applications << application.new(services, environment)
       @public_paths << Pathname(application.public_path) if application.respond_to?(:public_path)
 
       spokes.each do |spoke|
-        spoke.services = @services
-        @applications << spoke.new
+        @applications << spoke.new(services, environment)
 
         @public_paths << Pathname(spoke.public_path) if spoke.respond_to?(:public_path)
       end
