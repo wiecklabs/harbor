@@ -10,11 +10,20 @@ module Wheels
       @applications = []
       @public_paths = []
 
-      @applications << application.new(services, environment)
+      begin
+        @applications << application.new(services, environment)
+      rescue ArgumentError => e
+        raise ArgumentError.new("#{application}: #{e.message}")
+      end
+
       @public_paths << Pathname(application.public_path) if application.respond_to?(:public_path)
 
       spokes.each do |spoke|
-        @applications << spoke.new(services, environment)
+        begin
+          @applications << spoke.new(services, environment)
+        rescue ArgumentError => e
+          raise ArgumentError.new("#{spoke}: #{e.message}")
+        end
 
         @public_paths << Pathname(spoke.public_path) if spoke.respond_to?(:public_path)
       end
