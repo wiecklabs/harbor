@@ -24,14 +24,6 @@ module Wheels
       result
     end
 
-    def q(value)
-      Rack::Utils::escape(value)
-    end
-
-    def h(value)
-      Rack::Utils::escape_html(value)
-    end
-
     def inspect
       "Wheels::ViewContext <#{variable_frames.inspect}>"
     end
