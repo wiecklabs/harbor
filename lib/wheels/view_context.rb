@@ -3,6 +3,7 @@ module Wheels
     require Pathname(__FILE__).dirname + "view_context/helpers"
 
     include Helpers::Form
+    include Helpers::Text
 
     attr_accessor :view
 
