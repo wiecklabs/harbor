@@ -1,4 +1,5 @@
-require "helper"
+require "pathname"
+require Pathname(__FILE__).dirname + "helper"
 
 class TextHelperTest < Test::Unit::TestCase
 
@@ -74,6 +75,70 @@ class TextHelperTest < Test::Unit::TestCase
     assert_raise(ArgumentError) do
       # character_count should be non-nil.
       assert_equal("", @helper.truncate("", nil))
+    end
+  end
+
+  # truncate_on_words(value, character_count = 30, trailing = "&hellip;")
+  def test_truncate_on_words_at_defaults
+    # closest end-of-word match to 30 is 26
+    assert_equal(@value[0, 26] + "&hellip;", @helper.truncate_on_words(@value))
+  end
+
+  def test_truncate_on_words_round_up
+    assert_equal(@value[0, 51] + "&hellip;", @helper.truncate_on_words(@value, 50))
+  end
+
+  def test_truncate_on_words_round_down
+    assert_equal(@value[0, 17] + "&hellip;", @helper.truncate_on_words(@value, 20))
+  end
+
+  def test_truncate_on_words_custom_trailing
+    assert_equal(@value[0, 17] + "...", @helper.truncate_on_words(@value, 20, "..."))
+  end
+
+  def test_truncate_on_words_arbitrary_objects
+    user = Class.new do
+      attr_reader :name
+
+      def initialize(name)
+        @name = name
+      end
+
+      def to_s
+        @name
+      end
+    end
+
+    bob = user.new("Bob is a really cool guy who is always on time, unlike Mike who is a slacker.")
+
+    assert_equal("Bob is a really", @helper.truncate_on_words(bob, 15, ""))
+  end
+
+  def test_truncate_on_words_no_op
+    assert_equal(@value, @helper.truncate_on_words(@value, 500))
+    assert_equal(@value, @helper.truncate_on_words(@value, 500, "..."))
+  end
+
+  def test_truncate_on_words_errors
+    assert_raise(ArgumentError) do
+      # character_count should be a non-zero number.
+      assert_equal("", @helper.truncate_on_words("...", 0))
+    end
+
+    assert_raise(ArgumentError) do
+      # character_count should be non-nil.
+      assert_equal("", @helper.truncate_on_words("", nil))
+    end
+  end
+
+  def test_truncate_on_words_blank_values
+    # Empty or Nil input should not error.
+    assert_nothing_raised do
+      assert_equal("", @helper.truncate_on_words(""))
+    end
+
+    assert_nothing_raised do
+      assert_equal("", @helper.truncate_on_words(nil))
     end
   end
 

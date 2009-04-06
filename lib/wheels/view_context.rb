@@ -4,6 +4,7 @@ module Wheels
 
     include Helpers::Form
     include Helpers::Text
+    include Helpers::Html
 
     attr_accessor :view
 

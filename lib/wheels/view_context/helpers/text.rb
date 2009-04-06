@@ -16,7 +16,16 @@ module Wheels::ViewContext::Helpers::Text
     Rack::Utils::escape_html(value)
   end
 
-  # Truncate long text values
+  ##
+  # Truncates an object to the specified character count, appending the specified
+  # trailing text. The character count includes the length of the trailer. HTML entities
+  # are counted as 1 character in trailing.
+  # 
+  #   truncate("Lorem ipsum dolor sit amet, consectetur") # => "Lorem ipsum dolor sit amet, c&hellip;"
+  #   truncate("Lorem ipsum dolor sit amet, consectetur", 20) # => "Lorem ipsum dolor s&hellip;"
+  #   truncate("Lorem ipsum dolor sit amet, consectetur", 20, "...") # => "Lorem ipsum dolor..."
+  # 
+  ##
   def truncate(value, character_count = 30, trailing = "&hellip;")
     unless character_count.is_a?(Integer)
       raise ArgumentError.new(
@@ -54,10 +63,58 @@ module Wheels::ViewContext::Helpers::Text
     end
   end
 
-  # Truncate long text values on the nearest word (rounding down if the size exceeds the character_count by more than 5%).
-  # TODO: Test!
-  def truncate_on_words(value, character_count, trailing = "&hellip;")
-    word_count > size ? self.strip + '...' : self.split(/ /).first(word_count).join(' ').strip + ((self.split(/ /).size > word_count) ? '...' : '')
+  ##
+  # Truncates an object on the nearest word to the specified character count, appending the specified
+  # trailing text. 
+  # 
+  #   truncate_on_words("Lorem ipsum dolor sit amet, consectetur") # => "Lorem ipsum dolor sit amet&hellip;"
+  #   truncate_on_words("Lorem ipsum dolor sit amet, consectetur", 20) # => "Lorem ipsum dolor&hellip;"
+  #   truncate_on_words("Lorem ipsum dolor sit amet, consectetur", 20, "...") # => "Lorem ipsum dolor..."
+  # 
+  # The truncation will always look backwards unless the forward word boundary is within 5% of the specified
+  # character count. Thus:
+  # 
+  #   truncate_on_words("Lorem ipsum dolor sit amet, consectetur est.", 38) # => "Lorem ipsum dolor sit amet, consectetur..."
+  # 
+  ##
+  def truncate_on_words(value, character_count = 30, trailing = "&hellip;")
+    unless character_count.is_a?(Integer)
+      raise ArgumentError.new(
+        "Wheels::ViewContext::Helpers::Text#truncate_on_words[character_count] must be an Integer, was #{character_count.inspect}"
+      )
+    end
+
+    unless character_count > 0
+      raise ArgumentError.new(
+        "Wheels::ViewContext::Helpers::Text#truncate_on_words[character_count] must be greater than zero, was #{character_count.inspect}."
+      )
+    end
+
+    unless trailing.is_a?(String)
+      raise ArgumentError.new(
+        "Wheels::ViewContext::Helpers::Text#truncate_on_words[trailing] must be a String, was #{trailing.inspect}"
+      )
+    end
+
+    return "" if value.nil?
+
+    truncated_text = value.to_s.dup
+    text_length = truncated_text.length
+
+    return value if character_count >= text_length
+
+    leftover = truncated_text.slice!(character_count, text_length)
+
+    if (index = leftover.index(/\W|$/)) && index < (character_count * 0.05).ceil
+      truncated_text << leftover.slice(0, index)
+    else
+      truncated_text = truncated_text[0, truncated_text.rindex(/\W/)]
+    end
+
+    # Remove any trailing punctuation.
+    truncated_text.slice!(truncated_text.length - 1) if truncated_text[truncated_text.length - 1, 1] =~ /\W/
+
+    truncated_text + trailing
   end
 
 end
