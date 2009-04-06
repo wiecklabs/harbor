@@ -37,10 +37,6 @@ class TextHelperTest < Test::Unit::TestCase
     assert_equal(@value, @helper.truncate(@value, 500, "..."))
   end
 
-  def test_stuff
-    p @helper.truncate_on_words("Lorem ipsum dolor sit amet, consectetur", 38, "...")
-  end
-
   def test_arbitrary_objects
     user = Class.new do
       attr_reader :name
