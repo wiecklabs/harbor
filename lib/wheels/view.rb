@@ -42,10 +42,14 @@ module Wheels
       if layout
         if layout.is_a?(Array)
           actual = nil
-          layout.each do |name|
-            if self.class.exists?(name + self.extension)
-              actual = name
+          self.class.path.each do |dir|
+            layout.each do |name|
+              if File.file?(dir + (name + self.extension))
+                actual = name
+                break
+              end
             end
+            break if actual
           end
 
           if actual
