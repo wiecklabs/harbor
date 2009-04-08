@@ -50,10 +50,10 @@ module Wheels
         @io = BlockIO.new(path_or_io)
         @headers["Content-Length"] = @io.size
       else
-        content_type ||= Rack::File::MIME_TYPES.fetch(File.extname(path_or_io)[1..-1], "binary/octet-stream")
+        content_type ||= Rack::File::MIME_TYPES.fetch(::File.extname(path_or_io)[1..-1], "binary/octet-stream")
         if @request.env.has_key?("HTTP_X_SENDFILE_TYPE")
           @headers["X-Sendfile"] = path_or_io.to_s
-          @headers["Content-Length"] = File.size(path_or_io)
+          @headers["Content-Length"] = ::File.size(path_or_io)
         else
           @io = BlockIO.new(path_or_io)
           @headers["Content-Length"] = @io.size

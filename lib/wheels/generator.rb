@@ -38,8 +38,8 @@ module Wheels
 
         # Evaluate all of the skeleton templates
         Dir["#{@app_name}/**/*.skel"].each do |path|
-          File.open(path.sub('.skel', ''), 'w') do |file|
-            file.puts Erubis::FastEruby.new(File.read(path), :pattern => '##> <##').evaluate(self)
+          ::File.open(path.sub('.skel', ''), 'w') do |file|
+            file.puts Erubis::FastEruby.new(::File.read(path), :pattern => '##> <##').evaluate(self)
           end
 
           FileUtils.rm(path)

@@ -17,7 +17,7 @@ module Wheels
     def self.start
       require 'irb'
       require 'irb/completion'
-      if File.exists? ".irbrc"
+      if ::File.exists? ".irbrc"
         ENV['IRBRC'] = ".irbrc"
       end
 

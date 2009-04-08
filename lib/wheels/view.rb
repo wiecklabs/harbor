@@ -19,7 +19,7 @@ module Wheels
     end
 
     def self.exists?(filename)
-      self.path.detect { |dir| File.file?(dir + filename) }
+      self.path.detect { |dir| ::File.file?(dir + filename) }
     end
 
     attr_accessor :content_type, :context, :extension
@@ -40,15 +40,15 @@ module Wheels
 
     def _erubis_render(filename, context)
 
-      filename += self.extension if File.extname(filename) == ""
+      filename += self.extension if ::File.extname(filename) == ""
 
       path = self.class.exists?(filename)
       raise "Could not find '#{filename}' in #{self.class.path.inspect}" unless path
 
       if self.class.cache_templates?
-        (self.class.__templates[path + filename] ||= Erubis::FastEruby.new(File.read(path + filename))).evaluate(context)
+        (self.class.__templates[path + filename] ||= Erubis::FastEruby.new(::File.read(path + filename))).evaluate(context)
       else
-        Erubis::FastEruby.new(File.read(path + filename)).evaluate(context)
+        Erubis::FastEruby.new(::File.read(path + filename)).evaluate(context)
       end
     end
 

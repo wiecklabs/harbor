@@ -10,8 +10,8 @@ module Wheels
         @io = path_or_io
         @size = @io.size
       else
-        @io = File::open(path_or_io.to_s, 'r')
-        @size = File.size(path_or_io.to_s)
+        @io = ::File::open(path_or_io.to_s, 'r')
+        @size = ::File.size(path_or_io.to_s)
       end
     end
 

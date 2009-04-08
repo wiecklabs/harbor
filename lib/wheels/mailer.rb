@@ -166,7 +166,7 @@ module Wheels
       end
 
       def to_s
-        @body ||= File.open(file.to_s(), "rb") { |f| f.read() }
+        @body ||= ::File.open(file.to_s(), "rb") { |f| f.read() }
         [@body].pack("m")
       end
 

@@ -5,6 +5,7 @@ $:.unshift(Pathname(__FILE__).dirname.expand_path)
 
 require "wheels/logging"
 require "wheels/shellwords"
+require "wheels/file"
 require "wheels/container"
 require "wheels/router"
 require "wheels/application"
