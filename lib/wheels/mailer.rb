@@ -16,6 +16,14 @@ module Wheels
       @@layout rescue nil
     end
 
+    def self.host=(host)
+      @@host = host
+    end
+
+    def self.host
+      @@host rescue "www.example.com"
+    end
+
     attr_accessor :mail_server
 
     ##
@@ -95,6 +103,10 @@ module Wheels
 
     def html
       @html
+    end
+
+    def host
+      self.class.host
     end
 
     def tokenize_urls!(mail_server_url)
