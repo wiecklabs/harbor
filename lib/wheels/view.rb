@@ -44,7 +44,7 @@ module Wheels
           actual = nil
           self.class.path.each do |dir|
             layout.each do |name|
-              if File.file?(dir + (name + self.extension))
+              if ::File.file?(dir + (name + self.extension))
                 actual = name
                 break
               end
