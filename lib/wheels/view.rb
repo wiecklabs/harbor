@@ -5,6 +5,12 @@ require Pathname(__FILE__).dirname + "view_context"
 module Wheels
   class View
 
+    class LayoutNotFoundError < StandardError
+      def initialize(name)
+        super("Layout #{name.inspect} not found")
+      end
+    end
+
     def self.path
       @path ||= []
     end
@@ -33,7 +39,26 @@ module Wheels
 
     def to_s(layout = nil)
       content = _erubis_render(@view, @context)
-      layout ? View.new(layout, @context.merge(:content => content)).to_s : content
+      if layout
+        if layout.is_a?(Array)
+          actual = nil
+          layout.each do |name|
+            if self.class.exists?(name + self.extension)
+              actual = name
+            end
+          end
+
+          if actual
+            View.new(actual, @context.merge(:content => content)).to_s
+          else
+            raise LayoutNotFoundError.new(layout)
+          end
+        else
+          View.new(layout, @context.merge(:content => content)).to_s
+        end
+      else
+        content
+      end
     end
 
     private
