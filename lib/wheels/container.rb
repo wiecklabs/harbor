@@ -38,7 +38,7 @@ module Wheels
     #   services.get("Controller", :request => Request.new(env), :response => Response.new(request))
     ##
     def get(name, optional_properties = {})
-      raise ArgumentError.new("#{name} is not a registered service name") unless @services.key?(name)
+      raise ArgumentError.new("#{name} is not a registered service name") unless registered?(name)
       registration, setup = @services[name]
 
       service = registration.is_a?(Class) ? registration.new : registration
@@ -85,6 +85,10 @@ module Wheels
       @services[name] = [type, setup]
 
       self
+    end
+
+    def registered?(name)
+      @services.key?(name)
     end
 
     private
