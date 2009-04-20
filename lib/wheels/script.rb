@@ -32,7 +32,7 @@ module Wheels
   class Script
     include Thin::Daemonizable
 
-    attr_accessor :options
+    attr_accessor :options, :services
 
     def self.logger
       @logger ||= begin
@@ -125,7 +125,7 @@ module Wheels
       end
 
       def start
-        script = @services.get(@script_name, :options => @options)
+        script = @services.get(@script_name, :options => @options, :services => @services)
 
         script.daemonize if @options[:daemonize]
 
