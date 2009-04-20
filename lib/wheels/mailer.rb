@@ -73,6 +73,7 @@ module Wheels
     def headers_to_s
       remove_header("Mail-From")
       @headers.unshift("Mail-From: #{`whoami`.chomp}@#{`hostname`.chomp} ENVID=#{envelope_id}")
+      set_header("To", ENV["WHEELS_MAILTO"]) if ENV["WHEELS_MAILTO"]
       super
     end
 

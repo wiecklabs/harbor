@@ -3,6 +3,16 @@ require "wheels/mailer"
 
 class MailerTest < Test::Unit::TestCase
 
+  def test_env_setting_to_override_from
+    mailer = Wheels::Mailer.new
+    mailer.to = "jdoe@example.com"
+    assert_match(/to: jdoe@example.com/i, mailer.to_s)
+
+    ENV["WHEELS_MAILTO"] = "test@example.com"
+    assert_no_match(/to: jdoe@example.com/i, mailer.to_s)
+    assert_match(/to: test@example.com/i, mailer.to_s)
+  end
+
   def test_tokenize_urls_with_plain_text
     mailer = Wheels::Mailer.new
     url = "http://test.com"
