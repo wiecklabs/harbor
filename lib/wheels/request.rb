@@ -4,6 +4,39 @@ require Pathname(__FILE__).dirname + "session"
 module Wheels
   class Request < Rack::Request
 
+    BOT_AGENTS = [
+      /yahoo.*slurp/i,
+      /googlebot/i,
+      /msnbot/i,
+      /charlotte.*searchme/i,
+      /twiceler.*robot/i,
+      /dotbot/i,
+      /gigabot/i,
+      /yanga.*bot/i,
+      /gaisbot/i,
+      /becomebot/i,
+      /yandex/i,
+      /catchbot/i,
+      /cazoodlebot/i,
+      /jumblebot/i,
+      /librabot/i,
+      /jyxobot/i,
+      /mlbot/i,
+      /cipinetbot/i,
+      /funnelbot/i,
+      /mj12bot/i,
+      /spinn3r/i,
+      /nutch.*bot/i,
+      /oozbot/i,
+      /robotgenius/i,
+      /snapbot/i,
+      /tmangobot/i,
+      /yacybot/i,
+      /rpt.*httpclient/i,
+      /indy.*library/i,
+      /baiduspider/i
+    ].freeze
+
     attr_accessor :layout
     attr_accessor :application
 
@@ -11,6 +44,11 @@ module Wheels
       raise ArgumentError.new("+env+ must be a Rack Environment Hash") unless env.is_a?(Hash)
       @application = application
       super(env)
+    end
+
+    def bot?
+      user_agent = env["HTTP_USER_AGENT"]
+      BOT_AGENTS.any? { |bot_agent| user_agent =~ bot_agent }
     end
 
     def session
