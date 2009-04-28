@@ -55,6 +55,10 @@ module Harbor
       @data
     end
 
+    def id
+      @data[:session_id]
+    end
+
     def save
       cookie = {}
       cookie[:domain] = @options[:domain]
