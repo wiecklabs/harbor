@@ -2,7 +2,7 @@ require "pathname"
 require Pathname(__FILE__).dirname + "helper"
 require "tempfile"
 
-class WheelsFileTest < Test::Unit::TestCase
+class HarborFileTest < Test::Unit::TestCase
   def setup
   end
 
@@ -10,7 +10,7 @@ class WheelsFileTest < Test::Unit::TestCase
     tempfile = Tempfile.new("file_test")
     assert_equal("100600", "%o" % File.stat(tempfile.path).mode)
 
-    Wheels::File.move(tempfile.path, "tempfile")
+    Harbor::File.move(tempfile.path, "tempfile")
 
     assert_equal("100%o" % (0666 - File.umask), "%o" % File.stat("tempfile").mode)
 
@@ -23,7 +23,7 @@ class WheelsFileTest < Test::Unit::TestCase
     tempfile = Tempfile.new("file_test")
     assert_equal("100600", "%o" % File.stat(tempfile.path).mode)
 
-    Wheels::File.move(tempfile.path, "tempfile", 0777)
+    Harbor::File.move(tempfile.path, "tempfile", 0777)
 
     assert_equal("100777", "%o" % File.stat("tempfile").mode)
 
@@ -37,7 +37,7 @@ class WheelsFileTest < Test::Unit::TestCase
 
     assert(File.directory?("testing/mkdir/p"))
 
-    Wheels::File.rmdir_p("testing/mkdir/p")
+    Harbor::File.rmdir_p("testing/mkdir/p")
 
     assert(!File.directory?("testing/mkdir/p"))
     assert(!File.directory?("testing/mkdir"))
@@ -49,7 +49,7 @@ class WheelsFileTest < Test::Unit::TestCase
     destination = "testing/move/safely.txt"
 
     assert_raise(RuntimeError) do
-      Wheels::File.move_safely(tempfile.path, destination) do
+      Harbor::File.move_safely(tempfile.path, destination) do
         raise
       end
     end
@@ -57,13 +57,13 @@ class WheelsFileTest < Test::Unit::TestCase
     assert(File.file?(tempfile.path))
     assert(!File.directory?("testing"))
 
-    Wheels::File.move_safely(tempfile.path, destination) do
+    Harbor::File.move_safely(tempfile.path, destination) do
     end
 
     assert(File.file?(destination))
 
     FileUtils.rm(destination)
-    Wheels::File.rmdir_p(File.dirname(destination))
+    Harbor::File.rmdir_p(File.dirname(destination))
   ensure
     tempfile.close
   end

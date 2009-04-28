@@ -25,8 +25,8 @@ end
 # Rake::RDocTask.new(:rdoc) do |rdoc|
 #   rdoc.options << '--line-numbers' << '--inline-source' <<
 #     '--main' << 'README' <<
-#     '--title' << 'Wheels Documentation' <<
-#     '--charset' << 'utf-8' << "--exclude" << "lib/wheels/generator/"
+#     '--title' << 'Harbor Documentation' <<
+#     '--charset' << 'utf-8' << "--exclude" << "lib/harbor/generator/"
 #   rdoc.rdoc_dir = "doc"
 #   rdoc.rdoc_files.include 'README'
 #   rdoc.
@@ -38,7 +38,7 @@ end
 task :rdoc do
   sh 'rm -r doc' if File.directory?('doc')
   begin
-    sh 'sdoc --line-numbers --inline-source --main "README" --title "Wheels Documentation" --exclude lib/wheels/generator/* README lib'
+    sh 'sdoc --line-numbers --inline-source --main "README" --title "Harbor Documentation" --exclude lib/harbor/generator/* README lib'
   rescue
     puts "sdoc not installed:"
     puts "  gem install voloko-sdoc --source http://gems.github.com"
@@ -65,8 +65,8 @@ end
 
 require "rake/gempackagetask"
 
-NAME = "wheels"
-SUMMARY = "Wheels Framework"
+NAME = "harbor"
+SUMMARY = "Harbor Framework"
 GEM_VERSION = "0.7.6"
 
 spec = Gem::Specification.new do |s|
@@ -78,7 +78,7 @@ spec = Gem::Specification.new do |s|
   s.platform = Gem::Platform::RUBY
   s.require_path = 'lib'
   s.files = %w(Rakefile) + Dir.glob("lib/**/*")
-  s.executables = ['wheels']
+  s.executables = ['harbor']
 
   s.add_dependency 'logging'
 end
@@ -87,12 +87,12 @@ Rake::GemPackageTask.new(spec) do |pkg|
   pkg.gem_spec = spec
 end
 
-desc "Install Wheels as a gem"
+desc "Install Harbor as a gem"
 task :install => [:repackage] do
   sh %{gem install pkg/#{NAME}-#{GEM_VERSION}}
 end
 
-desc "Publish Wheels gem"
+desc "Publish Harbor gem"
 task :publish do
   STDOUT.print "Publishing gem... "
   STDOUT.flush
@@ -100,7 +100,7 @@ task :publish do
   `git push --tags &> /dev/null`
 
   commands = [
-    "if [ ! -d '#{NAME}' ]; then git clone git://github.com/wiecklabs/wheels.git; fi",
+    "if [ ! -d '#{NAME}' ]; then git clone git://github.com/wiecklabs/harbor.git; fi",
     "cd #{NAME}",
     "git pull &> /dev/null",
     "rake repackage &> /dev/null",

@@ -1,0 +1,17 @@
+class ##>=app_class<## < Harbor::Application
+
+  def default_layout
+    "layouts/application"
+  end
+
+  def self.routes(services = self.services)
+    Harbor::Router.new do
+
+      using services, Default do
+        get("/") { |default| default.index }
+      end
+
+    end
+  end
+
+end

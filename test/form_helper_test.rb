@@ -91,6 +91,6 @@ Content
   end
 
   def evaluate(erubis_data)
-    Erubis::FastEruby.new(erubis_data).evaluate(Wheels::ViewContext.new(nil, {}))
+    Erubis::FastEruby.new(erubis_data).evaluate(Harbor::ViewContext.new(nil, {}))
   end
 end

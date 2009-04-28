@@ -1,9 +1,9 @@
 require "rubygems"
 require "pathname"
 require "test/unit"
-require Pathname(__FILE__).dirname.parent + "lib/wheels"
-require "wheels/xml_view"
-require "wheels/mailer"
+require Pathname(__FILE__).dirname.parent + "lib/harbor"
+require "harbor/xml_view"
+require "harbor/mailer"
 
 module Rack
   class Request

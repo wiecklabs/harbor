@@ -1,12 +1,12 @@
 #!/usr/bin/env ruby
 
-# wheels generator
+# harbor generator
 #
-#   usage: wheels setup app-name
+#   usage: harbor setup app-name
 
 require 'rubygems'
-require 'wheels/generator'
+require 'harbor/generator'
 
 command = ARGV.shift
 
-Wheels::Generator.run(command, ARGV)
+Harbor::Generator.run(command, ARGV)

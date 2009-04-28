@@ -22,7 +22,7 @@ class RequestTest < Test::Unit::TestCase
   end
 
   def request(path, method, options)
-    Wheels::Request.new(Class.new, Rack::MockRequest.env_for(path, options.merge(:method => method)))
+    Harbor::Request.new(Class.new, Rack::MockRequest.env_for(path, options.merge(:method => method)))
   end
 
 end

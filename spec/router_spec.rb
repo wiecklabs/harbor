@@ -1,7 +1,7 @@
 require "pathname"
 require Pathname(__FILE__).dirname + "helper"
 
-include Wheels
+include Harbor
 
 describe "Router" do
 

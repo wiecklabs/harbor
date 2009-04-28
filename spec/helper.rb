@@ -4,8 +4,8 @@ FileUtils::mkdir_p(Pathname(Dir::pwd) + "log")
 
 require "rubygems"
 require "spec"
-require Pathname(__FILE__).dirname.parent + "lib/wheels"
-require "wheels/xml_view"
+require Pathname(__FILE__).dirname.parent + "lib/harbor"
+require "harbor/xml_view"
 
 module Rack
   class Request

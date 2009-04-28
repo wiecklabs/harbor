@@ -1,10 +1,10 @@
 require "pathname"
 require Pathname(__FILE__).dirname + "helper"
-require "wheels/exception_notifier"
+require "harbor/exception_notifier"
 
 class ExceptionNotifierTest < Test::Unit::TestCase
 
-  class MockMailServer < Wheels::MailServers::Abstract
+  class MockMailServer < Harbor::MailServers::Abstract
 
     def mailings
       @mailings ||= []
@@ -16,12 +16,12 @@ class ExceptionNotifierTest < Test::Unit::TestCase
   end
 
   def setup
-    @services = Wheels::Container.new
+    @services = Harbor::Container.new
     @services.register("mail_server", MockMailServer.new)
-    @services.register("mailer", Wheels::Mailer)
+    @services.register("mailer", Harbor::Mailer)
 
-    Wheels::ExceptionNotifier.notification_address = "errors@site.com"
-    Wheels::Application.error_handlers << Wheels::ExceptionNotifier
+    Harbor::ExceptionNotifier.notification_address = "errors@site.com"
+    Harbor::Application.error_handlers << Harbor::ExceptionNotifier
 
     @request_log = StringIO.new
     @error_log = StringIO.new
@@ -34,9 +34,9 @@ class ExceptionNotifierTest < Test::Unit::TestCase
     logger.clear_appenders
     logger.add_appenders Logging::Appenders::IO.new('error', @error_log)
 
-    @application = Class.new(Wheels::Application) do
+    @application = Class.new(Harbor::Application) do
       def self.routes(services)
-        Wheels::Router.new do
+        Harbor::Router.new do
           get("/") { raise "Error" }
         end
       end
@@ -44,7 +44,7 @@ class ExceptionNotifierTest < Test::Unit::TestCase
   end
 
   def teardown
-    Wheels::Application.error_handlers.clear
+    Harbor::Application.error_handlers.clear
   end
 
   def test_uses_default_behavior_in_development

@@ -1,10 +1,10 @@
 require "helper"
-require "wheels/mailer"
+require "harbor/mailer"
 
 class MailerTest < Test::Unit::TestCase
 
   def test_env_setting_to_override_from
-    mailer = Wheels::Mailer.new
+    mailer = Harbor::Mailer.new
     mailer.to = "jdoe@example.com"
     assert_match(/to: jdoe@example.com/i, mailer.to_s)
 
@@ -14,7 +14,7 @@ class MailerTest < Test::Unit::TestCase
   end
 
   def test_tokenize_urls_with_plain_text
-    mailer = Wheels::Mailer.new
+    mailer = Harbor::Mailer.new
     url = "http://test.com"
     mailer.text = url
     mailer.tokenize_urls!("http://m.wieck.com")
@@ -23,7 +23,7 @@ class MailerTest < Test::Unit::TestCase
   end
 
   def test_tokenize_urls_with_html
-    mailer = Wheels::Mailer.new
+    mailer = Harbor::Mailer.new
     url = "http://test.com"
     mailer.rawhtml = "<a href=\"#{url}\">Link</a>"
     mailer.tokenize_urls!("http://m.wieck.com")
@@ -32,7 +32,7 @@ class MailerTest < Test::Unit::TestCase
   end
 
   def test_tokenize_urls_with_https
-    mailer = Wheels::Mailer.new
+    mailer = Harbor::Mailer.new
     url = "https://test.com"
     mailer.text = url
     mailer.tokenize_urls!("http://m.wieck.com")
@@ -44,7 +44,7 @@ class MailerTest < Test::Unit::TestCase
   # Fixing an issue reported by Drew where links would be blown away.
   # 
   def test_tokenize_urls_with_link_as_name
-    mailer = Wheels::Mailer.new
+    mailer = Harbor::Mailer.new
     url = "http://test.com"
     mailer.rawhtml = "<a href=\"#{url}\">#{url}</a>"
     mailer.tokenize_urls!("http://m.wieck.com")
@@ -54,19 +54,19 @@ class MailerTest < Test::Unit::TestCase
   end
 
   def test_lazy_attachments
-    mailer_1 = Wheels::Mailer.new
-    mailer_2 = Wheels::Mailer.new
+    mailer_1 = Harbor::Mailer.new
+    mailer_2 = Harbor::Mailer.new
 
     file = (Pathname(__FILE__).dirname + "helper.rb").to_s
 
-    wheels_attachment = mailer_1.attach(file)
+    harbor_attachment = mailer_1.attach(file)
     mailer_2.attach_as(file, "helper.rb")
 
     assert_equal(mailer_1.attachments, mailer_2.attachments)
 
     mailfactory_attachment = mailer_1.mailfactory_add_attachment(file)
 
-    assert_equal(mailfactory_attachment.to_s, wheels_attachment.to_s)
+    assert_equal(mailfactory_attachment.to_s, harbor_attachment.to_s)
   end
 
 end

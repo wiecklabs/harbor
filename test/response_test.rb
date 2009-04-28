@@ -14,12 +14,12 @@ class ResponseTest < Test::Unit::TestCase
   end
   
   def setup
-    Wheels::View::path.unshift Pathname(__FILE__).dirname + "views"
-    @response = Wheels::Response.new(RequestStub.new)
+    Harbor::View::path.unshift Pathname(__FILE__).dirname + "views"
+    @response = Harbor::Response.new(RequestStub.new)
   end
   
   def teardown
-    Wheels::View::path.clear
+    Harbor::View::path.clear
   end
   
   def test_content_buffer
@@ -47,7 +47,7 @@ class ResponseTest < Test::Unit::TestCase
   end
 
   def test_render_xml
-    @response.render Wheels::XMLView.new("list")
+    @response.render Harbor::XMLView.new("list")
     assert_equal("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<site>\n  <name>Bob</name>\n</site>\n", @response.buffer)
     assert_equal("text/xml", @response.content_type)
   end

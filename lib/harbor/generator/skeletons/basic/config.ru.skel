@@ -1,0 +1,26 @@
+#!/usr/bin/env ruby
+
+require "lib/##>=app_name<##"
+
+# View::cache_templates!
+
+# ##>=app_class<##.services.register("mailer", Harbor::Mailer)
+# ##>=app_class<##.services.register("mail_server", Harbor::SendmailServer)
+
+# DataMapper.setup :default, "sqlite3://#{Pathname(__FILE__).dirname.expand_path + "##>=app_name<##.db"}"
+# DataMapper.setup :search, "ferret:///tmp/##>=app_name<##.sock"
+
+if $0 == __FILE__
+  require "harbor/console"
+  Harbor::Console.start
+elsif $0['thin']
+  use Harbor::Public #, ##>=app_class<##::public_path
+  use Rack::Session::Cookie
+  use Harbor::ParameterLogger
+  use Rack::ShowExceptions
+
+  run ##>=app_class<##.new
+else
+  # Require rake tasks here
+  # require "some/rake/tasks"
+end

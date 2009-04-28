@@ -2,14 +2,14 @@ require "helper"
 
 class ApplicationTest < Test::Unit::TestCase
 
-  class MyApplication < Wheels::Application
+  class MyApplication < Harbor::Application
     def self.public_path
       Pathname(__FILE__).dirname + "public"
     end
   end
 
   def setup
-    @router = Wheels::Router.new do
+    @router = Harbor::Router.new do
       get("/") { |request, response| response.puts "Hello World" }
       get("/exception") { raise "Error in /exception" }
       get("/public-file") { |request, response| response.puts "From Router" }
@@ -27,7 +27,7 @@ class ApplicationTest < Test::Unit::TestCase
     logger.clear_appenders
     logger.add_appenders Logging::Appenders::IO.new('error', @error_log)
 
-    @application = MyApplication.new(Wheels::Container.new, @router)
+    @application = MyApplication.new(Harbor::Container.new, @router)
   end
 
   def teardown

@@ -1,9 +1,9 @@
 require "pathname"
-require Pathname(__FILE__).dirname.parent + "lib/wheels"
+require Pathname(__FILE__).dirname.parent + "lib/harbor"
 
-services = Wheels::Container.new
-# services.register("mail_server", Wheels::SmtpServer.new)
-# services.register("mailer", Wheels::Mailer)
+services = Harbor::Container.new
+# services.register("mail_server", Harbor::SmtpServer.new)
+# services.register("mailer", Harbor::Mailer)
 
 class Hello
   attr_accessor :request, :response
@@ -13,7 +13,7 @@ class Hello
   end
 end
 
-router = Wheels::Router.new do
+router = Harbor::Router.new do
   using services, Hello do
     get("/") do |hello|
       hello.world
@@ -21,4 +21,4 @@ router = Wheels::Router.new do
   end
 end
 
-run Wheels::Application.new(router)
+run Harbor::Application.new(router)

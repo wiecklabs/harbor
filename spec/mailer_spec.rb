@@ -1,21 +1,21 @@
 require "pathname"
 require Pathname(__FILE__).dirname + "helper"
 
-require "wheels/mailer"
+require "harbor/mailer"
 
-class TestServer < Wheels::MailServers::Abstract
+class TestServer < Harbor::MailServers::Abstract
   def deliver(mail)
     mail
   end
 end
 
-describe "Wheels::Mailer" do
+describe "Harbor::Mailer" do
   before :all do
     @server = TestServer.new
   end
 
   it "should pass itself to the server on send!" do
-    mail = Wheels::Mailer.new
+    mail = Harbor::Mailer.new
     mail.mail_server = @server
     mail.send!.should == mail
   end

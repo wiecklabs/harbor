@@ -4,7 +4,7 @@ require Pathname(__FILE__).dirname + "helper"
 class TextHelperTest < Test::Unit::TestCase
 
   class TextHelper
-    include Wheels::ViewContext::Helpers::Text
+    include Harbor::ViewContext::Helpers::Text
   end
 
   def setup
