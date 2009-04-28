@@ -1,34 +1,34 @@
 require 'thin/version'
 require 'thin/daemonizing'
 
-##
-# Class for defining and running daemonizable scripts.
-# 
-#   services = Harbor::Container.new
-#   services.register("mailer", Harbor::Mailer)
-#   
-#   class Processor < Harbor::Script
-#   
-#     attr_accessor :mailer
-#   
-#     def self.pid_file
-#       "tmp/processor.pid"
-#     end
-#   
-#     def self.log_file
-#       "log/processor.log"
-#     end
-#   
-#     def self.run!
-#       loop do
-#         # processing code
-#       end
-#     end
-#   end
-#   
-#   Harbor::Script::Runner.new(ARGV, services, Processor).run!
-##
 module Harbor
+  ##
+  # Class for defining and running daemonizable scripts.
+  # 
+  #   services = Harbor::Container.new
+  #   services.register("mailer", Harbor::Mailer)
+  #   
+  #   class Processor < Harbor::Script
+  #   
+  #     attr_accessor :mailer
+  #   
+  #     def self.pid_file
+  #       "tmp/processor.pid"
+  #     end
+  #   
+  #     def self.log_file
+  #       "log/processor.log"
+  #     end
+  #   
+  #     def self.run!
+  #       loop do
+  #         # processing code
+  #       end
+  #     end
+  #   end
+  #   
+  #   Harbor::Script::Runner.new(ARGV, services, Processor).run!
+  ##
   class Script
     include Thin::Daemonizable
 
