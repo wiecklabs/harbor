@@ -91,7 +91,7 @@ module Harbor
 
         if self.class.layout && layout = self.class.layout.dup
           layout.sub!(/(\.html\.erb$)|$/, ".txt.erb") if method == "text="
-          value = Harbor::View.new(layout, :content => value)
+          value = Harbor::View.new(layout, :content => value, :mailer => self)
         end
 
         super(value)
