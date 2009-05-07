@@ -8,13 +8,12 @@ module Harbor
       target.class_eval do
         @__clipper_hooked_method_added = method(:method_added) if respond_to?(:method_added)
         def self.method_added(method)
-          @__clipper_hooked_method_added.call(method) if @__clipper_hooked_method_added
-
           if !@__clipper_binding_method && hooks.has_key?(method)
             chain = hooks[method]
             chain.bind!
           end
 
+          @__clipper_hooked_method_added.call(method) if @__clipper_hooked_method_added
         end
       end
 
