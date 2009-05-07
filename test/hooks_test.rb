@@ -81,6 +81,14 @@ class HooksTest < Test::Unit::TestCase
         @hooked_method_with_method_added_calls += 1
       end
 
+      before :hooked_method_with_throw_halt do |reciever|
+        throw :halt, true
+      end
+
+      def hooked_method_with_throw_halt
+        false
+      end
+
     end
   end
 
@@ -158,7 +166,7 @@ class HooksTest < Test::Unit::TestCase
     assert_equal(1, hooked_instance.after_hook_with_block_calls)
   end
 
-  def test_redifining_hooked_method
+  def test_hooks_are_run_when_hooked_method_is_redefined
     @hooked_class.class_eval do
       def hooked_method
         @hooked_method_calls = 2
@@ -176,6 +184,18 @@ class HooksTest < Test::Unit::TestCase
     assert_equal(1, hooked_instance.before_hook_calls)
     assert_equal(2, hooked_instance.hooked_method_calls)
     assert_equal(1, hooked_instance.after_hook_calls)
+  end
+
+  def test_throw_halt_is_caught_and_returned
+    hooked_instance = @hooked_class.new
+
+    result = nil
+    assert_nothing_raised do
+      result = hooked_instance.hooked_method_with_throw_halt
+    end
+
+    assert(result)
+
   end
 
 end
