@@ -52,17 +52,21 @@ module Harbor
       end
 
       def call(instance, args, blk = nil)
-        @before.each do |block|
-          block.call instance
+        result = nil
+
+        catch(:halt) do
+          @before.each do |block|
+            block.call instance
+          end
+
+          result = instance.send("__hooked_#{@method_name}", *args, &blk)
+
+          @after.each do |block|
+            block.call instance
+          end
+
+          result
         end
-
-        result = instance.send("__hooked_#{@method_name}", *args, &blk)
-
-        @after.each do |block|
-          block.call instance
-        end
-
-        result
       end
 
       def self.bind!(target, method_name)
