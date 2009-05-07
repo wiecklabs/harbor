@@ -1,4 +1,3 @@
-require 'set'
 module Harbor
   module Hooks
 
@@ -38,8 +37,8 @@ module Harbor
       def initialize(target, method_name)
         @target = target
         @method_name = method_name
-        @before = Set.new
-        @after = Set.new
+        @before = []
+        @after = []
 
         bind! if target.instance_methods.include?(method_name.to_s)
       end
