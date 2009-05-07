@@ -1,6 +1,6 @@
 require 'rubygems'
 
-gem "harbor", "~> 0.4.2"
+gem "harbor", "~> 0.8"
 require "harbor"
 
 Dir[Pathname(__FILE__).dirname + "##>=app_name<##" + "models/*"].each { |r| require r }
