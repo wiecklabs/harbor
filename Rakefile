@@ -73,6 +73,7 @@ spec = Gem::Specification.new do |s|
   s.name = NAME
   s.summary = s.description = SUMMARY
   s.author = "Wieck Media"
+  s.homepage = "http://wiecklabs.com"
   s.email = "dev@wieck.com"
   s.version = GEM_VERSION
   s.platform = Gem::Platform::RUBY
