@@ -33,7 +33,9 @@ module Harbor
 
       mailer = request.application.services.get("mailer")
       mailer.to = notification_address
-      mailer.from = "errors@#{request.host}"
+
+      host = request.env["HTTP_X_FORWARDED_HOST"] || request.host
+      mailer.from = "errors@#{host}"
 
       subject = exception.to_s
 
