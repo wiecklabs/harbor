@@ -1,3 +1,4 @@
+gem "logging"
 require "logging"
 
 Logging.configure do

@@ -1,3 +1,4 @@
+gem "builder"
 require "builder"
 
 module Harbor

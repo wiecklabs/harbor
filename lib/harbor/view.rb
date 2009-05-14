@@ -1,5 +1,8 @@
 require "rubygems"
+
+gem "erubis"
 require "erubis"
+
 require Pathname(__FILE__).dirname + "view_context"
 
 module Harbor

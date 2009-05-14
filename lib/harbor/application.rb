@@ -2,7 +2,6 @@ gem "rack", "~> 0.4.0"
 require "rack"
 
 require "yaml"
-require "thread"
 
 require Pathname(__FILE__).dirname + "rack/utils"
 require Pathname(__FILE__).dirname + "request"

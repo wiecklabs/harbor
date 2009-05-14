@@ -1,4 +1,6 @@
 require "cgi"
+
+gem "mailfactory"
 require "mailfactory"
 
 require Pathname(__FILE__).dirname + "mail_servers/abstract"

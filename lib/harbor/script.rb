@@ -1,5 +1,13 @@
+gem "thin"
 require 'thin/version'
 require 'thin/daemonizing'
+
+module Logging
+  def log(message)
+    Harbor::Script.logger << message + "\n"
+  end
+  module_function :log
+end
 
 module Harbor
   ##
