@@ -126,20 +126,32 @@ module Harbor
     end
 
     def set_cookie(key, value)
+      raise ArgumentError.new("+key+ must not be blank") if key.nil? || key.size == 0
+
       case value
       when Hash
-        domain  = "; domain="  + value[:domain]    if value[:domain]
-        path    = "; path="    + value[:path]      if value[:path]
+        domain    = "; domain="  + value[:domain]    if value[:domain]
+        path      = "; path="    + value[:path]      if value[:path]
+        http_only = value[:http_only] ? "; HTTPOnly=" : nil
         # According to RFC 2109, we need dashes here.
         # N.B.: cgi.rb uses spaces...
-        expires = "; expires=" + value[:expires].clone.gmtime.
-          strftime("%a, %d-%b-%Y %H:%M:%S GMT")    if value[:expires]
+        expires_on = if (defined?(DateTime) && value[:expires].is_a?(DateTime))
+          value[:expires].clone.new_offset(0)
+        elsif value[:expires].is_a?(Time)
+          value[:expires].clone.gmtime
+        elsif value[:expires].nil?
+          nil
+        else
+          raise ArgumentError.new("The value hash for set_cookie contains an invalid +expires+ attribute, Time or DateTime expected, but got: #{value[:expires].inspect}")
+        end
+        expires = "; expires=" + expires_on.strftime("%a, %d-%b-%Y %H:%M:%S GMT") if expires_on
+
         value = value[:value]
       end
       value = [value]  unless Array === value
       cookie = Rack::Utils.escape(key) + "=" +
         value.map { |v| Rack::Utils.escape v }.join("&") +
-        "#{domain}#{path}#{expires}"
+        "#{domain}#{path}#{expires}#{http_only}"
 
       case self["Set-Cookie"]
       when Array
