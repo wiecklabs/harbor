@@ -6,7 +6,7 @@ module Harbor
   ##
   class BlockIO
     def initialize(path_or_io)
-      if path_or_io.is_a?(IO) || path_or_io.is_a?(StringIO)
+      if path_or_io.is_a?(::IO) || path_or_io.is_a?(StringIO)
         @io = path_or_io
         @size = @io.size
       else

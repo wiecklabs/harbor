@@ -46,7 +46,7 @@ module Harbor
     end
 
     def stream_file(path_or_io, content_type = nil)
-      if path_or_io.is_a?(StringIO) || path_or_io.is_a?(IO)
+      if path_or_io.is_a?(StringIO) || path_or_io.is_a?(::IO)
         @io = BlockIO.new(path_or_io)
         @headers["Content-Length"] = @io.size
       else

@@ -6,7 +6,7 @@ module Harbor
       end
 
       def deliver(mail)
-        sendmail = IO.popen("#{@sendmail} -i -t", "w+")
+        sendmail = ::IO.popen("#{@sendmail} -i -t", "w+")
         sendmail.puts mail.to_s
         sendmail.close
       end
