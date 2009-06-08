@@ -20,15 +20,15 @@ module Harbor
         raise 'Abstract method called'
       end
       
-      def save(relative_path, file)
-        raise 'Abstract method called'
-      end
-      
       def mkdir_p(relative_path)
         raise 'Abstract method called'
       end
       
       def open(relative_path, mode = 'r', &block)
+        raise 'Abstract method called'
+      end
+      
+      def save(relative_path, file)
         raise 'Abstract method called'
       end
       

@@ -8,7 +8,11 @@ module Harbor
     def initialize(path_or_io)
       if path_or_io.is_a?(::IO) || path_or_io.is_a?(StringIO)
         @io = path_or_io
-        @size = @io.size
+        if path_or_io.is_a?(StringIO)
+          @size = @io.size
+        else
+          @size = @io.stat.size
+        end
       else
         @io = ::File::open(path_or_io.to_s, 'r')
         @size = ::File.size(path_or_io.to_s)
