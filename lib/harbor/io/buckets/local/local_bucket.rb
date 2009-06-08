@@ -33,7 +33,7 @@ module Harbor
             FileUtils.mkdir_p(::File.dirname(absolute_path(relative_path)))
             object = ::File.open(absolute_path(relative_path), 'wb')
             source = Harbor::IO::BucketManager.instance.open(source_uri)
-            data = source.sysread(source.stat.size - 2)
+            data = source.sysread(source.stat.size)
             object.syswrite(data)
             source.close
           end
@@ -81,7 +81,7 @@ module Harbor
             relative_path = strip_leading_file_separator(relative_path)
             FileUtils.mkdir_p(::File.dirname(absolute_path(relative_path)))
             object = ::File.open(absolute_path(relative_path), 'wb')
-            data = file.sysread(file.stat.size - 2)
+            data = file.sysread(file.stat.size)
             object.syswrite(data)
             file.close
             object.close
