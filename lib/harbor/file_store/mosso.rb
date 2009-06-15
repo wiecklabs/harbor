@@ -38,6 +38,9 @@ module Harbor
 
       def open(filename, mode = "r", &block)
         object = container.object(filename)
+
+        # Hack: Mosso's cloudfiles library doesn't return objects
+        # which expose IO functionality, so we return our own.
         Stream.new(object)
       end
 
