@@ -8,7 +8,7 @@ class MossoFileStoreTest < Test::Unit::TestCase
 
   def setup
     @local = Harbor::FileStore::Local.new(Pathname(__FILE__).dirname)
-    @mosso = Harbor::FileStore::Mosso.new("wieck", ENV["MOSSO_API_KEY"], "harbor-unittests")
+    @mosso = Harbor::FileStore::Mosso.new(ENV["MOSSO_USERNAME"], ENV["MOSSO_API_KEY"], ENV["MOSSO_CONTAINER"])
   end
 
   def test_mosso_file_store_connects

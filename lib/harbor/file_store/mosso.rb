@@ -44,6 +44,10 @@ module Harbor
         Stream.new(object)
       end
 
+      def size(filename)
+        container.object(filename).bytes
+      end
+
       def container
         @container ||= connect!
       end
