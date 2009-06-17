@@ -11,7 +11,15 @@ module Harbor
 
       def read(bytes = nil)
         open
-        @stream.read(bytes)
+
+        data = @stream.read(bytes)
+
+        unless bytes && data
+          @stream.close
+          @stream = nil
+        end
+
+        data
       end
 
       def size

@@ -2,6 +2,8 @@ module Harbor
   class FileStore
     class Local < Harbor::FileStore
 
+      attr_accessor :path
+
       def initialize(path)
         @path = Pathname(path)
       end

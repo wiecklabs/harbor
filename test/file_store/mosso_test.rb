@@ -82,6 +82,8 @@ class MossoFileStoreTest < Test::Unit::TestCase
 
     @mosso.put(filename, file)
 
+    file.rewind
+
     f = @mosso.get(filename)
 
     @local.put(filename, f)

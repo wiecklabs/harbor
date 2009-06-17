@@ -4,28 +4,55 @@ module Harbor
   class FileStore
     class Mosso < Harbor::FileStore
 
-      class Stream
-        def initialize(object)
-          @object = object
-        end
-
-        def read(bytes = nil)
-          return nil if bytes && @data
-          @data = @object.data
-        end
-      end
-
       attr_accessor :container
 
-      def initialize(username, api_key, container_name)
+      def initialize(username, api_key, container_name, options = {})
         @username = username
         @api_key = api_key
         @container_name = container_name
+        @options = options
+      end
+
+      def get(path)
+        Harbor::FileStore::File.new(self, path)
       end
 
       def put(filename, file)
-        object = container.create_object(filename)
-        object.write(file)
+        url = container.connection.storagehost + container.connection.storagepath + "/#{container.name}/#{filename}"
+        token = container.connection.authtoken
+
+        path = nil
+
+        if file.is_a?(::File)
+          path = file.path
+        elsif file.is_a?(Harbor::FileStore::File) && file.store.local?
+          path = file.store.path + file.path
+        end
+
+        command = <<-CMD
+        curl -X "PUT" \\
+             -T #{path ? Shellwords.escape(path) : "-"} \\
+             -H "X-Auth-Token: #{token}" \\
+             -H "Content-Type: text/plain" \\
+             https://#{url}
+        CMD
+
+        if path
+          system(command)
+        else
+          IO::popen(command, "w") do |session|
+            case file
+            when ::File
+              while data = file.read(500_000)
+                session.write(data)
+              end
+            when Harbor::FileStore::File
+              file.read do |block|
+                session.write(block)
+              end
+            end
+          end
+        end
       end
 
       def delete(filename)
@@ -37,11 +64,32 @@ module Harbor
       end
 
       def open(filename, mode = "r", &block)
-        object = container.object(filename)
+        url = container.connection.storagehost + container.connection.storagepath + "/#{container.name}/#{filename}"
+        token = container.connection.authtoken
 
-        # Hack: Mosso's cloudfiles library doesn't return objects
-        # which expose IO functionality, so we return our own.
-        Stream.new(object)
+        command = <<-CMD
+        curl -s -X "GET" \\
+             -D - \\
+             -H "X-Auth-Token: #{token}" \\
+             https://#{url}
+        CMD
+
+        stream = IO::popen(command)
+
+        headers = []
+
+        while line = stream.gets
+          break if line == "\r\n"
+          headers << line
+        end
+
+        stream
+        # 
+        # object = container.object(filename)
+        # 
+        # # Hack: Mosso's cloudfiles library doesn't return objects
+        # # which expose IO functionality, so we return our own.
+        # Stream.new(object)
       end
 
       def size(filename)
