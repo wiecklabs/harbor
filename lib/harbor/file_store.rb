@@ -16,10 +16,6 @@ module Harbor
       file_stores[name]
     end
 
-    def get(path)
-      Harbor::FileStore::File.new(self, path)
-    end
-
     def put(path, file)
       raise NotImplementedError.new("You must define your own implementation of FileStore#put")
     end

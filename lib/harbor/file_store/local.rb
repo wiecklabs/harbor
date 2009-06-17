@@ -2,18 +2,26 @@ module Harbor
   class FileStore
     class Local < Harbor::FileStore
 
-      attr_accessor :path
+      attr_accessor :path, :options
 
-      def initialize(path)
+      def initialize(path, options = {})
         @path = Pathname(path)
+
+        @options = options
+      end
+
+      def get(path)
+        Harbor::FileStore::File.new(self, path)
       end
 
       def put(path, file)
-        open(path, "wb") do |f|
-          while data = file.read(500_000)
-            f.write data
-          end
+        f = Harbor::FileStore::File.new(self, path)
+
+        while data = file.read(500_000)
+          f.write data
         end
+
+        f.write nil
       end
 
       def delete(path)

@@ -4,7 +4,7 @@ module Harbor
   class FileStore
     class Mosso < Harbor::FileStore
 
-      attr_accessor :container
+      attr_accessor :container, :options
 
       def initialize(username, api_key, container_name, options = {})
         @username = username
@@ -31,7 +31,7 @@ module Harbor
 
         command = <<-CMD
         curl -X "PUT" \\
-             -T #{path ? Shellwords.escape(path) : "-"} \\
+             -T #{path ? Shellwords.escape(path.to_s) : "-"} \\
              -H "X-Auth-Token: #{token}" \\
              -H "Content-Type: text/plain" \\
              https://#{url}
@@ -67,29 +67,40 @@ module Harbor
         url = container.connection.storagehost + container.connection.storagepath + "/#{container.name}/#{filename}"
         token = container.connection.authtoken
 
-        command = <<-CMD
-        curl -s -X "GET" \\
-             -D - \\
-             -H "X-Auth-Token: #{token}" \\
-             https://#{url}
-        CMD
+        if mode == "r"
+          command = <<-CMD
+          curl -s -X "GET" \\
+               -D - \\
+               -H "X-Auth-Token: #{token}" \\
+               https://#{url}
+          CMD
 
-        stream = IO::popen(command)
+          stream = IO::popen(command, "r")
 
-        headers = []
+          headers = []
 
-        while line = stream.gets
-          break if line == "\r\n"
-          headers << line
+          while line = stream.gets
+            break if line == "\r\n"
+            headers << line
+          end
+        elsif mode =~ /w/
+          command = <<-CMD
+          curl -X "PUT" \\
+               -T #{"-"} \\
+               -H "X-Auth-Token: #{token}" \\
+               -H "Content-Type: text/plain" \\
+               https://#{url}
+          CMD
+
+          stream = IO::popen(command, "w")
         end
 
-        stream
-        # 
-        # object = container.object(filename)
-        # 
-        # # Hack: Mosso's cloudfiles library doesn't return objects
-        # # which expose IO functionality, so we return our own.
-        # Stream.new(object)
+        if block_given?
+          yield stream
+          stream.close
+        else
+          stream
+        end
       end
 
       def size(filename)

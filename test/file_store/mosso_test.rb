@@ -9,6 +9,14 @@ class MossoFileStoreTest < Test::Unit::TestCase
   def setup
     @local = Harbor::FileStore::Local.new(Pathname(__FILE__).dirname)
     @mosso = Harbor::FileStore::Mosso.new(ENV["MOSSO_USERNAME"], ENV["MOSSO_API_KEY"], ENV["MOSSO_CONTAINER"])
+
+    Harbor::FileStore.register("local", @local)
+    Harbor::FileStore.register("mosso", @mosso)
+  end
+
+  def teardown
+    @mosso.delete("__local_file_store_test__") rescue nil
+    Harbor::FileStore.file_stores.clear
   end
 
   def test_mosso_file_store_connects
@@ -91,6 +99,38 @@ class MossoFileStoreTest < Test::Unit::TestCase
     assert_equal(f.read, @local.get(filename).read)
 
     @local.delete(filename)
+  end
+
+  def test_copy_on_read
+    @mosso.options[:copy_on_read] = ["local"]
+    filename = "__local_file_store_test__"
+    file = File.open(__FILE__)
+
+    @mosso.put(filename, file)
+
+    f = @mosso.get(filename)
+    f.read
+
+    assert(@local.exists?(filename))
+  ensure
+    @mosso.delete(filename) rescue nil
+    @local.delete(filename) rescue nil
+    @mosso.options[:copy_on_read] = nil
+  end
+
+  def test_local_copy_on_write
+    @local.options[:copy_on_write] = ["mosso"]
+
+    filename = "__local_file_store_test__"
+    file = File.open(__FILE__)
+
+    @local.put(filename, file)
+
+    assert(@mosso.exists?(filename))
+  ensure
+    @mosso.delete(filename) rescue nil
+    @local.delete(filename) rescue nil
+    @local.options[:copy_on_write] = nil
   end
 
 end
