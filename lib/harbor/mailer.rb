@@ -188,6 +188,16 @@ module Harbor
       def inspect
         "#<Harbor::Mail::Attachment @file=#{file.inspect}>"
       end
+
+      def _dump(*)
+        Marshal.dump(@file)
+      end
+
+      def self._load(marshalled)
+        attachment = allocate
+        attachment.instance_variable_set(:@file, Marshal.load(marshalled))
+        attachment
+      end
     end
 
   end
