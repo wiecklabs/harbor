@@ -76,8 +76,12 @@ module Harbor
       layout = nil
 
       unless view.is_a?(View)
-        layout = context[:layout]
-        layout ||= @request.layout unless @request.xhr?
+        if context.has_key?(:layout)
+          layout = context[:layout]
+        else
+          layout ||= @request.layout unless @request.xhr?
+        end
+
         view = View.new(view, context.merge({ :request => @request }))
       end
 
