@@ -64,7 +64,8 @@ module Harbor
 
         return false unless @options[:cache_size] && size > @options[:cache_size]
 
-        Dir[@path + "**/*"].each do |file|
+        files = Dir[@path + "**/*"].select { |f| ::File.file?(f) }.sort_by { |f| ::File.ctime(f) }
+        files.each do |file|
           next unless ::File.ctime(file) < Time.now - (@options[:cache_time] || 60)
 
           file = Pathname(file).relative_path_from(@path)
