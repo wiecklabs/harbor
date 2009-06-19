@@ -17,6 +17,8 @@ module Harbor
       def put(path, file)
         f = Harbor::FileStore::File.new(self, path)
 
+        ::FileUtils.mkdir_p((@path + path).parent.to_s) unless (@path + path).parent.exist?
+
         while data = file.read(500_000)
           f.write data
         end
@@ -26,6 +28,7 @@ module Harbor
 
       def delete(path)
         ::FileUtils.rm(@path + path)
+        Harbor::File.rmdir_p((@path + path).parent.to_s)
       end
 
       def exists?(path)

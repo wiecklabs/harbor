@@ -24,6 +24,35 @@ class LocalFileStoreTest < Test::Unit::TestCase
     assert(File.exists?("/tmp/#{filename}"), "File should exist: /tmp/#{filename}")
   end
 
+  def test_put_with_directory_structure
+    filename = "__dir__/__local_file_store_test__"
+    file = File.open(__FILE__)
+
+    assert_nothing_raised do
+      @tmp.put(filename, file)
+    end
+
+    assert(File.exists?("/tmp/#{filename}"))
+  ensure
+    FileUtils.rm("/tmp/#{filename}")
+    Harbor::File.rmdir_p("/tmp/__dir__")
+  end
+
+  def test_delete_with_directory_structure
+    filename = "__dir__/__local_file_store_test__"
+    file = File.open(__FILE__)
+
+    @tmp.put(filename, file)
+    @tmp.delete(filename)
+
+    assert(!@tmp.exists?(filename))
+    assert(!File.exists?("/tmp/#{filename}"))
+    assert(!File.exists?("/tmp/__dir__"))
+  ensure
+    FileUtils.rm("/tmp/#{filename}") rescue nil
+    Harbor::File.rmdir_p("/tmp/__dir__") rescue nil
+  end
+
   def test_delete
     filename = "__local_file_store_test__"
     @tmp.put(filename, File.open(__FILE__))
