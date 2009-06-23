@@ -5,6 +5,7 @@ module Harbor
       attr_accessor :path, :options
 
       def initialize(path, options = {})
+        path = "#{path}/" unless path =~ /.*\/$/
         @path = Pathname(path)
 
         @options = options
@@ -13,10 +14,12 @@ module Harbor
       end
 
       def get(path)
+        path = strip_leading_slash(path)
         Harbor::FileStore::File.new(self, path)
       end
 
       def put(path, file)
+        path = strip_leading_slash(path)
         f = Harbor::FileStore::File.new(self, path)
 
         size = file.is_a?(::File) ? ::File.size(file) : file.size
@@ -32,19 +35,24 @@ module Harbor
       end
 
       def delete(path)
+        path = strip_leading_slash(path)
         ::FileUtils.rm(@path + path)
         Harbor::File.rmdir_p((@path + path).parent.to_s)
       end
 
       def exists?(path)
+        path = strip_leading_slash(path)
         (@path + path).exist?
       end
 
       def open(path, mode = "r", &block)
+        path = strip_leading_slash(path)
+        ::FileUtils.mkdir_p((@path + path).parent.to_s) unless (@path + path).parent.exist?
         ::File.open(@path + path, mode, &block)
       end
 
       def size(path)
+        path = strip_leading_slash(path)
         ::File.size(@path + path)
       end
 
@@ -77,6 +85,11 @@ module Harbor
         end
 
         true
+      end
+      
+      def strip_leading_slash(path)
+        path = path[1..path.size - 1] if path =~ /^\//
+        path
       end
 
     end
