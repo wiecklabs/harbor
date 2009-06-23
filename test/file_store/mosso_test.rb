@@ -132,5 +132,17 @@ class MossoFileStoreTest < Test::Unit::TestCase
     @local.delete(filename) rescue nil
     @local.options[:copy_on_write] = nil
   end
+  
+  def test_mosso_copy_on_read_with_local_copy_on_write
+    @mosso.options[:copy_on_read] = ["local"]
+    @local.options[:copy_on_write] = ["mosso"]
+    
+    filename = "__local_file_store_test__"
+    file = File.open(__FILE__)
+    
+    @local.put(filename, file)
+    
+    assert(@mosso.exists?(filename))
+  end
 
 end
