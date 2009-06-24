@@ -7,6 +7,10 @@ module Harbor
       def initialize(store, path)
         @store = store
         @path = path
+      end
+
+      def copy_on_write
+        return @copy_on_write if @copy_on_write
 
         @copy_on_write = []
         if store.options[:copy_on_write]
@@ -15,18 +19,26 @@ module Harbor
           end
         end
 
+        @copy_on_write
+      end
+
+      def copy_on_read
+        return @copy_on_read if @copy_on_read
+
         @copy_on_read = []
         if store.options[:copy_on_read]
           store.options[:copy_on_read].each do |name|
             @copy_on_read << Harbor::FileStore[name].get(@path)
           end
         end
+
+        @copy_on_read
       end
 
       def write(data)
         open("wb")
 
-        @copy_on_write.each { |file| file.write(data) }
+        copy_on_write.each { |file| file.write(data) }
 
         if data
           @stream.write(data)
@@ -41,7 +53,7 @@ module Harbor
 
         data = @stream.read(bytes)
 
-        @copy_on_read.each { |file| file.write(data) }
+        copy_on_read.each { |file| file.write(data) }
 
         unless bytes && data
           @stream.close
