@@ -104,7 +104,7 @@ module Harbor
       end
 
       def size(filename)
-        container.object(filename).bytes
+        container.object(filename).bytes.to_i
       end
 
       def container
