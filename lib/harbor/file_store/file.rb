@@ -7,6 +7,8 @@ module Harbor
       def initialize(store, path)
         @store = store
         @path = path
+        
+        @pending_writes = []
       end
 
       def copy_on_write
@@ -38,13 +40,24 @@ module Harbor
       def write(data)
         open("wb")
 
-        copy_on_write.each { |file| file.write(data) }
+        copy_on_write.each do |file|
+          if store.options[:async_copy]
+            @pending_writes << lambda { file.write(data) }
+          else
+            file.write(data)
+          end
+        end
 
         if data
           @stream.write(data)
         else
           @stream.close
           @stream = nil
+          
+          Thread.new {
+            @pending_writes.each { |write| write.call }
+            @pending_writes = []
+          } if store.options[:async_copy]
         end
       end
 
