@@ -5,13 +5,13 @@ require Pathname(__FILE__).dirname.parent + "lib/harbor"
 require "harbor/xml_view"
 require "harbor/mailer"
 
-module Rack
-  class Request
-    def params
-      @params ||= {}
-    end
-  end
-end
+# module Rack
+#   class Request
+#     def params
+#       @params ||= {}
+#     end
+#   end
+# end
 
 def upload(filename)
   input = <<-EOF
