@@ -1,5 +1,3 @@
-require "faster_csv"
-
 module Harbor
   class Locale
 
