@@ -1,0 +1,7 @@
+# This is a pipe-delimited file with values of
+# LanguageAbbreviation|CultureCode|Description
+
+US|en-US|English (US)
+AU|en-AU|English (AU)
+UK|en-GB|English (UK)
+JP|ja|Japanese
