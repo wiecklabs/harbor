@@ -1,4 +1,5 @@
-require "helper"
+require "pathname"
+require Pathname(__FILE__).dirname + "helper"
 
 class RequestTest < Test::Unit::TestCase
   def test_no_method_override_for_get
@@ -11,6 +12,18 @@ class RequestTest < Test::Unit::TestCase
     assert_equal("POST", post("/?_request=delete").request_method)
     assert_equal("PUT", post("/", :input => "_method=put").request_method)
     assert_equal("DELETE", post("/", :input => "_method=delete").request_method)
+  end
+
+  def test_params_fetch
+    request = get("/", { 'QUERY_STRING' => 'fruit=apple&preperation=&servings=' })
+
+    assert_equal('apple', request.fetch('fruit'))
+    assert_equal(nil, request.fetch('preperation'))
+    assert_equal(nil, request.fetch('servings'))
+
+    assert_equal('apple', request.fetch('fruit', 'orange'))
+    assert_equal('diced', request.fetch('preperation', 'diced'))
+    assert_equal(4, request.fetch('servings', 4))
   end
 
   def get(path, options = {})
