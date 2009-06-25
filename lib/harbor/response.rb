@@ -96,6 +96,11 @@ module Harbor
       redirect(url, params) and throw(:abort_request)
     end
 
+    def abort!(code)
+      self.status = code
+      throw(:abort_request)
+    end
+
     def unauthorized
       self.status = 401
     end

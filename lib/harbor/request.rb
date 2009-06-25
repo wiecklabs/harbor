@@ -34,7 +34,9 @@ module Harbor
       /yacybot/i,
       /rpt.*httpclient/i,
       /indy.*library/i,
-      /baiduspider/i
+      /baiduspider/i,
+      /WhistleBlower/i,
+      /Pingdom/
     ].freeze
 
     attr_accessor :layout

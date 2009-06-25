@@ -117,8 +117,9 @@ module Harbor
 
       [:@html, :@text].each do |ivar|
         if content = instance_variable_get(ivar)
-          new_content = content.to_s.gsub(/(http(s)?:\/\/.+?(?=[" <]|$))/) do |url|
-            "#{mail_server_url}/m/#{envelope_id}?r=#{CGI.escape([url].pack("m"))}"
+          new_content = content.to_s.gsub(/(https?:\/\/.+?(?=[" <]|$))(\W*)(.{4}|$)/) do |url|
+            # Don't tokenize the inner text of a link
+            $3 == '</a>' ? url : ("#{mail_server_url}/m/#{envelope_id}?r=#{CGI.escape([$1].pack("m"))}" + $2 + $3)
           end
           instance_variable_set(ivar, new_content)
         end
@@ -187,6 +188,16 @@ module Harbor
 
       def inspect
         "#<Harbor::Mail::Attachment @file=#{file.inspect}>"
+      end
+
+      def _dump(*)
+        Marshal.dump(@file)
+      end
+
+      def self._load(marshalled)
+        attachment = allocate
+        attachment.instance_variable_set(:@file, Marshal.load(marshalled))
+        attachment
       end
     end
 
