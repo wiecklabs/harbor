@@ -102,6 +102,8 @@ module Harbor
       param_keys = []
 
       if matcher.is_a?(String)
+        # Strip trailing forward-slash on routes
+        matcher = matcher[0..-2] if (matcher[-1] == ?/)
         matcher = /^#{matcher.gsub('.', '[\.]').gsub(PARAM) { param_keys << $2; "(#{URI_CHAR}+)" }}$/
       end
 
