@@ -34,7 +34,7 @@ module Harbor::ViewContext::Helpers::Cache
     store = @cache_store || Harbor::View.fragment_cache_store
 
     if store.nil?
-      raise ArgumentError.new("Cache Store Not Defined.  Please set Harbor::ViewContext.fragment_cache_store to your desired cache store.")
+      raise ArgumentError.new("Cache Store Not Defined.  Please set Harbor::View.fragment_cache_store to your desired cache store.")
     end
 
     content = if item = store.get(key)
