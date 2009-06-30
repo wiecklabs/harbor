@@ -48,6 +48,14 @@ module Harbor
       super(env)
     end
 
+    def fetch(key, default_value = nil)
+      if (value = self[key]).nil? || value == ''
+        default_value
+      else
+        value
+      end
+    end
+
     def bot?
       user_agent = env["HTTP_USER_AGENT"]
       BOT_AGENTS.any? { |bot_agent| user_agent =~ bot_agent }
@@ -76,6 +84,32 @@ module Harbor
 
     def environment
       @env['APP_ENVIRONMENT'] || (@application ? @application.environment : "development")
+    end
+
+    def protocol
+      ssl? ? 'https://' : 'http://'
+    end
+
+    def ssl?
+      @env['HTTPS'] == 'on' || @env['HTTP_X_FORWARDED_PROTO'] == 'https'
+    end
+
+    def referer
+      @env['HTTP_REFERER']
+    end
+
+    def uri
+      @env['REQUEST_URI'] || @env['REQUEST_PATH']
+    end
+
+    # ==== Returns
+    # String::
+    #   The URI without the query string. Strips trailing "/" and reduces
+    #   duplicate "/" to a single "/".
+    def path
+      path = (uri.empty? ? '/' : uri.split('?').first).squeeze("/")
+      path = path[0..-2] if (path[-1] == ?/) && path.size > 1
+      path
     end
 
     private

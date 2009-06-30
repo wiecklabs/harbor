@@ -39,9 +39,12 @@ module Harbor
       @view = view
       @context = context.is_a?(ViewContext) ? context : ViewContext.new(self, context)
     end
+    
+    def content
+      @content ||= _erubis_render(@view, @context)
+    end
 
     def to_s(layout = nil)
-      content = _erubis_render(@view, @context)
       if layout
         if layout.is_a?(Array)
           actual = nil
@@ -88,4 +91,5 @@ module Harbor
       @__templates ||= {}
     end
   end
+
 end
