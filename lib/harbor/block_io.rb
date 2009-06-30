@@ -10,7 +10,7 @@ module Harbor
       case path_or_io
       when ::IO
         @io = path_or_io
-        @size = @io.state.size
+        @size = @io.stat.size
       when StringIO, Harbor::FileStore::File
         @io = path_or_io
         @size = @io.size
