@@ -23,7 +23,7 @@ module Harbor
         auth = new(request)
 
         unless auth.provided? && yield(auth.credentials)
-          response.headers["WWW-Authenticate"] = 'Basic realm=""' % auth.realm
+          response.headers["WWW-Authenticate"] = 'Basic realm="%s"' % auth.realm
           response.unauthorized!
         end
       end
