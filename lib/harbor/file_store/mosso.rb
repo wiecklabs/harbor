@@ -14,10 +14,12 @@ module Harbor
       end
 
       def get(path)
+        path = strip_leading_slash(path)
         Harbor::FileStore::File.new(self, path)
       end
 
       def put(filename, file)
+        filename = strip_leading_slash(filename)
         url = container.connection.storagehost + container.connection.storagepath + "/#{container.name}/#{filename}"
         token = container.connection.authtoken
 
@@ -56,14 +58,17 @@ module Harbor
       end
 
       def delete(filename)
+        filename = strip_leading_slash(filename)
         container.delete_object(filename)
       end
 
       def exists?(filename)
+        filename = strip_leading_slash(filename)
         container.object_exists?(filename)
       end
 
       def open(filename, mode = "r", &block)
+        filename = strip_leading_slash(filename)
         url = container.connection.storagehost + container.connection.storagepath + "/#{container.name}/#{filename}"
         token = container.connection.authtoken
 
@@ -104,6 +109,7 @@ module Harbor
       end
 
       def size(filename)
+        filename = strip_leading_slash(filename)
         container.object(filename).bytes.to_i
       end
 
@@ -120,6 +126,11 @@ module Harbor
 
       def connected?
         @connection && @connection.authok?
+      end
+      
+      def strip_leading_slash(path)
+        path = path[1..path.size - 1] if path =~ /^\//
+        path
       end
 
     end
