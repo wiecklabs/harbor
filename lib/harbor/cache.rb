@@ -50,10 +50,8 @@ module Harbor
         @semaphore = Mutex.new
 
         if @path = path
-          ::File.open(@path, "a+")
-          ::File.open(@path) do |file|
-            yaml = YAML.load(file)
-            @cache = yaml if yaml
+          ::File.open(@path, "a+b") do |file|
+            @cache = Marshal.load(file) unless file.eof?
           end
         end
       end
@@ -99,7 +97,7 @@ module Harbor
       end
 
       def cache_to_file
-        ::File.open(@path, "w") { |f| YAML.dump(@cache, f) } if @path
+        ::File.open(@path, "wb") { |f| Marshal.dump(@cache, f) } if @path
       end
     end
 
