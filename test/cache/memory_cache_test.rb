@@ -27,7 +27,7 @@ class MemoryCacheTest < Test::Unit::TestCase
     assert_raise(ArgumentError) { @cache.put('key', CACHE_CONTENT, 1, 0) }
 
     assert_nothing_raised { @cache.put('key', CACHE_CONTENT, 1) }
-    assert_nothing_raised { @cache.put('key', CACHE_CONTENT, 1, 1) }
+    assert_nothing_raised { @cache.put('key', CACHE_CONTENT, 1, 5) }
   end
 
   def test_content_is_retrievable_before_ttl
