@@ -53,7 +53,7 @@ module Harbor
           ::File.open(@path, "a+")
           ::File.open(@path) do |file|
             yaml = YAML.load(file)
-            @cache = yaml unless yaml.blank?
+            @cache = yaml if yaml
           end
         end
       end
@@ -76,8 +76,9 @@ module Harbor
       def get(key)
         if item = @cache[key]
           if item.fresh?
-            @semaphore.synchronize { item.bump }
-            cache_to_file if @maximum_age
+            @semaphore.synchronize do
+              cache_to_file if item.bump
+            end
 
             item
           else
@@ -92,11 +93,9 @@ module Harbor
 
       def delete(key)
         @semaphore.synchronize do
-          if item = @cache[key]
-            @cache.delete(key)
-          end
+          @cache.delete(key) if item = @cache[key]
           cache_to_file
-        end
+        end;nil
       end
 
       def cache_to_file
