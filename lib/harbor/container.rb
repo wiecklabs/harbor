@@ -20,6 +20,26 @@ module Harbor
   #   services.get("Controller") # => #<Controller: @mailer=#<Mailer>>
   ##
   class Container
+    
+    class RegistrationTypeMismatchError < StandardError
+      def initialize(registration_name, previously_registered_type, mismatched_type)
+        super(<<-EOS.split($/).join(' '))
+          "#{registration_name}" has already been registered as a #{previously_registered_type.inspect}
+          but a modification of Type to #{mismatched_type.inspect} was attempted.
+        EOS
+      end
+    end
+
+    class ServiceRegistration
+
+      attr_reader :name, :service, :initializers
+
+      def initialize(name, service)
+        @name, @service = name, service
+        @initializers = Set.new
+      end
+
+    end
 
     def initialize #:nodoc:
       @services = {}
@@ -39,20 +59,31 @@ module Harbor
     ##
     def get(name, optional_properties = {})
       raise ArgumentError.new("#{name} is not a registered service name") unless registered?(name)
-      registration, setup = @services[name]
-
-      service = registration.is_a?(Class) ? registration.new : registration
+      service_registration = @services[name]
+      service = service_registration.service.is_a?(Class) ? service_registration.service.new : service_registration.service
 
       dependencies(name).each do |dependency|
         service.send("#{dependency}=", get(dependency, optional_properties))
       end
 
+      optional_instances = {}
       optional_properties.each_pair do |k,v|
-        writer = "#{k}="
-        service.send(writer, v.is_a?(Class) ? v.new : v) if service.respond_to?(writer)
+        instance = v.is_a?(Class) ? v.new : v
+        optional_instances[k] = instance
       end
 
-      setup.call(service) if setup
+      optional_instances.each_pair do |k, v|
+        writer = "#{k}="
+        service.send(writer, v) if service.respond_to?(writer)
+        optional_instances.each_pair do |k2,v2|
+          next if k2 == k || !v2.respond_to?(writer)
+          v2.send(writer, v)
+        end
+      end
+
+      service_registration.initializers.each do |initializer|
+        initializer.call(service)
+      end
 
       service
     end
@@ -67,22 +98,26 @@ module Harbor
     #   services.register("mailer", Harbor::Mailer) { |mailer| mailer.from = "admin@example.com" }
     #   services.get("mailer") # => #<Harbor::Mailer @from="admin@example.com" @mail_server=#<SendmailServer...>>
     ##
-    def register(name, type, &setup)
-      type_dependencies = dependencies(name)
-      type_methods = type.is_a?(Class) ? type.instance_methods.grep(/\=$/) : []
+    def register(name, service, &setup)
+      if (existing_registration = @services[name]) && existing_registration.service != service
+        raise RegistrationTypeMismatchError.new(name, existing_registration.service, service)
+      end
 
-      @services.each do |service_name, service|
-        service_type, service_setup = service
-        if service_type.is_a?(Class) && service_type.instance_methods.include?("#{name}=")
-          dependencies(service_name) << name
+      type_dependencies = dependencies(name)
+      type_methods = service.is_a?(Class) ? service.instance_methods.grep(/\=$/) : []
+
+      @services.values.each do |service_registration|
+        if service_registration.service.is_a?(Class) && service_registration.service.instance_methods.include?("#{name}=")
+          dependencies(service_registration.name) << name
         end
 
-        if type_methods.include?("#{service_name}=")
-          type_dependencies << service_name
+        if type_methods.include?("#{service_registration.name}=")
+          type_dependencies << service_registration.name
         end
       end
 
-      @services[name] = [type, setup]
+      @services[name] ||= ServiceRegistration.new(name, service)
+      @services[name].initializers << setup if setup
 
       self
     end

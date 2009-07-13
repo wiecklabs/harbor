@@ -36,12 +36,12 @@ module Harbor
       register(:delete, matcher, &handler)
     end
 
-    def using(container, klass, &block)
-      Using.new(self, container, klass).instance_eval(&block)
+    def using(container, klass, initializer = nil, &block)
+      Using.new(self, container, klass, initializer).instance_eval(&block)
     end
 
     class Using
-      def initialize(router, container, klass)
+      def initialize(router, container, klass, initializer)
         @router = router
         @container = container
 
@@ -49,7 +49,7 @@ module Harbor
           @service_name = klass
         else
           @service_name = klass.to_s
-          @container.register(@service_name, klass)
+          @container.register(@service_name, klass, &initializer)
         end
       end
 
@@ -59,6 +59,7 @@ module Harbor
           @router.send(#{verb.inspect}, matcher) do |request, response|
             service = @container.get(@service_name, :request => request, :response => response)
 
+            # TODO: Eh? Why wouldn't you just register the Logger with the container?
             service.logger = Logging::Logger[service] if service.respond_to?(:logger=)
 
             handler.arity == 2 ? handler[service, request] : handler[service]

@@ -3,3 +3,4 @@ pkg
 doc
 .DS_Store
 log/*
+tmp
