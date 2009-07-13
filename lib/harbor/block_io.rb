@@ -5,14 +5,15 @@ module Harbor
   # where X-Sendfile cannot be used.
   ##
   class BlockIO
+    
     def initialize(path_or_io)
-      if path_or_io.is_a?(::IO) || path_or_io.is_a?(StringIO)
+      case path_or_io
+      when ::IO
         @io = path_or_io
-        if path_or_io.is_a?(StringIO)
-          @size = @io.size
-        else
-          @size = @io.stat.size
-        end
+        @size = @io.stat.size
+      when StringIO, Harbor::FileStore::File
+        @io = path_or_io
+        @size = @io.size
       else
         @io = ::File::open(path_or_io.to_s, 'r')
         @size = ::File.size(path_or_io.to_s)

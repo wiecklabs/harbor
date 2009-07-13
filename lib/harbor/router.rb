@@ -61,7 +61,7 @@ module Harbor
 
             service.logger = Logging::Logger[service] if service.respond_to?(:logger=)
 
-            handler.arity == 2 ? handler[service, request.params] : handler[service]
+            handler.arity == 2 ? handler[service, request] : handler[service]
           end
         end
         EOS
@@ -82,7 +82,11 @@ module Harbor
     def match(request)
       @routes.each do |request_method, matcher, param_keys, handler|
         next unless request.request_method == request_method
-        next unless request.path_info =~ matcher
+
+        # Strip trailing forward-slash on request path before matching
+        request_path = (request.path_info[-1] == ?/) ? request.path_info[0..-2] : request.path_info
+
+        next unless request_path =~ matcher
 
         request.params.update(Hash[*param_keys.zip($~.captures).flatten])
         return handler
@@ -98,6 +102,8 @@ module Harbor
       param_keys = []
 
       if matcher.is_a?(String)
+        # Strip trailing forward-slash on routes
+        matcher = matcher[0..-2] if (matcher[-1] == ?/)
         matcher = /^#{matcher.gsub('.', '[\.]').gsub(PARAM) { param_keys << $2; "(#{URI_CHAR}+)" }}$/
       end
 

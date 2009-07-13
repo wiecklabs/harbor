@@ -6,6 +6,7 @@ module Harbor
     include Helpers::Text
     include Helpers::Html
     include Helpers::Url
+    include Helpers::Cache
 
     attr_accessor :view
 

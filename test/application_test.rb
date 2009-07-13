@@ -1,4 +1,5 @@
-require "helper"
+require "pathname"
+require Pathname(__FILE__).dirname + "helper"
 
 class ApplicationTest < Test::Unit::TestCase
 
