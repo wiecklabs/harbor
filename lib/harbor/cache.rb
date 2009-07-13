@@ -45,9 +45,17 @@ module Harbor
 
     class Memory
 
-      def initialize
+      def initialize(path=nil)
         @cache = {}
         @semaphore = Mutex.new
+
+        if @path = path
+          ::File.open(@path, "a+")
+          ::File.open(@path) do |file|
+            yaml = YAML.load(file)
+            @cache = yaml unless yaml.blank?
+          end
+        end
       end
 
       def put(key, content, ttl, maximum_age = nil)
@@ -61,6 +69,7 @@ module Harbor
           return true if @cache[key] && @cache[key].fresh? && @cache[key].content.hash == content.hash
           @cache[key] = Harbor::Cache::Item.new(self, key, ttl, maximum_age, Time.now)
           @cache[key].content = content
+          cache_to_file
         end
       end
 
@@ -68,6 +77,8 @@ module Harbor
         if item = @cache[key]
           if item.fresh?
             @semaphore.synchronize { item.bump }
+            cache_to_file if @maximum_age
+
             item
           else
             delete(key)
@@ -82,12 +93,15 @@ module Harbor
       def delete(key)
         @semaphore.synchronize do
           if item = @cache[key]
-            item.destroy_content
             @cache.delete(key)
           end
+          cache_to_file
         end
       end
 
+      def cache_to_file
+        ::File.open(@path, "w") { |f| YAML.dump(@cache, f) } if @path
+      end
     end
 
   end
