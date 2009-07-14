@@ -1,12 +1,12 @@
 require "pathname"
 require Pathname(__FILE__).dirname.parent + "helper"
-
+require "ruby-debug"
 class MemoryCacheTest < Test::Unit::TestCase
 
   CACHE_CONTENT = 'Lorem ipsum dolor sit amet'
 
   def setup
-    @cache = Harbor::Cache::Memory.new(File.join(Dir::tmpdir, "cache_test"))
+    @cache = Harbor::Cache::Memory.new(@path=File.join(Dir::tmpdir, "cache_test"))
   end
 
   def teardown
@@ -62,4 +62,11 @@ class MemoryCacheTest < Test::Unit::TestCase
     assert_equal(nil, @cache.get('key'))
   end
 
+  def test_cache_persists
+    @cache.put('key', CACHE_CONTENT, 3)
+    @cache = nil
+    @cache = Harbor::Cache::Memory.new(@path)
+
+    assert_equal(CACHE_CONTENT, @cache.get('key').content)
+  end
 end
