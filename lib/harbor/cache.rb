@@ -50,7 +50,8 @@ module Harbor
         @semaphore = Mutex.new
 
         if @path = path
-          ::File.open(@path, "a+b") do |file|
+          ::File.open(@path, "a+b")
+          ::File.open(@path, "rb") do |file|
             @cache = Marshal.load(file) unless file.eof?
           end
         end
