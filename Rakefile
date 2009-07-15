@@ -67,7 +67,7 @@ require "rake/gempackagetask"
 
 NAME = "harbor"
 SUMMARY = "Harbor Framework"
-GEM_VERSION = "0.10.0"
+GEM_VERSION = "0.10.1"
 
 spec = Gem::Specification.new do |s|
   s.name = NAME
