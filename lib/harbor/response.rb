@@ -101,6 +101,10 @@ module Harbor
     end
 
     def abort!(code)
+      if Harbor::View.exists?("exceptions/#{code}.html.erb")
+        render "exceptions/#{code}.html.erb"
+      end
+
       self.status = code
       throw(:abort_request)
     end
