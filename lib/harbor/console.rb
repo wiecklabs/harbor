@@ -16,7 +16,13 @@ module Harbor
 
     def self.start
       require 'irb'
-      require 'irb/completion'
+
+      begin
+        require 'irb/completion'
+      rescue Exception
+        # No readline available, proceed anyway.
+      end
+
       if ::File.exists? ".irbrc"
         ENV['IRBRC'] = ".irbrc"
       end
