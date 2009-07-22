@@ -62,12 +62,16 @@ module Harbor
     end
 
     def find_public_file(file)
+      result = nil
+
       @public_paths.each do |public_path|
-        path = public_path + file
-        return path if path.file?
+        if (path = public_path + file).file?
+          result = path
+          break
+        end
       end
 
-      nil
+      result
     end
 
   end
