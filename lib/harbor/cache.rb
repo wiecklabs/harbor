@@ -67,6 +67,16 @@ module Harbor
       nil
     end
 
+    def delete_matching(key)
+      @semaphore.synchronize do
+        @store.delete_matching(key)
+      end
+    rescue
+      log("Harbor::Cache#put unable to delete cached content.", $!)
+    ensure
+      nil
+    end
+
     private
 
     def log(message, error)

@@ -36,6 +36,12 @@ class Harbor::Cache::Disk
     end
   end
 
+  def delete_matching(key)
+    filenames_for_key(key).each do |path|
+      FileUtils.rm(path) rescue nil
+    end
+  end
+
   def bump(key)
     if item = get(key)
       current_path = path_for_item(item)
@@ -50,7 +56,7 @@ class Harbor::Cache::Disk
   private
 
   def filenames_for_key(key)
-    Dir[@path + "c_#{key}.*"]
+    key.is_a?(Regexp) ? Dir[@path + "*"].select { |path| path[/.*?__INFO__/] =~ key } : Dir[@path + "c_#{key}.*"]
   end
 
   def filename_for_key(key)
@@ -83,7 +89,7 @@ class Harbor::Cache::Disk
   end
 
   def path_for_item(item)
-    @path + "c_#{item.key}.#{item.ttl}.#{item.maximum_age}.#{item.cached_at.strftime('%Y%m%dT%H%M%S%z')}.#{item.expires_at.strftime('%Y%m%dT%H%M%S%z')}"
+    @path + "c_#{item.key}.__INFO__.#{item.ttl}.#{item.maximum_age}.#{item.cached_at.strftime('%Y%m%dT%H%M%S%z')}.#{item.expires_at.strftime('%Y%m%dT%H%M%S%z')}"
   end
 
 end
