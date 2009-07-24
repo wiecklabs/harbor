@@ -48,7 +48,7 @@ module Rack
           content_length = env['CONTENT_LENGTH'].to_i
           input = env['rack.input']
 
-          boundary_size = boundary.size + EOL.size
+          boundary_size = Rack::Utils.bytesize(boundary) + EOL.size
           bufsize = 16384
 
           content_length -= boundary_size
