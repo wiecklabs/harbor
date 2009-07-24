@@ -56,7 +56,7 @@ module Rack
           status = input.read(boundary_size)
           raise EOFError, "bad content body"  unless status == boundary + EOL
 
-          rx = /(?:#{EOL})?#{Regexp.quote boundary}(#{EOL}|--)/
+          rx = /(?:#{EOL})?#{Regexp.quote boundary}(#{EOL}|--)/n
 
           loop {
             head = nil
@@ -64,7 +64,7 @@ module Rack
             filename = content_type = name = nil
 
             until head && buf =~ rx
-              if !head && i = buf.index("\r\n\r\n")
+              if !head && i = buf.index(EOL+EOL)
                 head = buf.slice!(0, i+2) # First \r\n
                 buf.slice!(0, 2)          # Second \r\n
 
