@@ -37,7 +37,7 @@ module Harbor
     end
 
     def using(container, klass, initializer = nil, &block)
-      Using.new(self, container, klass, initializer).instance_eval(&block)
+      self.class::Using.new(self, container, klass, initializer).instance_eval(&block)
     end
 
     class Using
