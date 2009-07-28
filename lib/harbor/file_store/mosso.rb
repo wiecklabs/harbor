@@ -30,6 +30,8 @@ module Harbor
         elsif file.is_a?(Harbor::FileStore::File) && file.store.local?
           path = file.store.path + file.path
         end
+        
+        make_path(::File.dirname(path))
 
         command = <<-CMD
         curl -X "PUT" \\
@@ -89,6 +91,8 @@ module Harbor
             headers << line
           end
         elsif mode =~ /w/
+          make_path(::File.dirname(filename))
+          
           command = <<-CMD
           curl -X "PUT" \\
                -T #{"-"} \\
@@ -126,6 +130,18 @@ module Harbor
 
       def connected?
         @connection && @connection.authok?
+      end
+      
+      def make_path(path)
+        if path == "." || path == "/"
+          return
+        else
+          unless @container.object_exists?(path)
+            object = @container.create_object(path)
+            object.write(nil, { 'Content-Type' => 'application/directory'} )
+          end
+          make_path(::File.dirname(path))
+        end
       end
       
       def strip_leading_slash(path)
