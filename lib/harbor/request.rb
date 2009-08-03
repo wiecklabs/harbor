@@ -85,13 +85,15 @@ module Harbor
     def environment
       @env['APP_ENVIRONMENT'] || (@application ? @application.environment : "development")
     end
-    
+
     def params
-      begin
-        self.GET.update(self.POST)
+      params = begin
+        self.GET && self.GET.update(self.POST || {})
       rescue EOFError => e
         self.GET
       end
+
+      params || {}
     end
 
     def protocol

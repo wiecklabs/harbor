@@ -10,7 +10,7 @@ class CacheItemTest < Test::Unit::TestCase
   end
 
   def test_accessors
-    item = Harbor::Cache::Item.new('key', 1, 2, Time.now)
+    item = Harbor::Cache::Item.new('key', 1, 2, '', Time.now)
     assert_respond_to(item, :key)
     assert_respond_to(item, :ttl)
     assert_respond_to(item, :maximum_age)
@@ -26,18 +26,18 @@ class CacheItemTest < Test::Unit::TestCase
     assert_raise(ArgumentError) { Harbor::Cache::Item.new('key', 1, 1, '', Time.now)}
     assert_raise(ArgumentError) { Harbor::Cache::Item.new('key', 1, 10, '', nil)}
 
-    assert_nothing_raised { Harbor::Cache::Item.new('key', 1, 2, '') }
+    assert_nothing_raised { Harbor::Cache::Item.new('key', 1, 2, '', Time.now) }
     assert_nothing_raised { Harbor::Cache::Item.new('key', 1, 2, '', Time.now) }
   end
 
   def test_freshness
-    item = Harbor::Cache::Item.new('key', 3, nil, '')
+    item = Harbor::Cache::Item.new('key', 3, nil, '', Time.now)
     Time.warp(2) { assert_equal(true, item.fresh?) }
     Time.warp(3) { assert_equal(false, item.fresh?) }
   end
 
   def test_expired
-    item = Harbor::Cache::Item.new('key', 3, nil, '')
+    item = Harbor::Cache::Item.new('key', 3, nil, '', Time.now)
     Time.warp(2) { assert_equal(false, item.expired?) }
     Time.warp(3) { assert_equal(true, item.expired?) }
   end

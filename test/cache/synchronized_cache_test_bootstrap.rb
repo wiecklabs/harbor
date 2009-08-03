@@ -36,8 +36,17 @@ module SynchronizedCacheTestBootstrap
 
   def test_content_is_retrievable_before_maximum_age_but_not_after
     @cache.put('key', CACHE_CONTENT, 3, 6)
-    Time.warp(2) { assert_equal(CACHE_CONTENT, @cache.get('key').content) }
-    Time.warp(4) { assert_equal(CACHE_CONTENT, @cache.get('key').content) }
+
+    Time.warp(2) do
+      assert @cache.get('key'), "Cache was expected to contain key but didn't"
+      assert_equal(CACHE_CONTENT, @cache.get('key').content)
+    end
+
+    Time.warp(4) do
+      assert @cache.get('key'), "Cache was expected to contain key but didn't"
+      assert_equal(CACHE_CONTENT, @cache.get('key').content)
+    end
+
     Time.warp(6) { assert_equal(nil, @cache.get('key')) }
   end
   
