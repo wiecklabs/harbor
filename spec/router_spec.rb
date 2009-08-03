@@ -5,7 +5,12 @@ include Harbor
 
 describe "Router" do
 
+  before do
+    @application = Class.new(Harbor::Application)
+  end
+
   describe "#initialize" do
+
     it "should set @routes to []" do
       Router.new.routes.should == []
     end
@@ -34,7 +39,7 @@ describe "Router" do
   describe "#transform" do
     before do
       @router = Router.new
-      @request = Rack::Request.new("PATH_INFO" => "/users", "REQUEST_METHOD" => "GET")
+      @request = Harbor::Request.new(@application, "PATH_INFO" => "/users", "REQUEST_METHOD" => "GET")
     end
 
     describe "with a regular expression" do
@@ -69,7 +74,7 @@ describe "Router" do
     before do
       @router = Router.new
       @router.get("/") { "Index" }
-      @request = Rack::Request.new("PATH_INFO" => "/")
+      @request = Harbor::Request.new(@application, "PATH_INFO" => "/")
     end
 
     it "should match a get request" do
@@ -87,7 +92,7 @@ describe "Router" do
     before do
       @router = Router.new
       @router.post("/") { "Index" }
-      @request = Rack::Request.new("PATH_INFO" => "/")
+      @request = Harbor::Request.new(@application, "PATH_INFO" => "/")
     end
 
     it "should match a post request" do
@@ -156,7 +161,7 @@ describe "Router" do
         attr_accessor :request, :response
       end
       @router = Router.new
-      @request = Rack::Request.new("PATH_INFO" => "/", "REQUEST_METHOD" => "GET")
+      @request = Harbor::Request.new(@application, "PATH_INFO" => "/", "REQUEST_METHOD" => "GET")
       @container = Container.new
     end
 
@@ -171,15 +176,17 @@ describe "Router" do
       @router.using(@container, Controller) do
         get("/") { |controler, params| params }
       end
-      @router.match(@request).call(@request, nil).is_a?(Hash).should be_true
+
+      @router.match(@request).call(@request, nil).should == @request
     end
-    
+
     it "should be able to use a service-name" do
       @container.register("controller", Controller)
       @router.using(@container, "controller") do
         get("/") { |controller, params| params }
       end
-      @router.match(@request).call(@request, nil).is_a?(Hash).should be_true
+
+      @router.match(@request).call(@request, nil).should == @request
     end
   end
 

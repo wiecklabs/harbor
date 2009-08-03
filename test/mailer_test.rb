@@ -1,4 +1,5 @@
-require "helper"
+require "pathname"
+require Pathname(__FILE__).dirname + "helper"
 require "harbor/mailer"
 
 class MailerTest < Test::Unit::TestCase
@@ -45,12 +46,13 @@ class MailerTest < Test::Unit::TestCase
   # 
   def test_tokenize_urls_with_link_as_name
     mailer = Harbor::Mailer.new
-    url = "http://test.com"
-    mailer.rawhtml = "<a href=\"#{url}\">#{url}</a>"
+    destination_url = "http://test.com"
+
+    mailer.rawhtml = "<a href=\"#{destination_url}\">#{destination_url}</a>"
     mailer.tokenize_urls!("http://m.wieck.com")
 
-    url = "http://m.wieck.com/m/#{mailer.envelope_id}?r=#{CGI.escape([url].pack("m"))}"
-    assert_equal("<a href=\"#{url}\">#{url}</a>", mailer.html)
+    url = "http://m.wieck.com/m/#{mailer.envelope_id}?r=#{CGI.escape([destination_url].pack("m"))}"
+    assert_equal("<a href=\"#{url}\">#{destination_url}</a>", mailer.html)
   end
 
   def test_lazy_attachments

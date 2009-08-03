@@ -8,14 +8,6 @@ require "harbor/mailer"
 require "harbor/cache/memory"
 require "harbor/cache/disk"
 
-# module Rack
-#   class Request
-#     def params
-#       @params ||= {}
-#     end
-#   end
-# end
-
 class Time
 
   class << self
