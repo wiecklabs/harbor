@@ -10,7 +10,11 @@ require Pathname(__FILE__).dirname + "block_io"
 
 module Harbor
   class Application
-
+    
+    ##
+    # Routes are defined in this method. Note that Harbor does not define any default routes,
+    # so you must reimplement this method in your application.
+    ##
     def self.routes(services)
       raise NotImplementedError.new("Your application must redefine #{self}::routes.")
     end
@@ -32,6 +36,9 @@ module Harbor
       @environment = args.last || "development"
     end
 
+    ##
+    # By default, Harbor projects use the layout defined in views/layouts/application.
+    ##
     def default_layout
       "layouts/application"
     end
@@ -89,9 +96,9 @@ module Harbor
     def log_request(request, response, start_time, end_time)
 
       case
-      when response.status >= 500 then status = "\033[0;31m#{response.status}\033[0m"
-      when response.status >= 400 then status = "\033[0;33m#{response.status}\033[0m"
-      else status = "\033[0;32m#{response.status}\033[0m"
+      when response.status >= 500 then status = "\033[0;31m#{response.status}\033[0m" # prints the status value in red
+      when response.status >= 400 then status = "\033[0;33m#{response.status}\033[0m" # prints the status value in yellow
+      else status = "\033[0;32m#{response.status}\033[0m"                             # prints the status value in green
       end
 
       message = "[#{self.class}] [#{start_time.strftime('%m-%d-%Y @ %H:%M:%S')}] [#{"%2.2fs" % (end_time - start_time)}] [#{request.remote_ip}] [#{request.request_method}] #{request.path_info} (#{status})"
