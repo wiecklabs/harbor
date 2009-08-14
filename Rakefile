@@ -67,7 +67,7 @@ require "rake/gempackagetask"
 
 NAME = "harbor"
 SUMMARY = "Harbor Framework"
-GEM_VERSION = "0.10.8"
+GEM_VERSION = "0.10.9"
 
 spec = Gem::Specification.new do |s|
   s.name = NAME
@@ -81,7 +81,13 @@ spec = Gem::Specification.new do |s|
   s.files = %w(Rakefile) + Dir.glob("lib/**/*")
   s.executables = ['harbor']
 
-  s.add_dependency 'logging'
+  s.add_dependency "rack", "~> 1.0.0"
+  s.add_dependency "logging"
+  s.add_dependency "mailfactory"
+  s.add_dependency "thin"
+  s.add_dependency "erubis"
+  s.add_dependency "builder"
+
 end
 
 Rake::GemPackageTask.new(spec) do |pkg|
