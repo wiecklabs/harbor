@@ -53,7 +53,14 @@ module Harbor
         content_type ||= Rack::Mime::MIME_TYPES.fetch(::File.extname(path_or_io), "binary/octet-stream")
         if @request.env.has_key?("HTTP_X_SENDFILE_TYPE")
           @headers["X-Sendfile"] = path_or_io.to_s
-          @headers["Content-Length"] = ::File.size(path_or_io)
+          case path_or_io
+          when Harbor::FileStore::File
+            size = path_or_io.size
+          else
+            size = ::File.size(path_or_io.to_s)
+          end
+          #@headers["Content-Length"] = ::File.size(path_or_io)
+          @headers["Content-Length"] = size
         else
           @io = BlockIO.new(path_or_io)
           @headers["Content-Length"] = @io.size
