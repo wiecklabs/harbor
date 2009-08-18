@@ -18,3 +18,5 @@ FR|fr-FR|French (FR)
 DE|de-DE|German (DE)
 IT|it-IT|Italian (IT)
 SP|es-ES|Spanish (SP)
+PT|pt|Portuguese
+
