@@ -49,10 +49,11 @@ class ApplicationTest < Test::Unit::TestCase
   end
 
   def test_exception
+    rack_errors = StringIO.new
     status, = @application.call({
       "PATH_INFO" => "/exception",
       "REQUEST_METHOD" => "GET",
-      "rack.errors" => $stderr,
+      "rack.errors" => rack_errors,
       "HTTP_HOST" => "",
       "rack.request.form_hash" => {}
     })

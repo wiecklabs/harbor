@@ -7,8 +7,6 @@ module Harbor
   #   services.register("mail_server", Harbor::SendmailServer)
   #   
   #   require 'harbor/exception_notifier'
-  #   Harbor::ExceptionNotifier.notification_address = "admin@site.com"
-  #   Harbor::Application.error_handlers << Harbor::ExceptionNotifier
   # 
   # You will then receive email alerts for all 500 errors in the format of:
   # 
@@ -16,7 +14,7 @@ module Harbor
   #   Subject:  [ERROR] [request_host] [environment] Exception description
   #   Body:     stack trace found in log, with request details.
   ##
-  module ExceptionNotifier
+  class ExceptionNotifier
 
     def self.notification_address=(address)
       @@notification_address = address
@@ -28,8 +26,12 @@ module Harbor
       raise "Harbor::ExceptionMailer.notification_address not set."
     end
 
-    def self.call(exception, request, response, trace)
-      return if request.environment == "development"
+    def self.notification_address?
+      defined?(@@notification_address)
+    end
+
+    def self.notify(exception, request, response, trace)
+      return if request.environment == "development" 
 
       mailer = request.application.services.get("mailer")
       mailer.to = notification_address
@@ -53,3 +55,5 @@ module Harbor
 
   end
 end
+
+Harbor::Application.register_event(:exception) { |*args| Harbor::ExceptionNotifier.notify(*args) }

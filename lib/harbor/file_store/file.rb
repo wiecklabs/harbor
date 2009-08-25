@@ -84,6 +84,10 @@ module Harbor
         @stream ||= store.open(path, mode)
       end
 
+      def absolute_path
+        @store.path + @path
+      end
+
     end
   end
 end

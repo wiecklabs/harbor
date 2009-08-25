@@ -19,11 +19,11 @@ module Harbor
     module ClassMethods
       
       def events
-        @events ||= {}
+        @@events ||= {}
       end
       
       def events=(hash)
-        @events = hash
+        @@events = hash
       end
       
       def register_event(name, &block)

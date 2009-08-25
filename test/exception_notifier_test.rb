@@ -21,7 +21,6 @@ class ExceptionNotifierTest < Test::Unit::TestCase
     @services.register("mailer", Harbor::Mailer)
 
     Harbor::ExceptionNotifier.notification_address = "errors@site.com"
-    Harbor::Application.error_handlers << Harbor::ExceptionNotifier
 
     @request_log = StringIO.new
     @error_log = StringIO.new
@@ -44,7 +43,7 @@ class ExceptionNotifierTest < Test::Unit::TestCase
   end
 
   def teardown
-    Harbor::Application.error_handlers.clear
+    Harbor::Application.events.clear
   end
 
   def test_uses_default_behavior_in_development
