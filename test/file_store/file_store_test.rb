@@ -22,13 +22,6 @@ class FileStoreTest < Test::Unit::TestCase
     assert_raise(NotImplementedError) { store.put("path", Class.new.new) }
   end
 
-  def test_get_returns_harbor_file
-    flunk("API has changed. Do we no longer need this?")
-
-    store = Harbor::FileStore.new
-    assert(store.get("path").is_a?(Harbor::FileStore::File))
-  end
-
   def test_delete_must_be_defined
     store = Harbor::FileStore.new
     assert_raise(NotImplementedError) { store.delete("path") }
