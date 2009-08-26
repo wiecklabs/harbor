@@ -4,6 +4,7 @@ gem "erubis"
 require "erubis"
 
 require Pathname(__FILE__).dirname + "view_context"
+require Pathname(__FILE__).dirname + "layouts"
 
 module Harbor
   class View
@@ -16,6 +17,10 @@ module Harbor
 
     def self.path
       @path ||= []
+    end
+
+    def self.layouts
+      @layouts ||= Harbor::Layouts.new
     end
 
     @cache_templates = false
@@ -39,36 +44,19 @@ module Harbor
       @view = view
       @context = context.is_a?(ViewContext) ? context : ViewContext.new(self, context)
     end
+
+    def supports_layouts?
+      true
+    end
     
     def content
       @content ||= _erubis_render(@view, @context)
     end
 
     def to_s(layout = nil)
-      if layout
-        if layout.is_a?(Array)
-          actual = nil
-          self.class.path.each do |dir|
-            layout.each do |name|
-              if ::File.file?(dir + (name + self.extension))
-                actual = name
-                break
-              end
-            end
-            break if actual
-          end
+      layout = self.class.layouts.match(@view) if layout == :search
 
-          if actual
-            View.new(actual, @context.merge(:content => content)).to_s
-          else
-            raise LayoutNotFoundError.new(layout)
-          end
-        else
-          View.new(layout, @context.merge(:content => content)).to_s
-        end
-      else
-        content
-      end
+      layout ? View.new(layout, @context.merge(:content => content)).to_s : content
     end
 
     private

@@ -36,13 +36,6 @@ module Harbor
     end
 
     ##
-    # By default, Harbor projects use the layout defined in views/layouts/application.
-    ##
-    def default_layout
-      "layouts/application"
-    end
-
-    ##
     # Request entry point called by Rack. It creates a request and response
     # object based on the incoming request environment, checks for public
     # files, and dispatches the request.
@@ -146,6 +139,10 @@ module Harbor
       path = public_path + file
 
       path.file? ? path : nil
+    end
+
+    def default_layout
+      warn "Harbor::Application#default_layout has been deprecated. See Harbor::Layouts."
     end
 
     private

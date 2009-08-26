@@ -41,6 +41,19 @@ class Time
 
 end
 
+class Test::Unit::TestCase
+  def capture_stderr(&block)
+    $stderr = StringIO.new
+
+    yield
+
+    result = $stderr.string
+    $stderr = STDERR
+
+    result
+  end
+end
+
 def upload(filename)
   input = <<-EOF
 --AaB03x\r

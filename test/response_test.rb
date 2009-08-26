@@ -7,19 +7,17 @@ class ResponseTest < Test::Unit::TestCase
     def xhr?
       false
     end
-
-    def layout
-      "layouts/application"
-    end
   end
   
   def setup
     Harbor::View::path.unshift Pathname(__FILE__).dirname + "views"
+    Harbor::View::layouts.default("layouts/application")
     @response = Harbor::Response.new(RequestStub.new)
   end
   
   def teardown
     Harbor::View::path.clear
+    Harbor::View::layouts.clear
   end
   
   def test_content_buffer
@@ -78,5 +76,14 @@ class ResponseTest < Test::Unit::TestCase
     @response.render Harbor::XMLView.new("list")
     assert_equal("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<site>\n  <name>Bob</name>\n</site>\n", @response.buffer)
     assert_equal("text/xml", @response.content_type)
+  end
+
+  def test_deprecated_multiple_layout_behavior
+    result = capture_stderr do
+      @response.render "index", :text => "test", :layout => ["layouts/application", "layouts/other"]
+    end
+
+    assert_equal("LAYOUT\ntest\n", @response.buffer)
+    assert_match /deprecated/, result
   end
 end

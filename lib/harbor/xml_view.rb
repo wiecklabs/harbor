@@ -33,9 +33,11 @@ module Harbor
       @context = context.is_a?(ViewContext) ? context : XMLViewContext.new(self, context)
     end
 
-    def to_s(layout = nil)
-      warn "Layouts are not supported for XMLView objects." if layout
+    def supports_layouts?
+      false
+    end
 
+    def to_s(layout = nil)
       filename = @view
       filename += self.extension if ::File.extname(filename) == ""
 

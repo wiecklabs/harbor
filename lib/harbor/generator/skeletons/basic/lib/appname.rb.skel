@@ -13,6 +13,7 @@ Dir[Pathname(__FILE__).dirname + '##>=app_name<##/controllers/*'].each { |r| req
 require Pathname(__FILE__).dirname + '##>=app_name<##/application'
 
 Harbor::View::path.unshift(Pathname(__FILE__).dirname + "##>=app_name<##" + "views")
+Harbor::View::layouts.default("layouts/application")
 
 class ##>=app_class<##
   @@public_path = Pathname(__FILE__).dirname.parent.expand_path + "public"

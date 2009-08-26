@@ -81,21 +81,25 @@ module Harbor
     end
 
     def render(view, context = {})
+      if context[:layout].is_a?(Array)
+        warn "Passing multiple layouts to response.render has been deprecated. See Harbor::Layouts."
+        context[:layout] = context[:layout].first
+      end
 
-      layout = nil
-
-      unless view.is_a?(View)
-        if context.has_key?(:layout)
-          layout = context[:layout]
-        else
-          layout ||= @request.layout unless @request.xhr?
-        end
-
+      case view
+      when View
+        view.context.merge(context)
+      else
         view = View.new(view, context.merge({ :request => @request }))
       end
 
       self.content_type = view.content_type
-      puts view.to_s(layout)
+
+      if context.has_key?(:layout) || @request.xhr?
+        puts view.to_s(context[:layout])
+      else
+        puts view.to_s(:search)
+      end
     end
 
     def redirect(url, params = nil)

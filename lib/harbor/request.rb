@@ -69,10 +69,6 @@ module Harbor
       @session
     end
 
-    def layout
-      defined?(@layout) ? @layout : application.default_layout
-    end
-
     def remote_ip
       env["REMOTE_ADDR"] || env["HTTP_CLIENT_IP"] || env["HTTP_X_FORWARDED_FOR"]
     end
