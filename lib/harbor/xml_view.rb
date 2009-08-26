@@ -4,10 +4,13 @@ require "builder"
 module Harbor
   class XMLViewContext < ViewContext
 
-    def render(partial, variables=nil)
-      push_variables(variables)
-      result = XMLView.new(partial, self).to_s
-      pop_variables
+    def render(partial, variables=nil)      
+      context = to_hash
+
+      result = XMLView.new(partial, merge(variables)).to_s
+
+      replace(context)
+
       result
     end
 
