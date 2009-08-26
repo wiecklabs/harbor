@@ -42,10 +42,6 @@ module Harbor
       result
     end
 
-    # def instance_variables
-    #   super - %w(@view)
-    # end
-
     def capture(*args, &block)
       # get the buffer from the block's binding
       buffer = _erb_buffer( block.binding ) rescue nil
