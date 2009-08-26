@@ -1,3 +1,5 @@
+require "harbor/logging"
+
 gem "thin"
 require 'thin/version'
 require 'thin/daemonizing'
