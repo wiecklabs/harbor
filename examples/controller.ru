@@ -21,4 +21,4 @@ router = Harbor::Router.new do
   end
 end
 
-run Harbor::Application.new(router)
+run Harbor::Application.new(services, router)
