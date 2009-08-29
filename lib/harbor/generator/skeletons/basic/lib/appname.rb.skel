@@ -1,21 +1,23 @@
 require 'rubygems'
 
-gem "harbor", "~> 0.8"
+gem "harbor"
 require "harbor"
 
-Dir[Pathname(__FILE__).dirname + "##>=app_name<##" + "models/*"].each { |r| require r }
-Dir[Pathname(__FILE__).dirname + '##>=app_name<##/helpers/*'].each { |r| require r }
-
-require Pathname(__FILE__).dirname + "##>=app_name<##" + "controllers" + "application"
-
-Dir[Pathname(__FILE__).dirname + '##>=app_name<##/controllers/*'].each { |r| require r }
-
-require Pathname(__FILE__).dirname + '##>=app_name<##/application'
-
-Harbor::View::path.unshift(Pathname(__FILE__).dirname + "##>=app_name<##" + "views")
+Harbor::View::path << Pathname(__FILE__).dirname + "##>=app_name<##" + "views"
 Harbor::View::layouts.default("layouts/application")
 
-class ##>=app_class<##
+class ##>=app_class<## < Harbor::Application
+
+  def self.routes(services)
+    Harbor::Router.new do
+
+      using services, Default do
+        get("/") { |default| default.index }
+      end
+
+    end
+  end
+
   @@public_path = Pathname(__FILE__).dirname.parent.expand_path + "public"
   def self.public_path=(value)
     @@public_path = value
@@ -43,3 +45,5 @@ class ##>=app_class<##
     @@tmp_path
   end
 end
+
+require Pathname(__FILE__).dirname + '##>=app_name<##/controllers/default'

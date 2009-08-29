@@ -3,12 +3,9 @@
 ENV["ENVIRONMENT"] ||= "development"
 require "lib/##>=app_name<##"
 
-# View::cache_templates!
-
 services = Harbor::Container.new
-
-# ##>=app_class<##.services.register("mailer", Harbor::Mailer)
-# ##>=app_class<##.services.register("mail_server", Harbor::SendmailServer)
+# services.register("mailer", Harbor::Mailer)
+# services.register("mail_server", Harbor::SendmailServer)
 
 # DataMapper.setup :default, "sqlite3://#{Pathname(__FILE__).dirname.expand_path + "##>=app_name<##.db"}"
 # DataMapper.setup :search, "ferret:///tmp/##>=app_name<##.sock"
