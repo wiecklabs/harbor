@@ -56,7 +56,11 @@ class Harbor::Cache::Disk
   private
 
   def filenames_for_key(key)
-    key.is_a?(Regexp) ? Dir[@path + "*"].select { |path| path[/.*?__INFO__/] =~ key } : Dir[@path + "c_#{key}.*"]
+    if key.is_a?(Regexp)
+      Dir[@path + "*"].select { |path| path[/.*?__INFO__/] =~ key }
+    else
+      Dir[@path + "c_#{key}.*"]
+    end
   end
 
   def filename_for_key(key)

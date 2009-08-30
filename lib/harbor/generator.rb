@@ -9,9 +9,9 @@ module Harbor
     class UnknownCommandError < GeneratorError; end
     class GeneratorArgumentError < GeneratorError; end
 
-    def self.run(command, options = [])
-      executor = case command
-      when 'setup' then SetupCommand.new(options.first)
+    def self.run(app, command, options = [])
+      executor = if klass = @@generators["#{app}:#{command}"]
+        klass.new(options)
       else
         raise UnknownCommandError.new("Unknown Command: #{command}")
       end
@@ -19,13 +19,20 @@ module Harbor
       executor.run
     end
 
+    @@generators = {}
+    def self.register(app, command, klass)
+      @@generators["#{app}:#{command}"] = klass
+    end
+
     class SetupCommand
-      COMMAND = "setup"
-      
+      APP = 'harbor'
+      COMMAND = 'setup'
+      Harbor::Generator.register(APP, COMMAND, self)
+
       attr_reader :app_name
 
-      def initialize(app_name)
-        @app_name = app_name
+      def initialize(options)
+        @app_name = options.first
 
         raise GeneratorArgumentError.new("#{COMMAND} requires only an application name.") unless @app_name
       end

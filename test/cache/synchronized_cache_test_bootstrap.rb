@@ -52,4 +52,11 @@ module SynchronizedCacheTestBootstrap
     assert_equal(nil, @cache.get('key'))
   end
 
+  def test_content_can_be_deleted_with_a_matching_regex
+    @cache.put('sample_key', CACHE_CONTENT, 3)
+    @cache.delete_matching(/sample.*/)
+    assert_equal(nil, @cache.get('sample_key'))
+  end
+
+
 end

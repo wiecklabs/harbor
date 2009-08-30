@@ -22,6 +22,10 @@ class Harbor::Cache::Memory
     @cache.delete(key)
   end
 
+  def delete_matching(key_regex)
+    @cache.reject! { |key, value| key =~ key_regex }
+  end
+
   def bump(key)
     if item = @cache[key]
       item.bump

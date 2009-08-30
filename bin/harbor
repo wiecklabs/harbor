@@ -9,4 +9,4 @@ require 'harbor/generator'
 
 command = ARGV.shift
 
-Harbor::Generator.run(command, ARGV)
+Harbor::Generator.run('harbor', command, ARGV)
