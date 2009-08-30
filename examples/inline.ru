@@ -1,8 +1,8 @@
 require "pathname"
-require Pathname(__FILE__).dirname.parent + "lib/framework"
+require Pathname(__FILE__).dirname.parent + "lib/harbor"
 
-router = Router.new do
+router = Harbor::Router.new do
   get("/") { |request, response| response.puts "Hello World" }
 end
 
-run Application.new(router)
+run Harbor::Application.new(Harbor::Container.new, router)

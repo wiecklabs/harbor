@@ -4,10 +4,13 @@ require "builder"
 module Harbor
   class XMLViewContext < ViewContext
 
-    def render(partial, variables=nil)
-      push_variables(variables)
-      result = XMLView.new(partial, self).to_s
-      pop_variables
+    def render(partial, variables=nil)      
+      context = to_hash
+
+      result = XMLView.new(partial, merge(variables)).to_s
+
+      replace(context)
+
       result
     end
 
@@ -30,9 +33,11 @@ module Harbor
       @context = context.is_a?(ViewContext) ? context : XMLViewContext.new(self, context)
     end
 
-    def to_s(layout = nil)
-      warn "Layouts are not supported for XMLView objects." if layout
+    def supports_layouts?
+      false
+    end
 
+    def to_s(layout = nil)
       filename = @view
       filename += self.extension if ::File.extname(filename) == ""
 

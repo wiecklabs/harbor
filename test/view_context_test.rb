@@ -1,0 +1,65 @@
+require "pathname"
+require Pathname(__FILE__).dirname + "helper"
+
+class ViewContextTest < Test::Unit::TestCase
+
+  def setup
+    Harbor::View.path << Pathname(__FILE__).dirname + "views/view_context"
+    @assertor = Class.new do
+      include Test::Unit::Assertions
+    end.new
+
+    @context = {}
+    @context[:assertor] = @assertor
+  end
+  
+  def teardown
+    Harbor::View.path.clear
+  end
+
+  def test_instance_variables_are_available_in_context
+    @context[:variable] = true
+    @context[:assertions] = lambda do
+      @assertor.assert !!defined?(@variable), "Variable not provided"
+      @assertor.assert_equal true, @variable
+    end
+
+    Harbor::View.new("assertions", @context).to_s
+  end
+
+  def test_render_passes_variables_on
+    @context[:assertions] = lambda do
+      if defined?(@in_render)
+        @assertor.assert @in_render, "render did not pass its values to the new view"
+      else  
+        render "assertions", :in_render => true
+      end
+    end
+
+    Harbor::View.new("assertions", @context).to_s
+  end
+
+  def test_render_within_render
+    @context[:variable] = true
+    @context[:assertions] = lambda do
+      case
+      when @render_2
+        @assertor.assert @variable, "@variable was #{@variable.inspect} in second render"
+      when @render_1
+        @assertor.assert @variable, "@variable was #{@variable.inspect} before second render"
+
+        render "assertions", :render_2 => true, :variable => @variable
+
+        @assertor.assert @variable, "@variable was #{@variable.inspect} after second render"
+      else
+        render "assertions", :render_1 => true
+        @assertor.assert @variable, "@variable was #{@variable.inspect} after renders"
+      end
+    end
+
+    Harbor::View.new("assertions", @context).to_s
+  end
+
+  # def test_sub_renders_can
+
+end

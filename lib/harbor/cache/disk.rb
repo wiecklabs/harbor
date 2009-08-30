@@ -70,7 +70,7 @@ class Harbor::Cache::Disk
   def item_for_path(path)
     components = ::File.basename(path).split('.')
 
-    return nil if components.size < 5
+    return nil if components.size < 6
 
     expires_at = Time.parse(components.pop)
     cached_at = Time.parse(components.pop)
@@ -87,7 +87,7 @@ class Harbor::Cache::Disk
       ttl = nil
     end
 
-    key = components.join('.').sub(/^c\_/, '')
+    key = components.reject { |c| c == "__INFO__" }.join('.').sub(/^c\_/, '')
 
     Harbor::Cache::Item.new(key, ttl, maximum_age, ::File.read(path), cached_at, expires_at)
   end

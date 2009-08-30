@@ -1,9 +1,9 @@
-class Default < Application
+class Default
 
-  attr_accessor :mailer
+  attr_accessor :request, :response, :mailer
 
   def index
-    @response.render("default/index")
+    response.render "default/index"
   end
 
 end

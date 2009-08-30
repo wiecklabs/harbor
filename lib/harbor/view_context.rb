@@ -12,24 +12,34 @@ module Harbor
 
     def initialize(view, variables)
       @view = view
-      push_variables(variables)
       super(variables)
     end
 
     def merge(variables)
-      push_variables(variables)
+      update(variables)
+
       self
     end
 
-    def render(partial, variables=nil)
-      push_variables(variables)
-      result = View.new(partial, self).to_s
-      pop_variables
-      result
+    def clear
+      instance_variables.each { |ivar| remove_instance_variable(ivar) }
+
+      self
     end
 
-    def inspect
-      "Harbor::ViewContext <#{variable_frames.inspect}>"
+    def replace(variables)
+      clear
+      merge(variables)
+    end
+
+    def render(partial, variables=nil)
+      context = to_hash
+
+      result = View.new(partial, merge(variables)).to_s
+
+      replace(context)
+
+      result
     end
 
     def capture(*args, &block)
@@ -56,45 +66,6 @@ module Harbor
     end
 
     private
-
-    def push_variables(variables)
-      if variables.is_a?(Hash)
-        named_variables = {}
-        variables.each do |name, value|
-          if name.to_s[0,1] == "@"
-            named_variables[name] = value
-          else
-            named_variables["@#{name}"] = value
-          end
-        end
-
-        variable_frames.push(named_variables)
-
-        named_variables.each do |name, value|
-          instance_variable_set(name, value)
-        end
-      else
-        variable_frames.push({})
-      end
-    end
-
-    def pop_variables
-      if frame = variable_frames.pop
-        frame.each do |name, value|
-          instance_variable_set(name, nil)
-        end
-      end
-
-      if frame = variable_frames.last
-        frame.each do |name, value|
-          instance_variable_set(name, value)
-        end
-      end
-    end
-
-    def variable_frames
-      @variable_frames ||= []
-    end
 
     def request
       @request

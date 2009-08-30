@@ -7,16 +7,19 @@ require Pathname(__FILE__).dirname + "rack/utils"
 require Pathname(__FILE__).dirname + "request"
 require Pathname(__FILE__).dirname + "response"
 require Pathname(__FILE__).dirname + "block_io"
+require Pathname(__FILE__).dirname + "events"
 
 module Harbor
   class Application
 
+    include Harbor::Events
+    
+    ##
+    # Routes are defined in this method. Note that Harbor does not define any default routes,
+    # so you must reimplement this method in your application.
+    ##
     def self.routes(services)
       raise NotImplementedError.new("Your application must redefine #{self}::routes.")
-    end
-
-    def self.error_handlers
-      @@error_handlers ||= Set.new
     end
 
     attr_reader :router, :environment, :services
@@ -28,12 +31,8 @@ module Harbor
 
       @services = services
 
-      @router = (!args.empty? && !args[0].is_a?(String) && args[0].respond_to?(:match)) ? args[0] : self.class.routes(@services)
+      @router = (!args.empty? && !args[0].is_a?(String) && args[0].respond_to?(:match)) ? args.shift : self.class.routes(@services)
       @environment = args.last || "development"
-    end
-
-    def default_layout
-      "layouts/application"
     end
 
     ##
@@ -75,32 +74,7 @@ module Harbor
     rescue StandardError, LoadError, SyntaxError => e
       handle_exception(e, request, response)
     ensure
-      log_request(request, response, start, Time.now)
-    end
-
-    ##
-    # Logs requests and their params the configured request logger.
-    # 
-    # Format:
-    # 
-    #   #application      #time                   #duration   #ip              #method #uri      #status   #params
-    #   [PhotoManagement] [04-02-2009 @ 14:22:40] [0.12s]     [64.134.226.23] [GET]    /products (200)     {"order" => "desc"}
-    ##
-    def log_request(request, response, start_time, end_time)
-
-      case
-      when response.status >= 500 then status = "\033[0;31m#{response.status}\033[0m"
-      when response.status >= 400 then status = "\033[0;33m#{response.status}\033[0m"
-      else status = "\033[0;32m#{response.status}\033[0m"
-      end
-
-      message = "[#{self.class}] [#{start_time.strftime('%m-%d-%Y @ %H:%M:%S')}] [#{"%2.2fs" % (end_time - start_time)}] [#{request.remote_ip}] [#{request.request_method}] #{request.path_info} (#{status})"
-      message << "\t #{request.params.inspect}" unless request.params.empty?
-      message << "\n"
-
-      if (request_logger = Logging::Logger["request"]).info?
-        request_logger << message
-      end
+      raise_event(:request_complete, request, response, start, Time.now)
     end
 
     ##
@@ -123,6 +97,8 @@ module Harbor
       else
         response.puts "The page you requested could not be found"
       end
+
+      raise_event(:not_found, request, response)
     end
 
     ##
@@ -141,8 +117,6 @@ module Harbor
 
       trace = build_exception_trace(exception, request)
 
-      Logging::Logger['error'] << trace
-
       if environment == "development"
         response.puts(Rack::ShowExceptions.new(nil).pretty(request.env, exception))
       else
@@ -155,7 +129,7 @@ module Harbor
         end
       end
 
-      self.class.error_handlers.each { |handler| handler.call(exception, request, response, trace) }
+      raise_event(:exception, exception, request, response, trace)
 
       nil
     end
@@ -165,6 +139,10 @@ module Harbor
       path = public_path + file
 
       path.file? ? path : nil
+    end
+
+    def default_layout
+      warn "Harbor::Application#default_layout has been deprecated. See Harbor::Layouts."
     end
 
     private

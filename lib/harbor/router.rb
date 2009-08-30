@@ -59,9 +59,6 @@ module Harbor
           @router.send(#{verb.inspect}, matcher) do |request, response|
             service = @container.get(@service_name, :request => request, :response => response)
 
-            # TODO: Eh? Why wouldn't you just register the Logger with the container?
-            service.logger = Logging::Logger[service] if service.respond_to?(:logger=)
-
             handler.arity == 2 ? handler[service, request] : handler[service]
           end
         end

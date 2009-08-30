@@ -69,10 +69,6 @@ module Harbor
       @session
     end
 
-    def layout
-      defined?(@layout) ? @layout : application.default_layout
-    end
-
     def remote_ip
       env["REMOTE_ADDR"] || env["HTTP_CLIENT_IP"] || env["HTTP_X_FORWARDED_FOR"]
     end
@@ -85,13 +81,15 @@ module Harbor
     def environment
       @env['APP_ENVIRONMENT'] || (@application ? @application.environment : "development")
     end
-    
+
     def params
-      begin
-        self.GET.update(self.POST)
+      params = begin
+        self.GET && self.GET.update(self.POST || {})
       rescue EOFError => e
         self.GET
       end
+
+      params || {}
     end
 
     def protocol

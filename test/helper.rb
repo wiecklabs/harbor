@@ -4,17 +4,10 @@ require "test/unit"
 require Pathname(__FILE__).dirname.parent + "lib/harbor"
 require "harbor/xml_view"
 require "harbor/mailer"
+require "harbor/logging"
 
 require "harbor/cache/memory"
 require "harbor/cache/disk"
-
-# module Rack
-#   class Request
-#     def params
-#       @params ||= {}
-#     end
-#   end
-# end
 
 class Time
 
@@ -46,6 +39,19 @@ class Time
 
   end
 
+end
+
+class Test::Unit::TestCase
+  def capture_stderr(&block)
+    $stderr = StringIO.new
+
+    yield
+
+    result = $stderr.string
+    $stderr = STDERR
+
+    result
+  end
 end
 
 def upload(filename)

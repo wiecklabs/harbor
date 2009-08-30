@@ -45,15 +45,24 @@ module Harbor
       end
     end
 
-    def stream_file(path_or_io, content_type = nil)
+   def stream_file(path_or_io, content_type = nil)
       if path_or_io.is_a?(StringIO) || path_or_io.is_a?(::IO)
         @io = BlockIO.new(path_or_io)
         @headers["Content-Length"] = @io.size
       else
-        content_type ||= Rack::Mime::MIME_TYPES.fetch(::File.extname(path_or_io), "binary/octet-stream")
         if @request.env.has_key?("HTTP_X_SENDFILE_TYPE")
-          @headers["X-Sendfile"] = path_or_io.to_s
-          @headers["Content-Length"] = ::File.size(path_or_io)
+          case path_or_io
+          when Harbor::FileStore::File
+            path_on_disk = (path_or_io.store.path + path_or_io.path).to_s
+            size = path_or_io.size
+          else
+            path_on_disk = path_or_io.to_s
+            size = ::File.size(path_or_io.to_s)
+          end
+          @headers["X-Sendfile"] = path_on_disk
+          content_type ||= Rack::Mime::MIME_TYPES.fetch(::File.extname(path_on_disk), "binary/octet-stream")
+          #@headers["Content-Length"] = ::File.size(path_or_io)
+          @headers["Content-Length"] = size
         else
           @io = BlockIO.new(path_or_io)
           @headers["Content-Length"] = @io.size
@@ -62,7 +71,7 @@ module Harbor
 
       @content_type = content_type
       nil
-    end
+    end 
 
     def send_file(name, path_or_io, content_type = nil)
       stream_file(path_or_io, content_type)
@@ -72,21 +81,25 @@ module Harbor
     end
 
     def render(view, context = {})
+      if context[:layout].is_a?(Array)
+        warn "Passing multiple layouts to response.render has been deprecated. See Harbor::Layouts."
+        context[:layout] = context[:layout].first
+      end
 
-      layout = nil
-
-      unless view.is_a?(View)
-        if context.has_key?(:layout)
-          layout = context[:layout]
-        else
-          layout ||= @request.layout unless @request.xhr?
-        end
-
+      case view
+      when View
+        view.context.merge(context)
+      else
         view = View.new(view, context.merge({ :request => @request }))
       end
 
       self.content_type = view.content_type
-      puts view.to_s(layout)
+
+      if context.has_key?(:layout) || @request.xhr?
+        puts view.to_s(context[:layout])
+      else
+        puts view.to_s(:search)
+      end
     end
 
     def redirect(url, params = nil)

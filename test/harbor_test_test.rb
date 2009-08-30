@@ -1,0 +1,119 @@
+require "pathname"
+require Pathname(__FILE__).dirname + "helper"
+require "harbor/test/test"
+
+class HarborTestTest < Test::Unit::TestCase
+
+  include Harbor::Test
+
+  # ASSERTIONS
+  def test_assert_redirect_success
+    response = Harbor::Test::Response.new
+    response.redirect "/"
+
+    assert_nothing_raised do
+      assert_redirect(response)
+    end
+  end
+
+  def test_assert_redirect_failure
+    response = Harbor::Test::Response.new
+
+    assert_raises Test::Unit::AssertionFailedError do
+      assert_redirect(response)
+    end
+  end
+
+  def test_assert_success_success
+    response = Harbor::Test::Response.new
+
+    assert_nothing_raised do
+      assert_success(response)
+    end
+  end
+
+  def test_assert_success_failure
+    response = Harbor::Test::Response.new
+    response.redirect "/"
+
+    assert_raises Test::Unit::AssertionFailedError do
+      assert_success(response)
+    end
+  end
+
+  def test_assert_unauthorized_success
+    response = Harbor::Test::Response.new
+    response.unauthorized
+
+    assert_nothing_raised do
+      assert_unauthorized(response)
+    end
+  end
+
+  def test_assert_unauthorized_failure
+    response = Harbor::Test::Response.new
+
+    assert_raises Test::Unit::AssertionFailedError do
+      assert_unauthorized(response)
+    end
+  end
+
+  # SESSION
+  def test_session
+    container = Harbor::Container.new
+    container.register(:request, Harbor::Test::Request)
+
+    request = container.get(:request)
+    assert_equal Hash.new, request.session.data
+
+    request = container.get(:request, :session => { :user => 1 })
+    assert_equal 1, request.session[:user]
+  end
+
+  # TEST CONTROLLER
+  def test_sample_controller
+    controller = Class.new do
+      attr_accessor :request, :response
+
+      def hello_world(name)
+        response.puts("Hello World. My Name is #{name}.")
+      end
+    end
+
+    container = Harbor::Container.new
+    container.register(:hello_controller, controller)
+    container.register(:request, Harbor::Test::Request)
+    container.register(:response, Harbor::Test::Response)
+
+    hello = container.get(:hello_controller)
+    hello.hello_world("Bob")
+
+    assert_equal "Hello World. My Name is Bob.\n", hello.response.buffer
+  end
+
+  def test_controller_with_throw_abort_request
+    controller = Class.new do
+      attr_accessor :request, :response
+
+      def hello_world(name)
+        response.puts "Unauthorized."
+        response.unauthorized!
+      end
+    end
+
+    container = Harbor::Container.new
+    container.register(:hello_controller, controller)
+    container.register(:request, Harbor::Test::Request)
+    container.register(:response, Harbor::Test::Response)
+
+    hello = container.get(:hello_controller)
+
+    assert_throws :abort_request do
+      hello.hello_world("Bob")
+    end
+
+    assert_unauthorized hello.response
+    assert_equal "Unauthorized.\n", hello.response.buffer
+  end
+
+end

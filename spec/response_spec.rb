@@ -14,6 +14,7 @@ end
 describe "Response" do
   before :all do
     View::path.unshift Pathname(__FILE__).dirname + "views"
+    View.layouts.default("layouts/application")
   end
 
   before do
@@ -22,10 +23,6 @@ describe "Response" do
       def xhr?
         false
       end
-
-      def layout
-        "layouts/application"
-      end
     end
 
     @response = Response.new(request_stub)
@@ -33,6 +30,7 @@ describe "Response" do
 
   after :all do
     View::path.clear
+    View.layouts.clear
   end
 
   it "should buffer content" do
