@@ -68,10 +68,12 @@ module Harbor
       path = self.class.exists?(filename)
       raise "Could not find '#{filename}' in #{self.class.path.inspect}" unless path
 
+      full_path = path + filename
+
       if self.class.cache_templates?
-        (self.class.__templates[path + filename] ||= Erubis::FastEruby.new(::File.read(path + filename))).evaluate(context)
+        (self.class.__templates[path + filename] ||= Erubis::FastEruby.new(::File.read(full_path), :filename => full_path)).evaluate(context)
       else
-        Erubis::FastEruby.new(::File.read(path + filename)).evaluate(context)
+        Erubis::FastEruby.new(::File.read(full_path), :filename => full_path).evaluate(context)
       end
     end
 
