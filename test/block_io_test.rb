@@ -1,32 +1,32 @@
 require "pathname"
 require Pathname(__FILE__).dirname + "helper"
 
-describe "BlockIO" do
-  
-  before :all do
-    @original_block_size = Harbor::BlockIO::BLOCK_SIZE
+class BlockIOTest < Test::Unit::TestCase
+
+  def setup
+    @original_block_size = Harbor::BlockIO::block_size
     $VERBOSE, verbose = nil, $VERBOSE
-    Harbor::BlockIO::BLOCK_SIZE = 50
+    Harbor::BlockIO::block_size = 50
     $VERBOSE = verbose
   end
   
-  after :all do
+  def teardown
     $VERBOSE, verbose = nil, $VERBOSE
-    Harbor::BlockIO::BLOCK_SIZE = @original_block_size
+    Harbor::BlockIO::block_size = @original_block_size
     $VERBOSE = verbose
   end
   
-  it "should read a file" do
+  def test_reading_a_file
     io = Harbor::BlockIO.new(__FILE__)
-    io.to_s.should =~ /should read a file/
+    assert_not_nil(io.to_s =~ /test_reading_a_file/)
   end
 
-  it "should report the file size" do
+  def test_reporting_a_file_size
     io = Harbor::BlockIO.new(__FILE__)
-    io.size.should == File.size(__FILE__)
+    assert_equal(File.size(__FILE__), io.size)
   end
   
-  it "should iterate over a file in chunks" do
+  def test_iterating_over_a_file_in_chunks
     meaningless_data = File.read(__FILE__)
     block_io_txt = Pathname(__FILE__).dirname + "samples" + "block_io.txt"
     
@@ -40,16 +40,16 @@ describe "BlockIO" do
     byte_size = 0
     
     Harbor::BlockIO.new(block_io_txt).each do |chunk|
-      chunk.size.should_not > Harbor::BlockIO::BLOCK_SIZE
+      assert_operator(chunk.size, :<=, Harbor::BlockIO::block_size)
       byte_size += chunk.size
     end
     
-    byte_size.should == File.size(block_io_txt)
+    assert_equal(File.size(block_io_txt), byte_size)
     
     FileUtils::rm(block_io_txt)
   end
   
-  it "should iterate over a StringIO instance in chunks" do
+  def test_iterating_over_a_string_io_in_chunks
     meaningless_data = File.read(__FILE__)
     block_io_txt = Pathname(__FILE__).dirname + "samples" + "block_io.txt"
     
@@ -63,11 +63,11 @@ describe "BlockIO" do
     byte_size = 0
     
     Harbor::BlockIO.new(StringIO.new(File.read(block_io_txt))).each do |chunk|
-      chunk.size.should_not > Harbor::BlockIO::BLOCK_SIZE
+      assert_operator(chunk.size, :<=, Harbor::BlockIO::block_size)
       byte_size += chunk.size
     end
     
-    byte_size.should == File.size(block_io_txt)
+    assert_equal(File.size(block_io_txt), byte_size)
     
     FileUtils::rm(block_io_txt)
   end
