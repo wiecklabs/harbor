@@ -19,11 +19,11 @@ module Harbor
     module ClassMethods
       
       def events
-        @@events ||= {}
+        class_variable_defined?(:@@events) ? class_variable_get(:@@events) : class_variable_set(:@@events, {})
       end
       
       def events=(hash)
-        @@events = hash
+        events.replace(hash)
       end
       
       def register_event(name, &block)
