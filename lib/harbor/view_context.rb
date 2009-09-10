@@ -68,7 +68,7 @@ module Harbor
     end
 
     def each
-      keys.each { |key| yield (key, self[key]) }
+      keys.each { |key| yield(key, self[key]) }
     end
 
     def clear
