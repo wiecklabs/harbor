@@ -23,6 +23,17 @@ module Harbor
       @layouts ||= Harbor::Layouts.new
     end
 
+    def self.plugins
+      @plugins ||= Hash.new { |h, k| h[k] = [] }
+    end
+
+    def self.plugin(name, plugin)
+      raise ArgumentError.new("#{plugin} must be a Class") unless plugin.is_a?(Class)
+      raise ArgumentError.new("#{plugin} must be a Plugin") unless Plugin > plugin
+
+      plugins[name] << plugin
+    end
+
     @cache_templates = false
     def self.cache_templates?
       @cache_templates

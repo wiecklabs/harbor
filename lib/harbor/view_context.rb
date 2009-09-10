@@ -27,6 +27,16 @@ module Harbor
       result
     end
 
+    def plugin(name, options = {})
+      result = ""
+
+      Harbor::View.plugins[name].each do |plugin|
+        result << plugin.new(@context).inject(options).to_s
+      end
+
+      result
+    end
+
     def capture(*args, &block)
       # get the buffer from the block's binding
       buffer = _erb_buffer( block.binding ) rescue nil
