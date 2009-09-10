@@ -31,7 +31,7 @@ module Harbor
       result = ""
 
       Harbor::View.plugins[name].each do |plugin|
-        result << plugin.new(@context).inject(options).to_s
+        result << plugin.new(self).inject(options).to_s
       end
 
       result
