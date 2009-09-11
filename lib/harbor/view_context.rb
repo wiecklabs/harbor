@@ -36,6 +36,10 @@ module Harbor
 
       result
     end
+    
+    def locale
+      @locale ||= Harbor::Locale.default
+    end
 
     def capture(*args, &block)
       # get the buffer from the block's binding
