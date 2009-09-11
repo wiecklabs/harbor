@@ -63,11 +63,12 @@ end
 
 # Gem
 
+require "lib/harbor/version"
 require "rake/gempackagetask"
 
 NAME = "harbor"
 SUMMARY = "Harbor Framework"
-GEM_VERSION = "0.12.2"
+GEM_VERSION = Harbor::VERSION
 
 spec = Gem::Specification.new do |s|
   s.name = NAME
@@ -83,7 +84,6 @@ spec = Gem::Specification.new do |s|
 
   s.add_dependency "rack", "~> 1.0.0"
   s.add_dependency "erubis"
-
 end
 
 Rake::GemPackageTask.new(spec) do |pkg|
