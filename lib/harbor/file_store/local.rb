@@ -25,7 +25,7 @@ module Harbor
 
         ::FileUtils.mkdir_p((@root + path).parent.to_s) unless (@root + path).parent.exist?
 
-        Harbor::File::move(absolute_path, file.absolute_path)
+        ::FileUtils::cp(absolute_path, file.absolute_path)
         file
       end
 
