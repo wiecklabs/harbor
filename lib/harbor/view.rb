@@ -28,8 +28,15 @@ module Harbor
     end
 
     def self.plugin(name, plugin)
-      raise ArgumentError.new("#{plugin} must be a Class") unless plugin.is_a?(Class)
-      raise ArgumentError.new("#{plugin} must be a Plugin") unless Plugin > plugin
+
+      case plugin
+      when String
+        plugin = Harbor::Plugin::String.new(plugin)
+      when Class
+        raise ArgumentError.new("#{plugin} must be a Plugin") unless Plugin > plugin
+      else
+        raise ArgumentError.new("#{plugin} must include Harbor::AccessorInjector") unless AccessorInjector > plugin
+      end
 
       plugins[name] << plugin
     end

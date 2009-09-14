@@ -27,11 +27,11 @@ module Harbor
       result
     end
 
-    def plugin(name, options = {})
+    def plugin(name, variables = {})
       plugins = []
 
       Harbor::View.plugins[name].each do |plugin|
-        plugins << plugin.new(self).inject(options)
+        plugins << Plugin::prepare(plugin, self, variables)
       end
 
       plugins

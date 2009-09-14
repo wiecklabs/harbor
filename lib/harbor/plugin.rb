@@ -14,6 +14,14 @@ module Harbor
 
     attr_accessor :context
 
+    def self.prepare(plugin, context, variables)
+      if plugin.is_a?(Class)
+        plugin.new(context).inject(variables)
+      else
+        plugin.inject({ :context => context }.merge(variables))
+      end
+    end
+
     def initialize(context)
       @context = context
     end
@@ -26,6 +34,18 @@ module Harbor
 
     def to_s
       raise NotImplementedError.new("You must define your own #to_s method.")
+    end
+
+    class String < Plugin
+
+      def initialize(string)
+        @string = string
+      end
+
+      def to_s
+        @string
+      end
+
     end
     
   end
