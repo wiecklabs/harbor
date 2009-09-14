@@ -28,13 +28,13 @@ module Harbor
     end
 
     def plugin(name, options = {})
-      result = ""
+      plugins = []
 
       Harbor::View.plugins[name].each do |plugin|
-        result << plugin.new(self).inject(options).to_s
+        plugins << plugin.new(self).inject(options)
       end
 
-      result
+      plugins
     end
 
     def capture(*args, &block)
