@@ -85,7 +85,11 @@ module Harbor
       end
 
       def absolute_path
-        @store.path + @path
+        @store.root + @path
+      end
+      
+      def exists?
+        store.exists?(path)
       end
 
     end
