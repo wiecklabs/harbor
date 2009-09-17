@@ -63,11 +63,12 @@ end
 
 # Gem
 
+require "lib/harbor/version"
 require "rake/gempackagetask"
 
 NAME = "harbor"
 SUMMARY = "Harbor Framework"
-GEM_VERSION = "0.12"
+GEM_VERSION = Harbor::VERSION
 
 spec = Gem::Specification.new do |s|
   s.name = NAME
@@ -83,7 +84,6 @@ spec = Gem::Specification.new do |s|
 
   s.add_dependency "rack", "~> 1.0.0"
   s.add_dependency "erubis"
-
 end
 
 Rake::GemPackageTask.new(spec) do |pkg|
@@ -93,25 +93,4 @@ end
 desc "Install Harbor as a gem"
 task :install => [:repackage] do
   sh %{gem install pkg/#{NAME}-#{GEM_VERSION}}
-end
-
-desc "Publish Harbor gem"
-task :publish do
-  STDOUT.print "Publishing gem... "
-  STDOUT.flush
-  `git tag -a #{GEM_VERSION} -m "v. #{GEM_VERSION}" &> /dev/null`
-  `git push --tags &> /dev/null`
-
-  commands = [
-    "if [ ! -d '#{NAME}' ]; then git clone git://github.com/wiecklabs/harbor.git; fi",
-    "cd #{NAME}",
-    "git pull &> /dev/null",
-    "rake repackage &> /dev/null",
-    "cp pkg/* ../site/gems",
-    "cd ../site",
-    "gem generate_index"
-  ]
-
-  `ssh gems@able.wieck.com "#{commands.join(" && ")}"`
-  STDOUT.puts "done"
 end

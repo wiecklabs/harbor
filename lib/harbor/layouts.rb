@@ -12,7 +12,7 @@ module Harbor
       fragment = fragment.squeeze("*").squeeze("/").sub(%r{/$}, "").gsub("*", ".*")
       specificity = fragment_specificity(fragment)
 
-      regexp = Regexp.new(fragment)
+      regexp = Regexp.new("^#{fragment}")
 
       if previous = @map.assoc(regexp)
         @map[@map.index(previous)] = [regexp, layout, specificity]

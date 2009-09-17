@@ -1,5 +1,5 @@
 module Harbor
-  class ViewContext < Erubis::Context
+  class ViewContext
     require Pathname(__FILE__).dirname + "view_context/helpers"
 
     include Helpers::Form
@@ -8,27 +8,12 @@ module Harbor
     include Helpers::Url
     include Helpers::Cache
 
-    attr_accessor :view
+    attr_accessor :view, :keys
 
     def initialize(view, variables)
       @view = view
-      super(variables)
-    end
+      @keys = Set.new
 
-    def merge(variables)
-      update(variables)
-
-      self
-    end
-
-    def clear
-      instance_variables.each { |ivar| remove_instance_variable(ivar) }
-
-      self
-    end
-
-    def replace(variables)
-      clear
       merge(variables)
     end
 
@@ -40,6 +25,20 @@ module Harbor
       replace(context)
 
       result
+    end
+
+    def plugin(name, variables = {})
+      plugins = []
+
+      Harbor::View.plugins[name].each do |plugin|
+        plugins << Plugin::prepare(plugin, self, variables)
+      end
+
+      plugins
+    end
+    
+    def locale
+      @locale ||= Harbor::Locale.default
     end
 
     def capture(*args, &block)
@@ -63,6 +62,45 @@ module Harbor
 
         data
       end
+    end
+
+    def [](key)
+      instance_variable_get("@#{key}")
+    end
+
+    def []=(key, value)
+      @keys << key
+      instance_variable_set("@#{key}", value)
+    end
+
+    def merge(variables)
+      variables.each do |key, value|
+        self[key] = value
+      end if variables
+
+      self
+    end
+
+    def each
+      keys.each { |key| yield(key, self[key]) }
+    end
+
+    def clear
+      keys.each { |key| remove_instance_variable("@#{key}") }
+      keys.clear
+
+      self
+    end
+
+    def replace(variables)
+      clear
+      merge(variables)
+    end
+
+    def to_hash
+      hash = {}
+      keys.each { |key| hash[key] = self[key] }
+      hash
     end
 
     private

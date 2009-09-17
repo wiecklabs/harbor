@@ -5,6 +5,15 @@ module Harbor
   # where X-Sendfile cannot be used.
   ##
   class BlockIO
+
+    def self.block_size
+      @@block_size ||= 500_000 # 500kb
+    end
+    
+    def self.block_size=(value)
+      raise ArgumentError.new("Harbor::BlockIO::block_size value must be a Fixnum") unless value.is_a?(Fixnum)
+      @@block_size = value
+    end
     
     def initialize(path_or_io)
       case path_or_io
@@ -32,10 +41,8 @@ module Harbor
       @io.close
     end
 
-    BLOCK_SIZE = 500_000 # 500kb
-
     def each
-      while data = @io.read(Harbor::BlockIO::BLOCK_SIZE) do
+      while data = @io.read(Harbor::BlockIO::block_size) do
         yield data
       end
     end

@@ -5,14 +5,14 @@ module Harbor
       target.extend(ClassMethods)
 
       target.class_eval do
-        @__clipper_hooked_method_added = method(:method_added) if respond_to?(:method_added)
+        @__harbor_hooked_method_added = method(:method_added) if respond_to?(:method_added)
         def self.method_added(method)
-          if !@__clipper_binding_method && hooks.has_key?(method)
+          if !@__harbor_binding_method && hooks.has_key?(method)
             chain = hooks[method]
             chain.bind!
           end
 
-          @__clipper_hooked_method_added.call(method) if @__clipper_hooked_method_added
+          @__harbor_hooked_method_added.call(method) if @__harbor_hooked_method_added
         end
       end
 
@@ -73,11 +73,11 @@ module Harbor
         target.send(:alias_method, "__hooked_#{method_name}", method_name)
 
         target.send(:class_eval, <<-EOS)
-          instance_variable_set(:@__clipper_binding_method, true)
+          instance_variable_set(:@__harbor_binding_method, true)
           def #{method_name}(*args, &block)
             self.class.hooks[#{method_name.inspect}].call(self, args, block)
           end
-          remove_instance_variable(:@__clipper_binding_method)
+          remove_instance_variable(:@__harbor_binding_method)
         EOS
       end
 
