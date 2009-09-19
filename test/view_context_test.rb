@@ -11,6 +11,8 @@ class ViewContextTest < Test::Unit::TestCase
 
     @context = {}
     @context[:assertor] = @assertor
+    
+    Harbor::View::plugins("sample/plugin").clear
   end
   
   def teardown
@@ -59,7 +61,42 @@ class ViewContextTest < Test::Unit::TestCase
 
     Harbor::View.new("assertions", @context).to_s
   end
+  
+  def test_plugin_returns_nil_when_no_plugins_registered
+    @context[:assertions] = lambda do
+      @assertor.assert_equal(nil, plugin("some/plugin/that/doesn/exist/#{Time.now.usec}"))
+    end
 
-  # def test_sub_renders_can
+    Harbor::View.new("assertions", @context).to_s    
+  end
+
+  def test_plugin_returns_all_rendered_plugins_separated_by_spaces
+    Harbor::View::plugins("sample/plugin") << "Plugin1"
+    Harbor::View::plugins("sample/plugin") << "Plugin2"
+
+    @context[:assertions] = lambda do
+      @assertor.assert_equal("Plugin1 Plugin2", plugin("sample/plugin"))
+    end
+
+    Harbor::View.new("assertions", @context).to_s    
+  end
+  
+  def test_plugin_executes_block_for_each_registered_plugin
+    Harbor::View::plugins("sample/plugin") << "Plugin1"
+    Harbor::View::plugins("sample/plugin") << "Plugin2"
+
+    @context[:assertions] = lambda do
+      renders = []
+      
+      plugin("sample/plugin") do |plugin|
+        renders << "<li>#{plugin}</li>"
+      end
+
+      @assertor.assert_equal("<li>Plugin1</li>", renders[0])
+      @assertor.assert_equal("<li>Plugin2</li>", renders[1])
+    end
+
+    Harbor::View.new("assertions", @context).to_s
+  end
 
 end

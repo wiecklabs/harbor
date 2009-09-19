@@ -17,7 +17,7 @@ module Harbor
       merge(variables)
     end
 
-    def render(partial, variables=nil)
+    def render(partial, variables = nil)
       context = to_hash
 
       result = View.new(partial, merge(variables)).to_s
@@ -28,13 +28,17 @@ module Harbor
     end
 
     def plugin(name, variables = {})
-      plugins = []
-
-      Harbor::View.plugins[name].each do |plugin|
-        plugins << Plugin::prepare(plugin, self, variables)
+      if (plugin_list = Harbor::View::plugins(name)).any?
+        if block_given?
+          plugin_list.each do |plugin|
+            yield Plugin::prepare(plugin, self, variables)
+          end
+        else
+          plugin_list.render(self, variables)
+        end
+      else
+        nil
       end
-
-      plugins
     end
     
     def locale

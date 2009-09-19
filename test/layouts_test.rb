@@ -20,10 +20,10 @@ class LayoutsTest < Test::Unit::TestCase
 
       map = layouts.instance_variable_get(:@map)
 
-      assert_equal %r{admin/videos/show}, map[0][0]
-      assert_equal %r{admin/.*/show}, map[1][0]
-      assert_equal %r{admin/.*}, map[2][0]
-      assert_equal %r{.*}, map[3][0]
+      assert_equal %r{^admin/videos/show}, map[0][0]
+      assert_equal %r{^admin/.*/show}, map[1][0]
+      assert_equal %r{^admin/.*}, map[2][0]
+      assert_equal %r{^.*}, map[3][0]
     end
   end
 

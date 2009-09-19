@@ -5,6 +5,7 @@ require "erubis"
 
 require Pathname(__FILE__).dirname + "view_context"
 require Pathname(__FILE__).dirname + "layouts"
+require Pathname(__FILE__).dirname + "plugin_list"
 
 module Harbor
   class View
@@ -23,22 +24,10 @@ module Harbor
       @layouts ||= Harbor::Layouts.new
     end
 
-    def self.plugins
-      @plugins ||= Hash.new { |h, k| h[k] = [] }
-    end
+    def self.plugins(key)
+      @plugins ||= Hash.new { |h, k| h[k] = PluginList.new }
 
-    def self.plugin(name, plugin)
-
-      case plugin
-      when String
-        plugin = Harbor::Plugin::String.new(plugin)
-      when Class
-        raise ArgumentError.new("#{plugin} must be a Plugin") unless Plugin > plugin
-      else
-        raise ArgumentError.new("#{plugin} must include Harbor::AccessorInjector") unless AccessorInjector > plugin
-      end
-
-      plugins[name] << plugin
+      @plugins[key.to_s.gsub(/^\/+/, '')]
     end
 
     @cache_templates = false

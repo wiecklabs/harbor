@@ -34,5 +34,13 @@ class ViewTest < Test::Unit::TestCase
   def test_render_with_extension
     assert_equal(Harbor::View.new("edit").to_s, Harbor::View.new("edit.html.erb").to_s)
   end
+  
+  def test_plugins_returns_a_plugin_list
+    assert_kind_of(Harbor::PluginList, Harbor::View::plugins("some/plugin/key"))
+  end
+  
+  def test_leading_slashes_in_plugin_names_are_trimmed
+    assert_equal(Harbor::View::plugins("/some/plugin/key"), Harbor::View::plugins("some/plugin/key"))
+  end
 
 end
