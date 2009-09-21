@@ -112,6 +112,10 @@ module Harbor
     def request
       @request
     end
+    
+    def response
+      @response
+    end
 
     def _erb_buffer( the_binding ) # :nodoc:
       eval( "_buf", the_binding, __FILE__, __LINE__)

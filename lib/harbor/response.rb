@@ -4,13 +4,14 @@ require Pathname(__FILE__).dirname + "view"
 module Harbor
   class Response
 
-    attr_accessor :status, :content_type, :headers
+    attr_accessor :status, :content_type, :headers, :errors
 
     def initialize(request)
       @request = request
       @headers = {}
       @content_type = "text/html"
       @status = 200
+      @errors = Harbor::Errors.new
     end
 
     def headers
@@ -90,7 +91,7 @@ module Harbor
       when View
         view.context.merge(context)
       else
-        view = View.new(view, context.merge({ :request => @request }))
+        view = View.new(view, context.merge({ :request => @request, :response => self }))
       end
 
       self.content_type = view.content_type

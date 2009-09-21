@@ -86,4 +86,9 @@ class ResponseTest < Test::Unit::TestCase
     assert_equal("LAYOUT\ntest\n", @response.buffer)
     assert_match /deprecated/, result
   end
+  
+  def test_errors_is_a_errors_collection
+    assert_kind_of(Harbor::Errors, @response.errors)
+  end
+
 end
