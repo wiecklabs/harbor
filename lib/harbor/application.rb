@@ -118,6 +118,7 @@ module Harbor
       trace = build_exception_trace(exception, request)
 
       if environment == "development"
+        response.content_type = "text/html"
         response.puts(Rack::ShowExceptions.new(nil).pretty(request.env, exception))
       else
         response.layout = "layouts/exception" if Harbor::View.exists?("layouts/exception")
