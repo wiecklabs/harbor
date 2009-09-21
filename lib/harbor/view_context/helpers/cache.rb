@@ -23,6 +23,21 @@ end
 ##
 module Harbor::ViewContext::Helpers::Cache
 
+  class CacheRenderError < StandardError
+    def initialize(inner_error, content_item)
+      @inner_error = inner_error
+      @content_item = content_item
+    end
+    
+    def to_s
+      "#{@content_item.class.name}:#{@content_item.inspect}\n\t#{@inner_error.message}"
+    end
+    
+    def inspect
+      "<#CacheRenderError content_item=#{@content_item.class.name}:#{@content_item.inspect} inner_error=#{@inner_error.inspect} backtrace=#{@inner_error.backtrace.join("\n\t")}>"
+    end
+  end
+  
   ##
   #   Caches the result of a block using the given TTL and maximum_age values.
   #   If no ttl is given, a default of 30 minutes is used.  If no maximum_age value is given
@@ -38,7 +53,11 @@ module Harbor::ViewContext::Helpers::Cache
     end
 
     content = if item = store.get(key)
-      item.content
+      begin
+        item.content
+      rescue => e
+        raise CacheRenderError.new(e, item)
+      end
     else
       data = capture(&generator)
       store.put(key, data, ttl, max_age)
