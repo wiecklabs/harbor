@@ -29,12 +29,5 @@ class PluginListTest < Test::Unit::TestCase
 
     assert_equal(0, @map.size)
   end
-
-  def test_render
-    @map << TestPlugin
-    @map << "Sample String Plugin"
-
-    assert_equal("Fancy TestPlugin Sample String Plugin", @map.render(nil, :plugin_type => "Test"))
-  end
   
 end

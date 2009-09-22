@@ -70,30 +70,23 @@ class ViewContextTest < Test::Unit::TestCase
     Harbor::View.new("assertions", @context).to_s    
   end
 
-  def test_plugin_returns_all_rendered_plugins_separated_by_spaces
+  def test_plugin_returns_all_rendered_plugins
     Harbor::View::plugins("sample/plugin") << "Plugin1"
     Harbor::View::plugins("sample/plugin") << "Plugin2"
 
     @context[:assertions] = lambda do
-      @assertor.assert_equal("Plugin1 Plugin2", plugin("sample/plugin"))
+      @assertor.assert_equal("Plugin1Plugin2", plugin("sample/plugin").to_s)
     end
 
     Harbor::View.new("assertions", @context).to_s    
   end
   
-  def test_plugin_executes_block_for_each_registered_plugin
+  def test_plugin_returns_an_array
     Harbor::View::plugins("sample/plugin") << "Plugin1"
     Harbor::View::plugins("sample/plugin") << "Plugin2"
 
-    @context[:assertions] = lambda do
-      renders = []
-      
-      plugin("sample/plugin") do |plugin|
-        renders << "<li>#{plugin}</li>"
-      end
-
-      @assertor.assert_equal("<li>Plugin1</li>", renders[0])
-      @assertor.assert_equal("<li>Plugin2</li>", renders[1])
+    @context[:assertions] = lambda do      
+      @assertor.assert_kind_of(Array, plugin("sample/plugin"))
     end
 
     Harbor::View.new("assertions", @context).to_s

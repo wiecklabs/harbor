@@ -20,12 +20,6 @@ module Harbor
     def clear
       @plugins.clear
     end
-    
-    def render(context, variables = {})
-      @plugins.map do |plugin|
-        Plugin::prepare(plugin, context, variables).to_s
-      end.join(' ')
-    end
 
     def <<(plugin)
       case plugin

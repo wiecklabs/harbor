@@ -29,18 +29,14 @@ module Harbor
 
     def plugin(name, variables = {})
       if (plugin_list = Harbor::View::plugins(name)).any?
-        if block_given?
-          plugin_list.each do |plugin|
-            yield Plugin::prepare(plugin, self, variables)
-          end
-        else
-          plugin_list.render(self, variables)
+        plugin_list.map do |plugin|
+          Plugin::prepare(plugin, self, variables)
         end
       else
         nil
       end
     end
-    
+
     def locale
       @locale ||= Harbor::Locale.default
     end
