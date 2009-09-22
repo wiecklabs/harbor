@@ -8,7 +8,6 @@ services = Harbor::Container.new
 # services.register("mail_server", Harbor::SendmailServer)
 
 # DataMapper.setup :default, "sqlite3://#{Pathname(__FILE__).dirname.expand_path + "##>=app_name<##.db"}"
-# DataMapper.setup :search, "ferret:///tmp/##>=app_name<##.sock"
 
 if $0 == __FILE__
   require "harbor/console"
