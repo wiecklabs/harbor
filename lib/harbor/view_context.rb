@@ -33,7 +33,7 @@ module Harbor
           Plugin::prepare(plugin, self, variables)
         end
       else
-        nil
+        []
       end
     end
 
