@@ -84,8 +84,11 @@ module Harbor
         @stream ||= store.open(path, mode)
       end
 
+      ##
+      # Returns the full path to this file
+      ##
       def absolute_path
-        @store.root + @path
+        (@store.root + @path).to_s
       end
       
       def exists?
