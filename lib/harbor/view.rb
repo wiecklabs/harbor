@@ -43,13 +43,13 @@ module Harbor
       self.path.detect { |dir| ::File.file?(dir + filename) }
     end
 
-    attr_accessor :content_type, :context, :extension
+    attr_accessor :content_type, :context, :extension, :path
 
     def initialize(view, context = {})
       @content_type = "text/html"
       @extension = ".html.erb"
-      @view = view
       @context = context.is_a?(ViewContext) ? context : ViewContext.new(self, context)
+      @filename = ::File.extname(view) == "" ? (view + @extension) : view
     end
 
     def supports_layouts?
@@ -57,28 +57,25 @@ module Harbor
     end
     
     def content
-      @content ||= _erubis_render(@view, @context)
+      @content ||= _erubis_render(@context)
     end
 
     def to_s(layout = nil)
-      layout = self.class.layouts.match(@view) if layout == :search
+      layout = self.class.layouts.match(@filename) if layout == :search
 
       layout ? View.new(layout, @context.merge(:content => content)).to_s : content
     end
 
     private
 
-    def _erubis_render(filename, context)
+    def _erubis_render(context)
+      @path ||= self.class.exists?(@filename)
+      raise "Could not find '#{@filename}' in #{self.class.path.inspect}" unless @path
 
-      filename += self.extension if ::File.extname(filename) == ""
-
-      path = self.class.exists?(filename)
-      raise "Could not find '#{filename}' in #{self.class.path.inspect}" unless path
-
-      full_path = path + filename
+      full_path = @path + @filename
 
       if self.class.cache_templates?
-        (self.class.__templates[path + filename] ||= Erubis::FastEruby.new(::File.read(full_path), :filename => full_path)).evaluate(context)
+        (self.class.__templates[full_path] ||= Erubis::FastEruby.new(::File.read(full_path), :filename => full_path)).evaluate(context)
       else
         Erubis::FastEruby.new(::File.read(full_path), :filename => full_path).evaluate(context)
       end

@@ -29,6 +29,7 @@ module Harbor
       @content_type = "text/xml"
       @extension = ".rxml"
       @output = ""
+      @filename = ::File.extname(view) == "" ? (view + @extension) : view
 
       if context.is_a?(ViewContext)
         @context = context
@@ -44,13 +45,10 @@ module Harbor
     end
 
     def to_s(layout = nil)
-      filename = @view
-      filename += self.extension if ::File.extname(filename) == ""
+      path = View::path.detect { |dir| ::File.exists?(dir + @filename) }
+      raise "Could not find '#{@filename}' in #{View::path.inspect}" if path.nil?
       
-      path = View::path.detect { |dir| ::File.exists?(dir + filename) }
-      raise "Could not find '#{@view}' in #{View::path.inspect}" if path.nil?
-      
-      eval_code = ::File.read(path + filename)
+      eval_code = ::File.read(path + @filename)
       XMLViewContext.new(self, @context).instance_eval(eval_code, __FILE__, __LINE__)
 
       @output
