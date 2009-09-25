@@ -139,7 +139,7 @@ module Harbor
 
         script.daemonize if @options[:daemonize]
 
-        script.run!
+        @argv.empty? ? script.run! : script.run!(*@argv)
       end
 
       def restart
