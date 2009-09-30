@@ -11,9 +11,9 @@ module Harbor::ViewContext::Helpers::Text
   end
 
   # HTML escape +value+
-  def h(value)
+  def h(value, default = nil)
     # TODO: Remove external dependency!
-    Rack::Utils::escape_html(value)
+    Rack::Utils::escape_html(value.blank? ? default : value)
   end
 
   ##
