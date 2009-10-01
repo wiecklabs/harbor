@@ -58,6 +58,26 @@ class HarborTestTest < Test::Unit::TestCase
     end
   end
 
+  def test_request_env_is_not_nil
+    container = Harbor::Container.new
+    container.register(:request, Harbor::Test::Request)
+
+    request = container.get(:request)
+
+    assert request.env
+  end
+
+  def test_request_env_can_be_passed_to_container
+    container = Harbor::Container.new
+    container.register(:request, Harbor::Test::Request)
+
+    request = container.get(:request, :env => { "REQUEST_METHOD" => "PUT" })
+
+    assert request.env
+    assert_equal "PUT", request.env["REQUEST_METHOD"]
+    assert_equal "PUT", request.request_method
+  end
+
   # SESSION
   def test_session
     container = Harbor::Container.new
