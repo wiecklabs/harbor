@@ -62,9 +62,9 @@ class ViewContextTest < Test::Unit::TestCase
     Harbor::View.new("assertions", @context).to_s
   end
   
-  def test_plugin_returns_nil_when_no_plugins_registered
+  def test_plugin_returns_empty_array_when_no_plugins_registered
     @context[:assertions] = lambda do
-      @assertor.assert_equal(nil, plugin("some/plugin/that/doesn/exist/#{Time.now.usec}"))
+      @assertor.assert_equal([], plugin("some/plugin/that/doesn/exist/#{Time.now.usec}"))
     end
 
     Harbor::View.new("assertions", @context).to_s    

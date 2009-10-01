@@ -29,6 +29,7 @@ class BlockIOTest < Test::Unit::TestCase
   def test_iterating_over_a_file_in_chunks
     meaningless_data = File.read(__FILE__)
     block_io_txt = Pathname(__FILE__).dirname + "samples" + "block_io.txt"
+    FileUtils.mkdir_p(block_io_txt.parent)
     
     File::open(block_io_txt, "w+") do |file|
       100.times do
@@ -52,6 +53,7 @@ class BlockIOTest < Test::Unit::TestCase
   def test_iterating_over_a_string_io_in_chunks
     meaningless_data = File.read(__FILE__)
     block_io_txt = Pathname(__FILE__).dirname + "samples" + "block_io.txt"
+    FileUtils.mkdir_p(block_io_txt.parent)
     
     File::open(block_io_txt, "w+") do |file|
       100.times do
