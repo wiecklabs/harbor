@@ -8,6 +8,7 @@ require "harbor/logging"
 
 require "harbor/cache/memory"
 require "harbor/cache/disk"
+require "harbor/test/test"
 
 class Time
 
