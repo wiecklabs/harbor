@@ -4,7 +4,7 @@ class Harbor::Cache
 
     attr_reader :key, :ttl, :expires_at, :cached_at, :content, :maximum_age, :ultimate_expiration_time
 
-    def initialize(key, ttl, maximum_age, content, cached_at, expires_at = nil)
+    def initialize(key, ttl, maximum_age, string_or_io, cached_at, expires_at = nil)
       raise ArgumentError.new("Harbor::Cache::Item#initialize expects a String value for 'key', got #{key}") unless key.is_a?(String)
       raise ArgumentError.new("Harbor::Cache::Item#initialize expects a Fixnum value greater than 0 for 'ttl', got #{ttl}") unless ttl.is_a?(Fixnum) && ttl > 0
       raise ArgumentError.new("Harbor::Cache::Item#initialize expects nil, or a Fixnum value greater than 0 for 'maximum_age', got #{maximum_age}") unless maximum_age.nil? || (maximum_age.is_a?(Fixnum) && maximum_age > 0)
@@ -17,7 +17,16 @@ class Harbor::Cache
       @cached_at = cached_at
       @expires_at = expires_at || (cached_at + ttl)
       @ultimate_expiration_time = (maximum_age ? cached_at + maximum_age : nil)
-      @content = content
+
+      if string_or_io.respond_to?(:read)
+        @io = string_or_io
+      else
+        @content = string_or_io
+      end
+    end
+
+    def content
+      @content ||= @io.read
     end
 
     def fresh?

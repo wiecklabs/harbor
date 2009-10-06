@@ -7,7 +7,7 @@ class Harbor::Cache::Memory
   end
 
   def put(key, ttl, maximum_age, content, cached_at)
-    @cache[key]= Harbor::Cache::Item.new(key, ttl, maximum_age, content, cached_at)
+    @cache[key] = Harbor::Cache::Item.new(key, ttl, maximum_age, content, cached_at)
   end
 
   def get(key)
