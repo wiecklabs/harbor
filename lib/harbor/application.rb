@@ -47,14 +47,17 @@ module Harbor
       request = Request.new(self, env)
       response = Response.new(request)
 
-      if file = find_public_file(request.path_info[1..-1])
-        response.stream_file(file)
-        return response.to_a
-      end
-
-      handler = @router.match(request)
-
       catch(:abort_request) do
+        if file = find_public_file(request.path_info[1..-1])
+          response.cache(nil, ::File.mtime(file), 86400) do
+            response.stream_file(file)
+          end
+
+          return response.to_a
+        end
+
+        handler = @router.match(request)
+
         dispatch_request(handler, request, response)
       end
 

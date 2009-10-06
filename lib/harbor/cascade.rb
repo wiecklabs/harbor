@@ -35,26 +35,23 @@ module Harbor
       request = Request.new(self, env)
       response = Response.new(request)
 
-      if file = find_public_file(request.path_info[1..-1])
-        response.stream_file(file)
-        return response.to_a
-      end
-
-      application, handler = nil
-
-      @applications.each do |application|
-        # begin
-          break if handler = application.router.match(request)
-        # rescue StandardError => se
-        #   puts application.class.name, application.router.inspect, se.message, *se.backtrace
-        #   raise
-        # end
-      end
-
-      application = @applications.first unless handler
-      request.application = application
-
       catch(:abort_request) do
+        if file = find_public_file(request.path_info[1..-1])
+          response.cache(nil, ::File.mtime(file), 86400) do
+            response.stream_file(file)
+          end
+          return response.to_a
+        end
+
+        application, handler = nil
+
+        @applications.each do |application|
+          break if handler = application.router.match(request)
+        end
+
+        application = @applications.first unless handler
+        request.application = application
+
         application.dispatch_request(handler, request, response)
       end
 

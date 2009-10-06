@@ -190,13 +190,13 @@ class ResponseTest < Test::Unit::TestCase
   ##
 
   def test_cache_requires_block
-    assert_raises(ArgumentError) { @response.cache("key", Time.now) }
+    assert_raises(ArgumentError) { @response.cache(nil, Time.now) }
   end
 
   def test_cache_sets_last_modified_header
     assert !@response.headers["Last-Modified"]
     modified = Time.now
-    @response.cache("key", modified) {}
+    @response.cache(nil, modified) {}
     assert @response.headers["Last-Modified"]
     assert_equal modified.httpdate, @response.headers["Last-Modified"]
   end
@@ -209,7 +209,7 @@ class ResponseTest < Test::Unit::TestCase
 
     called = false
     assert_throws(:abort_request) do
-      response.cache("key", time) { called = true }
+      response.cache(nil, time) { called = true }
     end
     assert_equal 304, response.status
     assert !called
@@ -220,7 +220,7 @@ class ResponseTest < Test::Unit::TestCase
     response = Harbor::Response.new(request)
 
     called = false
-    response.cache("key", Time.now) { called = true }
+    response.cache(nil, Time.now) { called = true }
     assert called
   end
 
@@ -231,7 +231,7 @@ class ResponseTest < Test::Unit::TestCase
 
     called = false
     Time.warp(10) do
-      response.cache("key", Time.now) { called = true }
+      response.cache(nil, Time.now) { called = true }
     end
     assert called
   end
@@ -239,6 +239,20 @@ class ResponseTest < Test::Unit::TestCase
   def test_cache_raises_argument_error_with_no_cache_configured
     assert_raises(ArgumentError) do
       @response.cache("key", Time.now, 10) {}
+    end
+  end
+
+  def test_cache_with_ttl_sets_cache_control_without_store
+    @response.cache(nil, Time.now, 10) { |response| response.puts "Test" }
+
+    assert_equal "max-age=10, must-revalidate", @response.headers["Cache-Control"]
+  end
+
+  def test_cache_with_ttl_sets_cache_control_with_store
+    with_cache do |cache|
+      @response.cache("key", Time.now, 10) { |response| response.puts "Test" }
+
+      assert_equal "max-age=10, must-revalidate", @response.headers["Cache-Control"]
     end
   end
 

@@ -76,19 +76,20 @@ module Harbor
     def cache(key, last_modified, ttl = nil, max_age = nil)
       raise ArgumentError.new("You must provide a block of code to cache.") unless block_given?
 
-      key = "page-#{key}"
-      
       store = nil
-      if ttl || max_age
+      if key && (ttl || max_age)
         store = Harbor::View.cache
 
         unless store
           raise ArgumentError.new("Cache Store Not Defined. Please set Harbor::View.cache to your desired cache store.")
         end
+
+        key = "page-#{key}"
       end
 
       last_modified = last_modified.httpdate
       @headers["Last-Modified"] = last_modified
+      @headers["Cache-Control"] = "max-age=#{ttl}, must-revalidate" if ttl
 
       modified_since = @request.env["HTTP_IF_MODIFIED_SINCE"]
 
