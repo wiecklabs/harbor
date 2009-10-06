@@ -6,7 +6,8 @@ class ResponseTest < Test::Unit::TestCase
   def setup
     Harbor::View::path.unshift Pathname(__FILE__).dirname + "views"
     Harbor::View::layouts.default("layouts/application")
-    @response = Harbor::Response.new(Harbor::Test::Request.new)
+    @request = Harbor::Test::Request.new
+    @response = Harbor::Response.new(@request)
   end
   
   def teardown
@@ -84,6 +85,109 @@ class ResponseTest < Test::Unit::TestCase
   def test_errors_is_a_errors_collection
     assert_kind_of(Harbor::Errors, @response.errors)
   end
+
+  ##
+  # STREAM_FILE / SEND_FILE
+  ##
+
+  def test_stream_file_with_string_io
+    @response.stream_file(StringIO.new("test"))
+
+    assert_equal "4", @response.headers["Content-Length"]
+    assert_equal "application/octet-stream", @response.headers["Content-Type"]
+  end
+
+  def test_stream_file_with_io
+    file = File.open(__FILE__)
+    @response.stream_file(file)
+
+    assert_equal File.size(__FILE__).to_s, @response.headers["Content-Length"]
+    assert_equal "application/octet-stream", @response.headers["Content-Type"]
+  ensure
+    file.close
+  end
+
+  def test_stream_file_with_filename
+    @response.stream_file(__FILE__)
+
+    assert_equal File.size(__FILE__).to_s, @response.headers["Content-Length"]
+    assert_equal "text/x-script.ruby", @response.headers["Content-Type"]
+  end
+
+  def test_stream_file_with_pathname
+    @response.stream_file(Pathname(__FILE__))
+
+    assert_equal File.size(__FILE__).to_s, @response.headers["Content-Length"]
+    assert_equal "text/x-script.ruby", @response.headers["Content-Type"]
+  end
+
+  def test_stream_file_with_harbor_file
+    store = Harbor::FileStore::Local.new(File.dirname(__FILE__))
+    file = store.get(File.basename(__FILE__))
+
+    @response.stream_file(file)
+    assert_equal File.size(__FILE__).to_s, @response.headers["Content-Length"]
+    assert_equal "text/x-script.ruby", @response.headers["Content-Type"]
+  end
+
+  ##
+  # STREAM_FILE / SEND_FILE with X-Sendfile enabled
+  ##
+
+  def test_stream_file_with_string_io_and_x_sendfile
+    @request.env["HTTP_X_SENDFILE_TYPE"] = "X-Sendfile"
+    @response.stream_file(StringIO.new("test"))
+
+    assert !@response.headers["X-Sendfile"]
+    assert_equal "4", @response.headers["Content-Length"]
+    assert_equal "application/octet-stream", @response.headers["Content-Type"]
+  end
+
+  def test_stream_file_with_io_and_x_sendfile
+    @request.env["HTTP_X_SENDFILE_TYPE"] = "X-Sendfile"
+    file = File.open(__FILE__)
+    @response.stream_file(file)
+
+    assert !@response.headers["X-Sendfile"]
+    assert_equal File.size(__FILE__).to_s, @response.headers["Content-Length"]
+    assert_equal "application/octet-stream", @response.headers["Content-Type"]
+  ensure
+    file.close
+  end
+
+  def test_stream_file_with_filename_and_x_sendfile
+    @request.env["HTTP_X_SENDFILE_TYPE"] = "X-Sendfile"
+    @response.stream_file(__FILE__)
+
+    assert_equal __FILE__, @response.headers["X-Sendfile"]
+    assert_equal File.size(__FILE__).to_s, @response.headers["Content-Length"]
+    assert_equal "text/x-script.ruby", @response.headers["Content-Type"]
+  end
+
+  def test_stream_file_with_pathname_and_x_sendfile
+    @request.env["HTTP_X_SENDFILE_TYPE"] = "X-Sendfile"
+    @response.stream_file(Pathname(__FILE__))
+
+    assert_equal __FILE__, @response.headers["X-Sendfile"]
+    assert_equal File.size(__FILE__).to_s, @response.headers["Content-Length"]
+    assert_equal "text/x-script.ruby", @response.headers["Content-Type"]
+  end
+
+  def test_stream_file_with_harbor_file_and_x_sendfile
+    @request.env["HTTP_X_SENDFILE_TYPE"] = "X-Sendfile"
+    store = Harbor::FileStore::Local.new(File.dirname(__FILE__))
+    file = store.get(File.basename(__FILE__))
+
+    @response.stream_file(file)
+
+    assert_equal __FILE__, @response.headers["X-Sendfile"]
+    assert_equal File.size(__FILE__).to_s, @response.headers["Content-Length"]
+    assert_equal "text/x-script.ruby", @response.headers["Content-Type"]
+  end
+
+  ##
+  # CACHE
+  ##
 
   def test_cache_requires_block
     assert_raises(ArgumentError) { @response.cache("key", Time.now) }
@@ -179,6 +283,8 @@ class ResponseTest < Test::Unit::TestCase
       end
     end
   end
+
+  private
 
   def with_cache
     cache = Harbor::Cache.new(Harbor::Cache::Memory.new)

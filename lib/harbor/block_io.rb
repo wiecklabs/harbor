@@ -20,13 +20,22 @@ module Harbor
       when ::IO
         @io = path_or_io
         @size = @io.stat.size
-      when StringIO, Harbor::FileStore::File
+      when StringIO
         @io = path_or_io
         @size = @io.size
+      when Harbor::FileStore::File
+        @io = path_or_io
+        @size = @io.size
+        @path = path_or_io.absolute_path
       else
-        @io = ::File::open(path_or_io.to_s, 'r')
-        @size = ::File.size(path_or_io.to_s)
+        @path = path_or_io.to_s
+        @io = ::File::open(@path, 'r')
+        @size = ::File.size(@path)
       end
+    end
+
+    def path
+      @path
     end
 
     def to_s

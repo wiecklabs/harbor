@@ -27,7 +27,7 @@ module Harbor
     end
 
     def size
-      buffer.size
+      @content_length || buffer.size
     end
 
     def puts(value)
@@ -46,32 +46,25 @@ module Harbor
       end
     end
 
-   def stream_file(path_or_io, content_type = nil)
-      if path_or_io.is_a?(StringIO) || path_or_io.is_a?(::IO)
-        @io = BlockIO.new(path_or_io)
-        @headers["Content-Length"] = @io.size
-      else
-        if @request.env.has_key?("HTTP_X_SENDFILE_TYPE")
-          case path_or_io
-          when Harbor::FileStore::File
-            path_on_disk = (path_or_io.store.path + path_or_io.path).to_s
-            size = path_or_io.size
-          else
-            path_on_disk = path_or_io.to_s
-            size = ::File.size(path_or_io.to_s)
-          end
-          @headers["X-Sendfile"] = path_on_disk
-          content_type ||= Rack::Mime::MIME_TYPES.fetch(::File.extname(path_on_disk), "binary/octet-stream")
-          @headers["Content-Length"] = size
-        else
-          @io = BlockIO.new(path_or_io)
-          @headers["Content-Length"] = @io.size
-        end
-      end
+    def stream_file(path_or_io, content_type = nil)
+      io = BlockIO.new(path_or_io)
+      content_type ||= Harbor::Mime.mime_type(::File.extname(io.path.to_s))
 
+      if io.path
+        if @request.env.has_key?("HTTP_X_SENDFILE_TYPE")
+          @headers["X-Sendfile"] = io.path
+          @content_length = io.size
+        else
+          @io = io
+        end
+      else
+        @io = io
+      end
+     
+      @headers["Content-Length"] = io.size
       @content_type = content_type
       nil
-    end 
+    end
 
     def send_file(name, path_or_io, content_type = nil)
       stream_file(path_or_io, content_type)
