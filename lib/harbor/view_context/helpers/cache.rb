@@ -1,17 +1,21 @@
 ##
-# Set Harbor::View.fragment_cache_store equal to a supported Cache Store for use
+# Set Harbor::View.cache equal to a supported Cache Store for use
 # in the ViewContext#cache helper.
 ##
 class Harbor::View
 
   class << self
 
-    def fragment_cache_store=(value)
-      @fragment_cache_store = value
+    def cache=(value)
+      if value && !value.is_a?(Harbor::Cache)
+        raise ArgumentError.new("Harbor::View.cache must be nil or an instance of Harbor::Cache")
+      end
+
+      @__cache__ = value
     end
 
-    def fragment_cache_store
-      @fragment_cache_store
+    def cache
+      @__cache__
     end
 
   end
@@ -46,11 +50,13 @@ module Harbor::ViewContext::Helpers::Cache
   #   Time.now + TTL is equal to or greater than the cache-insertion-time + maximum_age.
   ##
   def cache(key, ttl = 30 * 60, max_age = nil, &generator)
-    store = @cache_store || Harbor::View.fragment_cache_store
+    store = @cache_store || Harbor::View.cache
 
     if store.nil?
-      raise ArgumentError.new("Cache Store Not Defined.  Please set Harbor::View.fragment_cache_store to your desired cache store.")
+      raise ArgumentError.new("Cache Store Not Defined.  Please set Harbor::View.cache to your desired cache store.")
     end
+
+    key = "fragment-#{key}"
 
     content = if item = store.get(key)
       begin
