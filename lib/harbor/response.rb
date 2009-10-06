@@ -62,7 +62,6 @@ module Harbor
           end
           @headers["X-Sendfile"] = path_on_disk
           content_type ||= Rack::Mime::MIME_TYPES.fetch(::File.extname(path_on_disk), "binary/octet-stream")
-          #@headers["Content-Length"] = ::File.size(path_or_io)
           @headers["Content-Length"] = size
         else
           @io = BlockIO.new(path_or_io)
@@ -79,6 +78,39 @@ module Harbor
 
       @headers["Content-Disposition"] = "attachment; filename=\"#{escape_filename_for_http_header(name)}\""
       nil
+    end
+
+    def cache(key, last_modified, ttl = nil, max_age = nil)
+      raise ArgumentError.new("You must provide a block of code to cache.") unless block_given?
+
+      key = "page-#{key}"
+      
+      store = nil
+      if ttl || max_age
+        store = Harbor::View.cache
+
+        unless store
+          raise ArgumentError.new("Cache Store Not Defined. Please set Harbor::View.cache to your desired cache store.")
+        end
+      end
+
+      last_modified = last_modified.httpdate
+      @headers["Last-Modified"] = last_modified
+
+      modified_since = @request.env["HTTP_IF_MODIFIED_SINCE"]
+
+      if modified_since == last_modified && (!store || store.get(key))
+        not_modified!
+      elsif store && item = store.get(key)
+        return puts(item.content)
+      end
+
+      yield self
+      store.put(key, buffer, ttl, max_age) if store
+    end
+
+    def not_modified!
+      self.status = 304 and throw(:abort_request)
     end
 
     def render(view, context = {})
