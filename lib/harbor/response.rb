@@ -109,8 +109,23 @@ module Harbor
       store.put(key, buffer, ttl, max_age) if store
     end
 
+    # Headers that MUST NOT be included with 304 Not Modified responses.
+    #
+    # http://tools.ietf.org/html/rfc2616#section-10.3.5
+    NOT_MODIFIED_OMIT_HEADERS = %w[
+      Allow
+      Content-Encoding
+      Content-Language
+      Content-Length
+      Content-MD5
+      Content-Type
+      Last-Modified
+    ].to_set
+
     def not_modified!
-      self.status = 304 and throw(:abort_request)
+      NOT_MODIFIED_OMIT_HEADERS.each { |name| headers.delete(name) }
+      self.status = 304
+      throw(:abort_request)
     end
 
     def render(view, context = {})
