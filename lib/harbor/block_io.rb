@@ -27,6 +27,10 @@ module Harbor
         @io = path_or_io
         @size = @io.size
         @path = path_or_io.absolute_path
+      when Pathname
+        @path = path_or_io.expand_path.to_s
+        @io = path_or_io.open('r')
+        @size = path_or_io.size
       else
         @path = path_or_io.to_s
         @io = ::File::open(@path, 'r')

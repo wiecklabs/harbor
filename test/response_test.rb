@@ -168,7 +168,7 @@ class ResponseTest < Test::Unit::TestCase
     @request.env["HTTP_X_SENDFILE_TYPE"] = "X-Sendfile"
     @response.stream_file(Pathname(__FILE__))
 
-    assert_equal __FILE__, @response.headers["X-Sendfile"]
+    assert_equal Pathname(__FILE__).expand_path.to_s, @response.headers["X-Sendfile"]
     assert_equal File.size(__FILE__).to_s, @response.headers["Content-Length"]
     assert_equal "text/x-script.ruby", @response.headers["Content-Type"]
   end
