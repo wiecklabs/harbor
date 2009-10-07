@@ -151,7 +151,10 @@ module Harbor
 
     def redirect(url, params = nil)
       self.status = 303
-      self.headers = { "Location" => (params ? "#{url}?#{Rack::Utils::build_query(params)}" : url) }
+      self.headers = {
+        "Location" => (params ? "#{url}?#{Rack::Utils::build_query(params)}" : url),
+        "Content-Type" => "text/html"
+      }
       self.flush
       self
     end
