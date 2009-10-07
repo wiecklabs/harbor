@@ -4,21 +4,17 @@ require Pathname(__FILE__).dirname + "view"
 module Harbor
   class Response
 
-    attr_accessor :status, :content_type, :headers, :errors
+    attr_accessor :status, :headers, :errors
 
     def initialize(request)
       @request = request
       @headers = {}
-      @content_type = "text/html"
+      @headers["Content-Type"] = "text/html"
       @status = 200
       @errors = Harbor::Errors.new
     end
 
     def headers
-      @headers.merge!({
-        "Content-Type" => self.content_type,
-        "Content-Length" => self.size.to_s
-      })
       @headers
     end
 
@@ -26,16 +22,30 @@ module Harbor
       @io = nil
     end
 
+    def size=(size)
+      @headers["Content-Length"] = size.to_s
+    end
+
     def size
-      @content_length || buffer.size
+      (@headers["Content-Length"] || buffer.size).to_i
+    end
+
+    def content_type=(content_type)
+      @headers["Content-Type"] = content_type
+    end
+
+    def content_type
+      @headers["Content-Type"]
     end
 
     def puts(value)
       string.puts(value)
+      self.size = string.length
     end
 
     def print(value)
       string.print(value)
+      self.size = string.length
     end
 
     def buffer
@@ -50,19 +60,14 @@ module Harbor
       io = BlockIO.new(path_or_io)
       content_type ||= Harbor::Mime.mime_type(::File.extname(io.path.to_s))
 
-      if io.path
-        if @request.env.has_key?("HTTP_X_SENDFILE_TYPE")
-          @headers["X-Sendfile"] = io.path
-          @content_length = io.size
-        else
-          @io = io
-        end
+      if io.path && @request.env.has_key?("HTTP_X_SENDFILE_TYPE")
+        @headers["X-Sendfile"] = io.path
       else
         @io = io
       end
      
-      @headers["Content-Length"] = io.size
-      @content_type = content_type
+      self.size = io.size
+      self.content_type = content_type
       nil
     end
 
