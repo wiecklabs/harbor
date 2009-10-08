@@ -3,7 +3,7 @@ require 'rubygems'
 gem "harbor"
 require "harbor"
 
-Harbor::View::path << Pathname(__FILE__).dirname + "##>=app_name<##" + "views"
+Harbor::View::path.unshift(Pathname(__FILE__).dirname + "##>=app_name<##" + "views")
 Harbor::View::layouts.default("layouts/application")
 
 class ##>=app_class<## < Harbor::Application
@@ -11,8 +11,8 @@ class ##>=app_class<## < Harbor::Application
   def self.routes(services)
     Harbor::Router.new do
 
-      using services, Default do
-        get("/") { |default| default.index }
+      using services, Home do
+        get("/") { |home| home.index }
       end
 
     end
