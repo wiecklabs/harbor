@@ -46,4 +46,4 @@ class ##>=app_class<## < Harbor::Application
   end
 end
 
-require Pathname(__FILE__).dirname + '##>=app_name<##/controllers/default'
+require Pathname(__FILE__).dirname + '##>=app_name<##/controllers/home'

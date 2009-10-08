@@ -7,7 +7,7 @@ services = Harbor::Container.new
 # services.register("mailer", Harbor::Mailer)
 # services.register("mail_server", Harbor::SendmailServer)
 
-# DataMapper.setup :default, "sqlite3://#{Pathname(__FILE__).dirname.expand_path + "##>=app_name<##.db"}"
+# DataMapper.setup :default, "postgres://localhost/##>=app_name<##"
 
 if $0 == __FILE__
   require "harbor/console"
