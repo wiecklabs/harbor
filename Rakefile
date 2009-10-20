@@ -3,15 +3,9 @@ require "pathname"
 require "rake"
 require "rake/rdoctask"
 require "rake/testtask"
-require "spec/rake/spectask"
 
 # Specs
-task :default => [:spec, :test]
-
-Spec::Rake::SpecTask.new("spec") do |t|
-  t.spec_opts << "--colour" << "--loadby" << "random"
-  t.spec_files = Dir["spec/**/*_spec.rb"]
-end
+task :default => [:test]
 
 Rake::TestTask.new do |t|
   t.libs << "test"
@@ -43,16 +37,6 @@ task :rdoc do
     puts "sdoc not installed:"
     puts "  gem install voloko-sdoc --source http://gems.github.com"
   end
-end
-
-# rcov
-Spec::Rake::SpecTask.new("rcov") do |t|
-  t.spec_opts << "--colour" << "--loadby" << "random"
-  t.rcov = true
-  t.spec_files = Dir["spec/**/*_spec.rb"]
-  t.rcov_opts << "--exclude" << "spec,environment.rb"
-  t.rcov_opts << "--text-summary"
-  t.rcov_opts << "--sort" << "coverage" << "--sort-reverse"
 end
 
 # Performance
