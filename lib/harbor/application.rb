@@ -7,6 +7,7 @@ require Pathname(__FILE__).dirname + "request"
 require Pathname(__FILE__).dirname + "response"
 require Pathname(__FILE__).dirname + "block_io"
 require Pathname(__FILE__).dirname + "events"
+require Pathname(__FILE__).dirname + "messages"
 
 module Harbor
   class Application

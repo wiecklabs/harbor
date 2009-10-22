@@ -108,6 +108,18 @@ module Harbor
       @env['REQUEST_URI'] || @env['REQUEST_PATH']
     end
 
+    def messages
+      @messages ||= if session?
+        session[:messages] = Messages.new(session[:messages])
+      else
+        params[:messages] = Messages.new(params[:messages])
+      end
+    end
+
+    def message(key)
+      @messages[key]
+    end
+
     # ==== Returns
     # String::
     #   The URI without the query string. Strips trailing "/" and reduces

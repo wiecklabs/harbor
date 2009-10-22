@@ -2,7 +2,11 @@ module Harbor
   module Test
     class Request < Harbor::Request
 
-      attr_accessor :session, :env
+      attr_accessor :session, :env, :params
+
+      def params
+        @params ||= {}
+      end
 
       ##
       # Rack::Response defines self.new(env, *args), which means we can't initialize

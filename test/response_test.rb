@@ -298,6 +298,31 @@ class ResponseTest < Test::Unit::TestCase
     end
   end
 
+  ##
+  # Messages
+  ##
+
+  def test_redirect_without_session
+    response = Harbor::Test::Response.new
+    request = Harbor::Test::Request.new
+    response.request = request
+
+    response.message("error", "Error")
+    response.redirect("/redirect", {})
+    assert_equal "/redirect?messages%5Berror%5D=Error", response.headers["Location"]
+  end
+
+  def test_redirect_with_session
+    response = Harbor::Test::Response.new
+    request = Harbor::Test::Request.new
+    request.session = Harbor::Test::Session.new
+    response.request = request
+
+    response.message("error", "Error")
+    response.redirect("/redirect", {})
+    assert_equal "/redirect", response.headers["Location"]
+  end
+
   private
 
   def with_cache

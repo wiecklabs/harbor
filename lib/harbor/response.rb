@@ -108,25 +108,6 @@ module Harbor
       store.put(key, buffer, ttl, max_age) if store
     end
 
-    # Headers that MUST NOT be included with 304 Not Modified responses.
-    #
-    # http://tools.ietf.org/html/rfc2616#section-10.3.5
-    NOT_MODIFIED_OMIT_HEADERS = %w[
-      Allow
-      Content-Encoding
-      Content-Language
-      Content-Length
-      Content-MD5
-      Content-Type
-      Last-Modified
-    ].to_set
-
-    def not_modified!
-      NOT_MODIFIED_OMIT_HEADERS.each { |name| headers.delete(name) }
-      self.status = 304
-      throw(:abort_request)
-    end
-
     def render(view, context = {})
       if context[:layout].is_a?(Array)
         warn "Passing multiple layouts to response.render has been deprecated. See Harbor::Layouts."
@@ -149,10 +130,14 @@ module Harbor
       end
     end
 
-    def redirect(url, params = nil)
+    def redirect(url, params = {})
+      if @request && !@request.session? && !messages.empty? && !messages.expired?
+        messages.each { |key, value| params["messages[#{key}]"] = value }
+      end
+
       self.status = 303
       self.headers = {
-        "Location" => (params ? "#{url}?#{Rack::Utils::build_query(params)}" : url),
+        "Location" => (params && params.any? ? "#{url}?#{Rack::Utils::build_query(params)}" : url),
         "Content-Type" => "text/html"
       }
       self.flush
@@ -180,11 +165,40 @@ module Harbor
       unauthorized and throw(:abort_request)
     end
 
+    # Headers that MUST NOT be included with 304 Not Modified responses.
+    #
+    # http://tools.ietf.org/html/rfc2616#section-10.3.5
+    NOT_MODIFIED_OMIT_HEADERS = %w[
+      Allow
+      Content-Encoding
+      Content-Language
+      Content-Length
+      Content-MD5
+      Content-Type
+      Last-Modified
+    ].to_set
+
+    def not_modified!
+      NOT_MODIFIED_OMIT_HEADERS.each { |name| headers.delete(name) }
+      self.status = 304
+      throw(:abort_request)
+    end
+
     def inspect
       "<#{self.class} headers=#{headers.inspect} content_type=#{content_type.inspect} status=#{status.inspect} body=#{buffer.inspect}>"
     end
 
+    def messages
+      @messages ||= @request.messages
+    end
+
+    def message(key, message)
+      messages[key] = message
+    end
+
     def to_a
+      messages.clear if messages.expired?
+
       if @request.session?
         session = @request.session
         set_cookie(session.key, session.save)
