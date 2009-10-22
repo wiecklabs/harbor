@@ -22,7 +22,7 @@ class MessagesTest < Test::Unit::TestCase
     assert_equal({}, request.messages)
 
     request = Harbor::Test::Request.new
-    request.params[:messages] = { "error" => "Error" }
+    request.params["messages"] = { "error" => "Error" }
     assert_equal({"error" => "Error"}, request.messages)
     assert_equal "Error", request.message("error")
   end
@@ -33,7 +33,7 @@ class MessagesTest < Test::Unit::TestCase
     response.request = request
 
     response.message("error", "Error")
-    assert_equal({"error" => "Error"}, request.params[:messages])
+    assert_equal({"error" => "Error"}, request.params["messages"])
     assert_equal("Error", request.message("error"))
   end
 
