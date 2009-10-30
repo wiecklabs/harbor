@@ -21,23 +21,22 @@ module Harbor
         load_time = Time.now - start_time
 
         appenders = Logging::Logger.root.instance_variable_get(:@appenders)
+        logger = appenders.find { |appender| appender.name == "harbor_debug_messages" }
+        messages = logger.messages.dup
+        logger.messages.clear
 
         return [status, headers, body] unless (headers["Content-Type"] =~ /html/) && body.is_a?(String) && body["jquery"]
-
-        logs = appenders.find { |appender| appender.name == "harbor_debug_messages" }
 
         debugger = @@template.dup
         debugger.gsub!("{{load_time}}", "%2.2f" % load_time)
 
-        queries = logs.messages.map do |level, message|
+        queries = messages.map do |level, message|
           ("<p>[#{@levels[level]}] " + message.gsub("<", "&lt;") + "</p>") if message =~ /^\(/
         end.compact
 
-        messages = logs.messages.map do |level, message|
+        messages = messages.map do |level, message|
           ("<p>[#{@levels[level]}] " + message.gsub("<", "&lt;") + "</p>") if message !~ /^\(/
         end.compact
-
-        logs.messages.clear
 
         debugger.gsub!("{{query_count}}", "%s" % queries.size)
         debugger.gsub!("{{message_count}}", "%s" % messages.size)
