@@ -174,8 +174,8 @@ module Harbor
 
 </div>
 <script type="text/javascript" charset="utf-8">
-  $(window).keyup(function(event) {
-    if ( event.which == 76 ) {
+  $("body").keyup(function(event) {
+    if ( event.which == 76 && event.srcElement == document.body ) {
       $("#logger").slideToggle();
     }
   });
