@@ -41,8 +41,17 @@ module Harbor
         debugger.gsub!("{{query_count}}", "%s" % queries.size)
         debugger.gsub!("{{message_count}}", "%s" % messages.size)
 
-        debugger.gsub!("{{messages}}", '<div class="messages" style="display: none">' + messages.join("\n") + '</div>') if messages.any?
-        debugger.gsub!("{{queries}}", '<div class="queries" style="display: none">' + queries.join("\n") + '</div>') if queries.any?
+        if messages.any?
+          debugger.gsub!("{{messages}}", '<div class="messages" style="display: none">' + messages.join("\n") + '</div>')
+        else
+          debugger.gsub!("{{messages}}", "")
+        end
+
+        if queries.any?
+          debugger.gsub!("{{queries}}", '<div class="queries" style="display: none">' + queries.join("\n") + '</div>')
+        else
+          debugger.gsub!("{{queries}}", "")
+        end
 
         body.gsub!("</body>", debugger + "</body>")
         headers["Content-Length"] = body.length.to_s
