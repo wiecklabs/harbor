@@ -77,22 +77,22 @@ module Harbor
       end
 
       def size
-        store.size(path)
+        store.size(Shellwords::escape(path))
       end
 
       def open(mode = "r")
-        @stream ||= store.open(path, mode)
+        @stream ||= store.open(Shellwords::escape(path), mode)
       end
 
       ##
       # Returns the full path to this file
       ##
       def absolute_path
-        (@store.root + @path).to_s
+        Shellwords::escape((@store.root + @path).to_s)
       end
       
       def exists?
-        store.exists?(path)
+        store.exists?(Shellwords::escape(path))
       end
 
     end
