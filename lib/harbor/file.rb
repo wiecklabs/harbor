@@ -1,7 +1,19 @@
 require 'fileutils'
 
 module Harbor
+
   class File
+
+    attr_accessor :path, :name
+
+    def initialize(path, name = nil)
+      @path = path
+      @name = name || ::File.basename(@path)
+    end
+
+    def size
+      ::File.size(@path)
+    end
 
     ##
     # The file is first copied, and then the provided block is run.

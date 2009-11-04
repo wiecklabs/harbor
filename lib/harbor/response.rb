@@ -78,6 +78,14 @@ module Harbor
       nil
     end
 
+    # Zip up the files (with no compression) and send it the client
+    # files should be an enumerable collection of Harbor::File instances
+    def send_files(files)
+      @io = ZippedIO.new(files)
+      self.size = @io.size
+      self.content_type = "application/zip"
+    end
+
     def cache(key, last_modified, ttl = nil, max_age = nil)
       raise ArgumentError.new("You must provide a block of code to cache.") unless block_given?
 
