@@ -4,7 +4,7 @@ require "rake"
 require "rake/rdoctask"
 require "rake/testtask"
 
-# Specs
+# Tests
 task :default => [:test]
 
 Rake::TestTask.new do |t|
