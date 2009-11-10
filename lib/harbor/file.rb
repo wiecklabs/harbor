@@ -10,6 +10,16 @@ module Harbor
       @path = path
       @name = name || ::File.basename(@path)
     end
+    
+    def read(block_size)
+      @io ||= File.open(@path, "rb")
+      yield @io.read(block_size)
+    end
+    
+    def rewind
+      @io ||= File.open(@path, "rb")
+      @io.rewind
+    end
 
     def size
       ::File.size(@path)

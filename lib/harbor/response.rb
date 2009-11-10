@@ -80,10 +80,11 @@ module Harbor
 
     # Zip up the files (with no compression) and send it the client
     # files should be an enumerable collection of Harbor::File instances
-    def send_files(files)
+    def send_files(name, files)
       @io = ZippedIO.new(files)
       self.size = @io.size
       self.content_type = "application/zip"
+      @headers["Content-Disposition"] = "attachment; filename=\"#{escape_filename_for_http_header(name)}\""
     end
 
     def cache(key, last_modified, ttl = nil, max_age = nil)

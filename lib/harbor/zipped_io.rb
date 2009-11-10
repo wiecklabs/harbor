@@ -68,10 +68,9 @@ module Harbor
       end
 
       def read
-        ::File.open(@file.path, "rb") do |f|
-          while data = f.read(Harbor::ZippedIO::block_size)
-            yield @zlibDeflater.deflate(data)
-          end
+        @file.rewind
+        while data = @file.read(Harbor::ZippedIO::block_size)
+          yield @zlibDeflater.deflate(data)
         end
         until @zlibDeflater.finished?
           yield @zlibDeflater.finish
@@ -82,11 +81,11 @@ module Harbor
       def size
         return @size if @size
         @size = 0
-        ::File.open(@file.path, "rb") do |f|
-          while data = f.read(Harbor::ZippedIO::block_size)
-            @size += @zlibDeflater.deflate(data).size
-          end
+        @file.rewind
+        while data = @file.read(Harbor::ZippedIO::block_size)
+          @size += @zlibDeflater.deflate(data).size
         end
+        
         until @zlibDeflater.finished?
           @size += @zlibDeflater.finish.size
         end
