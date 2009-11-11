@@ -93,7 +93,7 @@ class Harbor::Cache::Disk
   end
 
   def path_for_item(item)
-    @path + "c_#{item.key}.__INFO__.#{item.ttl}.#{item.maximum_age}.#{item.cached_at.strftime('%Y%m%dT%H%M%S%z')}.#{item.expires_at.strftime('%Y%m%dT%H%M%S%z')}"
+    @path + "c_#{item.key}.__INFO__.#{item.ttl}.#{item.maximum_age}.#{item.cached_at.strftime('%Y%m%dT%H%M%S%Z')}.#{item.expires_at.strftime('%Y%m%dT%H%M%S%Z')}"
   end
 
 end
