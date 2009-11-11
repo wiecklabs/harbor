@@ -5,7 +5,7 @@ module Harbor
   # 
   #   <%= plugin("user/tabs", :user => @user)
   # 
-  # It can of course be used 
+  # It can of course be used for anything, however:
   # 
   #   class Dog
   #     include Harbor::AccessorInjector
