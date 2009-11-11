@@ -61,6 +61,15 @@ module Harbor
       @host
     end
 
+    ##
+    # Tokenizes urls in the email body by replacing them with the mail_server_url
+    # provided. The message's envelope_id and a base64 encoded version of the original
+    # url are passed to the URL provided.
+    # 
+    #   mailer.html = 'Please visit <a href="http://example.com">our site</a> for details.'
+    #   mailer.tokenize_urls!("http://example.com/.m/%s?redirect=%s")
+    #   mailer.html # => "Please visit <a href=\"http://example.com/.m/%2AF%2Ch2Gtn.ny1poJnnvvCeSMZA?redirect=aHR0cDovL2V4YW1wbGUuY29t%0A\">our site</a> for details."
+    ##
     def tokenize_urls!(mail_server_url)
       mail_server_url = "http://#{mail_server_url}" unless mail_server_url =~ /^http/
 
@@ -68,7 +77,11 @@ module Harbor
         if content = instance_variable_get(ivar)
           new_content = content.to_s.gsub(/(https?:\/\/.+?(?=[" <]|$))(\W*)(.{4}|$)/) do |url|
             # Don't tokenize the inner text of a link
-            $3 == '</a>' ? url : ("#{mail_server_url}/.m/#{envelope_id}?r=#{CGI.escape([$1].pack("m"))}" + $2 + $3)
+            if $3 == '</a>'
+              url
+            else
+              (mail_server_url % [CGI.escape(envelope_id), CGI.escape([$1].pack("m"))]) + $2 + $3
+            end
           end
           instance_variable_set(ivar, new_content)
         end
