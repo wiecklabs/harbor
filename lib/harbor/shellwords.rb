@@ -1,9 +1,12 @@
 require 'shellwords'
 
-unless Shellwords.respond_to?(:escape)
+module Harbor
   ##
-  # ruby-1.8.7 defines this function for escaping strings to be
-  # safely used when passed to the shell.
+  # This is a backport of ruby-1.8.7's Shellwords.escape function to 1.8.6
+  # 
+  # It can be used to safely escape strings which will be passed to a shell:
+  # 
+  #   Shellwords.escape("file/with/spaces in name.txt") # => "file/with/spaces\\ in\\ name.txt"
   ##
   module Shellwords
     def escape(str)
@@ -22,7 +25,10 @@ unless Shellwords.respond_to?(:escape)
 
       return str
     end
-
-    module_function :escape
   end
+end
+
+unless Shellwords.respond_to?(:escape)
+  Shellwords.send(:include, Harbor::Shellwords)
+  Shellwords.send(:module_function, :escape)
 end
