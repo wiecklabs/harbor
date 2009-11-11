@@ -25,9 +25,16 @@ module Harbor
         messages = logger.messages.dup
         logger.messages.clear
 
-        return [status, headers, body] unless (headers["Content-Type"] =~ /html/) && body.is_a?(String) && body["jquery"]
+        return [status, headers, body] unless (headers["Content-Type"] =~ /html/) && body.is_a?(String)
 
         debugger = @@template.dup
+
+        if body["jquery"]
+          debugger.gsub!("{{jquery}}", "")
+        else
+          debugger.gsub!("{{jquery}}", '<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>')
+        end
+
         debugger.gsub!("{{load_time}}", "%2.2f" % load_time)
 
         queries = messages.map do |level, message|
@@ -76,6 +83,7 @@ module Harbor
       end
 
       @@template = <<-HTML
+{{jquery}}
 <style type="text/css" media="screen">
   #logger {
     position: fixed; bottom: 0; font-family: "Lucida Grande"; z-index: 99000;
