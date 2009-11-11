@@ -1,19 +1,19 @@
 require "dm-core"
 require "dm-timestamps"
 
-##
-# This is a database backed session handle for DataMapper. You can use it
-# instead of the builtin Harbor::Session::Cookie by doing:
-# 
-# Harbor::Session.configure do |session|
-#   session.store = Harbor::Contrib::Session::DataMapper
-# end
-# 
-# A basic Session resource is defined for you.
-##
 module Harbor
   module Contrib
     class Session
+      ##
+      # This is a database backed session handle for DataMapper. You can use it
+      # instead of the builtin Harbor::Session::Cookie by doing:
+      # 
+      # Harbor::Session.configure do |session|
+      #   session.store = Harbor::Contrib::Session::DataMapper
+      # end
+      # 
+      # A basic Session resource is defined for you.
+      ##
       class DataMapper < Harbor::Session::Abstract
 
         class SessionHash < Hash
