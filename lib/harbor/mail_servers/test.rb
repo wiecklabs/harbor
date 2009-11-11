@@ -7,8 +7,8 @@ module Harbor
         self.messages = []
       end
 
-      def deliver(mail)
-        messages.push(mail)
+      def deliver(message_or_messages)
+        messages.push(*message_or_messages)
       end
     end
   end

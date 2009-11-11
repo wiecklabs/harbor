@@ -4,8 +4,8 @@ module Harbor
       def initialize(config = {})
       end
 
-      def deliver(mail)
-        raise NotImplementedError.new("Classes extending #{self.class.name} must implement #deliver(mail).")
+      def deliver(message_or_messages)
+        raise NotImplementedError.new("Classes extending #{self.class.name} must implement #deliver(message_or_messages).")
       end
     end
   end
