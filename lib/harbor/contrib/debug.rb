@@ -77,6 +77,9 @@ module Harbor
 
       @@template = <<-HTML
 <style type="text/css" media="screen">
+
+  body:last-child { margin-bottom: 60px; }
+
   #logger {
     position: fixed; bottom: 0; font-family: "Lucida Grande"; z-index: 99000;
     width: 100%;
