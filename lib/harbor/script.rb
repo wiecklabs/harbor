@@ -4,7 +4,7 @@ gem "thin"
 require 'thin/version'
 require 'thin/daemonizing'
 
-module Logging
+module Logging #:nodoc:
   def log(message)
     Harbor::Script.logger << message + "\n"
   end

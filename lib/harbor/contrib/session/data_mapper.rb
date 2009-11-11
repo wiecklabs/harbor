@@ -62,7 +62,7 @@ module Harbor
       end
     end
 
-    class ::Session
+    class ::Session #:nodoc:
       include DataMapper::Resource
 
       property :id, String, :key => true, :default => lambda { `uuidgen`.chomp }
