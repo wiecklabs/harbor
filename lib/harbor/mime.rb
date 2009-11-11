@@ -1,8 +1,6 @@
-# Copyright (c) 2007, 2008, 2009 Christian Neukirchen <purl.org/net/chneukirchen>
-
-# This file originated from the Rack project, which can be found at rack.rubyforge.org
-
 module Harbor
+  # Copyright (c) 2007, 2008, 2009 Christian Neukirchen <purl.org/net/chneukirchen>
+  # This file originated from the Rack project, which can be found at rack.rubyforge.org
   module Mime
     # Returns String with mime type if found, otherwise use +fallback+.
     # +ext+ should be filename extension in the '.ext' format that
