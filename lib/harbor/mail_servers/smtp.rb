@@ -12,7 +12,7 @@ module Harbor
       end
 
       def deliver(message_or_messages)        
-        messages = [*message_or_messages]
+        messages = Array === message_or_messages ? message_or_messages : [message_or_messages]
 
         Net::SMTP.start(@config[:address], @config[:port]) do |smtp|
           messages.each do |message|

@@ -6,7 +6,7 @@ module Harbor
       end
 
       def deliver(message_or_messages)
-        messages = [*message_or_messages]
+        messages = Array === message_or_messages ? message_or_messages : [message_or_messages]
 
         messages.each do |message|
           sendmail = ::IO.popen("#{@sendmail} -i -t", "w+")

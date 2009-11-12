@@ -8,7 +8,9 @@ module Harbor
       end
 
       def deliver(message_or_messages)
-        messages.push(*message_or_messages)
+        messages = Array === message_or_messages ? message_or_messages : [message_or_messages]
+
+        messages.push(*messages)
       end
     end
   end
