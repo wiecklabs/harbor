@@ -3,25 +3,25 @@ require Pathname(__FILE__).dirname + "helper"
 require "ostruct"
 
 class EmailAppenderTestTest < Test::Unit::TestCase
-  
-  class MockMailer
-    attr_accessor :to, :from, :subject, :text, :html, :mail_server
-    attr_accessor :last_delivery
-
-    def send!
-      @last_delivery = OpenStruct.new(:to => to, :from => from, :subject => subject, :text => text, :html => html)
-    end
-    
-    def clear!
-      @last_delivery = nil
-    end
-  end
 
   def setup
     @container = Harbor::Container.new
-    @container.register(:mail_server, Harbor::MailServers::Sendmail.new)
-    @mock_mailer = MockMailer.new
-    @container.register(:mailer, @mock_mailer)
+
+    mail_server = Class.new(Harbor::MailServers::Abstract) do
+      attr_accessor :last_delivery
+
+      def deliver(message)
+        @last_delivery = message
+      end
+
+      def clear!
+        @last_delivery = nil
+      end
+    end
+
+    @mail_server = mail_server.new
+    @container.register(:mail_server, @mail_server)
+    @container.register(:mailer, Harbor::Mailer)
     @appender = Harbor::LogAppenders::Email.new(@container, "from@example.com", "to1@example.com", "to2@example.com")
   end
   
@@ -29,9 +29,9 @@ class EmailAppenderTestTest < Test::Unit::TestCase
     event = Logging::LogEvent.new(nil, 4, "Some error\nSome Details", false)
     @appender.write(event)
     
-    assert_kind_of(OpenStruct, @mock_mailer.last_delivery)
+    assert(@mail_server.last_delivery)
     
-    delivery = @mock_mailer.last_delivery
+    delivery = @mail_server.last_delivery
     assert_equal(["to1@example.com", "to2@example.com"], delivery.to)
     assert_equal("from@example.com", delivery.from)
     assert_equal("[ERROR] Some error", delivery.subject)
@@ -43,24 +43,24 @@ class EmailAppenderTestTest < Test::Unit::TestCase
     event = Logging::LogEvent.new(nil, 4, "Some error\nSome Details", false)
 
     @appender.write(event)
-    assert_kind_of(OpenStruct, @mock_mailer.last_delivery)
-    @mock_mailer.clear!
+    assert(@mail_server.last_delivery)
+    @mail_server.clear!
     
     @appender.write(event)
-    assert_equal(nil, @mock_mailer.last_delivery)
+    assert_equal(nil, @mail_server.last_delivery)
 
     # One second before an email can be sent
     Time.warp(@appender.duplicate_subject_delivery_threshold - 1) do
       @appender.write(event)
-      assert_equal(nil, @mock_mailer.last_delivery)
+      assert_equal(nil, @mail_server.last_delivery)
     end
     
     # Exactly when an email can be sent
     Time.warp(@appender.duplicate_subject_delivery_threshold) do
       @appender.write(event)
-      assert_kind_of(OpenStruct, @mock_mailer.last_delivery)
-      assert(@mock_mailer.last_delivery.text['Repeated 3 times since'])
-      @mock_mailer.clear!
+      assert(@mail_server.last_delivery)
+      assert(@mail_server.last_delivery.text['Repeated 3 times since'])
+      @mail_server.clear!
     end
   end
   
@@ -68,18 +68,18 @@ class EmailAppenderTestTest < Test::Unit::TestCase
     event = Logging::LogEvent.new(nil, 4, "Some error\nSome Details", false)
 
     @appender.write(event)
-    assert_kind_of(OpenStruct, @mock_mailer.last_delivery)
-    @mock_mailer.clear!
+    assert(@mail_server.last_delivery)
+    @mail_server.clear!
     
     Time.warp(@appender.duplicate_subject_delivery_threshold) do
       event = Logging::LogEvent.new(nil, 4, "Some OTHER error\nSome OTHER Details", false)
       @appender.write(event)
-      assert_kind_of(OpenStruct, @mock_mailer.last_delivery)      
+      assert(@mail_server.last_delivery)      
       
       @appender.write(event)
-      assert_kind_of(OpenStruct, @mock_mailer.last_delivery)
-      assert(!@mock_mailer.last_delivery.text['Repeated'])
-      @mock_mailer.clear!
+      assert(@mail_server.last_delivery)
+      assert(!@mail_server.last_delivery.text['Repeated'])
+      @mail_server.clear!
     end
     
   end

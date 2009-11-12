@@ -43,8 +43,8 @@ module Harbor
           data << "\n(from: #{`hostname`.chomp}, PID: #{Process.pid})"
 
           mailer.subject = "[ERROR] #{subject}"
-          mailer.x_priority = "1 (Highest)"
-          mailer.x_msmail_priority = "High"
+          mailer["x_priority"] = "1 (Highest)"
+          mailer["x_msmail_priority"] = "High"
           mailer.text = if tracked_subject.occurances.size > 1
             "Repeated #{tracked_subject.occurances.size} times since #{tracked_subject.sent_at.strftime('%Y-%m-%d %R%z')}\n\n#{data}"
           else
