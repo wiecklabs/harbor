@@ -30,13 +30,7 @@ end
 # end
 
 task :rdoc do
-  sh 'rm -r doc' if File.directory?('doc')
-  begin
-    sh 'sdoc --line-numbers --inline-source --main "README" --title "Harbor Documentation" --exclude lib/harbor/generator/* README lib'
-  rescue
-    puts "sdoc not installed:"
-    puts "  gem install voloko-sdoc --source http://gems.github.com"
-  end
+  sh 'rdoc -T harbor --line-numbers --main README --title "Harbor Documentation" --exclude "lib/harbor/generator/*" lib/harbor.rb lib/harbor README'
 end
 
 # Performance
