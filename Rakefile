@@ -30,7 +30,9 @@ end
 # end
 
 task :rdoc do
-  sh 'rdoc -T harbor --line-numbers --main README --title "Harbor Documentation" --exclude "lib/harbor/generator/*" lib/harbor.rb lib/harbor README'
+  sh <<-EOS.strip
+rdoc -T harbor#{" --op " + ENV["OUTPUT_DIRECTORY"] if ENV["OUTPUT_DIRECTORY"]} --main README --title "Harbor Documentation" --exclude "lib/harbor/generator/*" lib/harbor.rb lib/harbor README
+  EOS
 end
 
 # Performance
