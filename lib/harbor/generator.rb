@@ -3,67 +3,54 @@ require 'erubis'
 
 module Harbor
 
-  module Generator
+  class Generator
 
     class GeneratorError < StandardError; end
     class UnknownCommandError < GeneratorError; end
     class GeneratorArgumentError < GeneratorError; end
 
+    attr_accessor :app, :command, :klass, :description, :help
+
+    def initialize(app, command, klass, description, help)
+      @app, @command, @klass, @description, @help = app, command, klass, description, help
+    end
+
     def self.run(app, command, options = [])
-      executor = if klass = @@generators["#{app}:#{command}"]
-        klass.new(options)
+      executor = if generator = @@generators["#{app}:#{command}"]
+        generator.klass.new(options)
       else
-        raise UnknownCommandError.new("Unknown Command: #{command}")
+        puts usage(app)
+
+        exit(1)
       end
 
       executor.run
     end
 
+    def self.usage(app)
+      usage = []
+      usage << "Usage #{app} command [options]"
+      usage << ""
+      usage << "Available commands:"
+
+      @@generators.select { |key,| key =~ /^#{app}/ }.sort.each do |key, generator|
+        usage << "%12s   %s" % [generator.command, generator.description]
+      end
+
+      usage
+    end
+
     @@generators = {}
-    def self.register(app, command, klass)
-      @@generators["#{app}:#{command}"] = klass
+    def self.register(app, command, klass, description = "", help = "")
+      @@generators["#{app}:#{command}"] = new(app, command, klass, description, help)
     end
 
-    class SetupCommand
-      APP = 'harbor'
-      COMMAND = 'setup'
-      Harbor::Generator.register(APP, COMMAND, self)
-
-      attr_reader :app_name
-
-      def initialize(options)
-        @app_name = options.first
-
-        raise GeneratorArgumentError.new("#{COMMAND} requires only an application name.") unless @app_name
-      end
-
-      def run
-        skeleton_path = Pathname(__FILE__) + '../generator/skeletons/basic/*'
-
-        `mkdir #{@app_name}`
-        `cp -rp #{skeleton_path} #{@app_name}`
-
-        # Evaluate all of the skeleton templates
-        Dir["#{@app_name}/**/*.skel"].each do |path|
-          ::File.open(path.sub('.skel', ''), 'w') do |file|
-            file.puts Erubis::FastEruby.new(::File.read(path), :pattern => '##> <##').evaluate(self)
-          end
-
-          FileUtils.rm(path)
-        end
-
-        `mv #{@app_name}/lib/appname.rb  #{@app_name}/lib/#{@app_name}.rb`
-        `mv #{@app_name}/lib/appname  #{@app_name}/lib/#{@app_name}`
-      end
-
-      def app_class
-        # 'sample' => 'Sample'
-        # 'cool_app' => 'CoolApp'
-        @app_name.gsub(/(^|-|_)[a-z0-9]{1}/) { |m| m.sub(/-|_/, '').upcase }
-      end
-
+    def self.generators
+      @@generators
     end
 
+    require Pathname(__FILE__).dirname + "generator/help"
+    require Pathname(__FILE__).dirname + "generator/setup"
   end
 
 end

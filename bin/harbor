@@ -1,11 +1,6 @@
 #!/usr/bin/env ruby
-
-# harbor generator
-#
-#   usage: harbor setup app-name
-
-require 'rubygems'
-require 'harbor/generator'
+require "rubygems"
+require File.expand_path(File.dirname(__FILE__) + '/../lib/harbor/generator')
 
 command = ARGV.shift
 
