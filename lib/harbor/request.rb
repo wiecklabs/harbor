@@ -110,7 +110,7 @@ module Harbor
 
     def messages
       @messages ||= if session?
-        session[:messages] = Messages.new(session[:messages])
+        session[:messages] = Messages.new((session[:messages]||{}).merge(params["messages"]||{}))
       else
         params["messages"] = Messages.new(params["messages"])
       end
