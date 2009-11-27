@@ -75,12 +75,12 @@ module Harbor
 
       [:@html, :@text].each do |ivar|
         if content = instance_variable_get(ivar)
-          new_content = content.to_s.gsub(/(https?:\/\/.+?(?=[" <]|$))(\W*)(.{4}|$)/) do |url|
+          new_content = content.to_s.gsub(/(https?:\/\/.+?(?=[" <]|$))(.{4}|$)/) do |url|
             # Don't tokenize the inner text of a link
-            if $3 == '</a>'
+            if $2 == '</a>'
               url
             else
-              (mail_server_url % [CGI.escape(envelope_id), CGI.escape([$1].pack("m"))]) + $2 + $3
+              (mail_server_url % [CGI.escape(envelope_id), CGI.escape([$1].pack("m"))]) + $2
             end
           end
           instance_variable_set(ivar, new_content)

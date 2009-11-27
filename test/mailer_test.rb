@@ -45,4 +45,16 @@ class MailerTest < Test::Unit::TestCase
     assert_equal("<a href=\"#{url}\">#{destination_url}</a>", mailer.html)
   end
 
+  ##
+  # Fixing an issue where the regex wasn't robust enough to handle tags after the link tag
+  # 
+  def test_tokenize_urls_with_tags_after_anchor_tag
+    mailer = Harbor::Mailer.new
+    url = "http://test.com"
+    mailer.html = "<p><a href=\"#{url}\">Link</a></p>"
+    mailer.tokenize_urls!("http://m.wieck.com/m/%s?r=%s")
+
+    assert_equal("<p><a href=\"http://m.wieck.com/m/#{CGI.escape(mailer.envelope_id)}?r=#{CGI.escape([url].pack("m"))}\">Link</a></p>", mailer.html)
+  end
+  
 end
