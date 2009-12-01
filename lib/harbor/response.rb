@@ -201,7 +201,17 @@ module Harbor
       @messages ||= @request.messages
     end
 
-    def message(key, message)
+    ##
+    # Calling reponse.message forces a session to load. The reasoning is as follows:
+    # 1) This will eliminate the majority of ugly query-string messages.
+    # 2) Calling response.message in an action assumes a human receiver and thus the 
+    #    use of a session is valid
+    # 
+    # Nonetheless, control is left to app. Use use_session = false to use query-string
+    # based messages instead.
+    ##
+    def message(key, message, use_session=true)
+      @request.session if use_session
       messages[key] = message
     end
 
