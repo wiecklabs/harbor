@@ -202,7 +202,7 @@ module Harbor
 
       def initialize(file)
         @file = file
-      nd
+      end
 
       def binary_dos_date
         (time.day) + (time.month << 5) + ((time.year - 1980) << 9)
