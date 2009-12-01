@@ -173,8 +173,8 @@ module Harbor
           0, # numer of disk with start of central directory
           @entries.size,
           @entries.size,
-          # @entries.inject(0) { |value, entry| entry.central_directory_header_size + value },
-          size,
+          @entries.inject(0) { |value, entry| entry.central_directory_header_size + value },
+          # size,
           @offset,
           0 # comment length
         ].pack('VvvvvVVv')
