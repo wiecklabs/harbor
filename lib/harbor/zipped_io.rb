@@ -44,7 +44,7 @@ module Harbor
 
         @offset += compressed_size + entry.read_local_entry.size
 
-        @total_compressed_size += compressed_size
+        @total_compressed_size += compressed_size + entry.read_local_entry.size
       end
 
       @total_compressed_size += zip_central_directory.size
