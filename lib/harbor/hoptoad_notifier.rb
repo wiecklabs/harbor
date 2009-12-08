@@ -34,11 +34,10 @@ module Harbor
     end
 
     def self.notify(exception, request, response, trace)
-      require 'ruby-debug'
-      debugger
+      Lilypad.config self.hoptoad_api_key do
+        environments(%w(production stage staging))
+      end
 
-      Lilypad.config self.hoptoad_api_key
-      
       Lilypad.notify(exception, request.env)
     end
   end
