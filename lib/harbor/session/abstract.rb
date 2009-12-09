@@ -18,7 +18,7 @@ module Harbor
       # Receives the session data hash, and should return the data
       # to be set for the cookie's value
       ##
-      def self.commit_session(data)
+      def self.commit_session(data, request)
         [Marshal.dump(data)].pack("m*")
       end
     end

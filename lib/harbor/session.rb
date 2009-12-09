@@ -35,7 +35,7 @@ module Harbor
       @options = self.class.options.dup
       @cookie = request.cookies[@options[:key]]
       @store = self.class.options[:store]
-
+      @request = request
       @data ||= @store.load_session(@cookie)
     end
 
@@ -64,7 +64,7 @@ module Harbor
       cookie[:domain] = @options[:domain]
       cookie[:path] = @options[:path]
       cookie[:expires] = Time.now + @options[:expire_after] unless @options[:expire_after].nil?
-      cookie[:value] = @store.commit_session(@data)
+      cookie[:value] = @store.commit_session(@data, @request)
       cookie
     end
 
