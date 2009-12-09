@@ -190,6 +190,7 @@ module Harbor
   <div style="display: none">
     {{queries}}
     {{messages}}
+  </div>
 </div>
 
 </div>
