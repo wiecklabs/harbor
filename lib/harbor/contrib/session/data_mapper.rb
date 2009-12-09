@@ -9,7 +9,7 @@ module Harbor
       # instead of the builtin Harbor::Session::Cookie by doing:
       # 
       #   Harbor::Session.configure do |session|
-      #     session.store = Harbor::Contrib::Session::DataMapper
+      #     session[:store] = Harbor::Contrib::Session::DataMapper
       #   end
       # 
       # A basic Session resource is defined for you.
