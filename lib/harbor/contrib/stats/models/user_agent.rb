@@ -1,3 +1,4 @@
+require 'ipaddr'
 module Harbor
   module Contrib
     class Stats
