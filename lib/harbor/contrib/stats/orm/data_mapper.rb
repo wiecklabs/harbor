@@ -21,17 +21,17 @@ module Harbor
 
         class UserAgent < Harbor::Contrib::Stats::UserAgent
           def self.create_table!
-            repository.adapter.execute(CREATE_PAGE_VIEWS)
+            repository.adapter.execute(CREATE_USER_AGENTS)
           end
 
           def self.drop_table!
-            repository.adapter.execute(DROP_PAGE_VIEWS)
+            repository.adapter.execute(DROP_USER_AGENTS)
           end
 
           def self.create(session_id, remote_ip, user_agent)
             # We split in case X-Forwarded-For is a list, and rescue any errors
             # by setting the IP to 0.0.0.0 (which we'll treat as 'unknown').
-            clean_ip = IPAddr.new(ip.split(/,/, 2).first).to_s rescue '127.0.0.1'
+            clean_ip = IPAddr.new(remote_ip.split(/,/, 2).first).to_s rescue '127.0.0.1'
 
             repository.adapter.execute(INSERT, session_id, clean_ip, user_agent, "", "", session_id)
           end
