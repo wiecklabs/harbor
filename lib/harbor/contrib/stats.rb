@@ -20,10 +20,14 @@ module Harbor
 end
 
 Harbor::Application.register_event(:request_complete) do |request, |
-  if request.session?
-    session = request.session
+  if orm = Harbor::Contrib::Stats.orm
+    if request.session?
+      session = request.session
 
-    Harbor::Contrib::Stats::orm::PageView.create(session.id, request.uri, request.referrer)
-    Harbor::Contrib::Stats::orm::UserAgent.create(session.id, request.remote_ip, request.env["HTTP_USER_AGENT"])
+      orm::PageView.create(session.id, request.uri, request.referrer)
+      orm::UserAgent.create(session.id, request.remote_ip, request.env["HTTP_USER_AGENT"])
+    end
+  else    
+    warn "Harbor::Contrib::Stats::orm must be set to generate statistics."
   end
 end
