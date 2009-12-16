@@ -10,6 +10,14 @@ module Harbor
       @path = path
       @name = name || ::File.basename(@path)
     end
+
+    def close
+      @io.close
+    end
+
+    def closed?
+      @io.closed?
+    end
     
     def read(block_size)
       @io ||= ::File.open(@path, "rb")

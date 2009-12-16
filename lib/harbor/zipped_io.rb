@@ -71,6 +71,10 @@ module Harbor
       zip_central_directory.read do |data|
         yield data
       end
+
+      zip_entries.each do |entry|
+        entry.close
+      end
     end
 
     def size
@@ -214,6 +218,10 @@ module Harbor
 
       def central_directory_header_size
         CENTRAL_DIRECTORY_STATIC_HEADER_LENGTH + @file.name.size
+      end
+
+      def close
+        @file.close unless @file.closed?
       end
 
       def name
