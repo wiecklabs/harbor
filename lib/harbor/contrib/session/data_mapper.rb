@@ -44,7 +44,7 @@ module Harbor
 
         def self.load_session(cookie)
           session = if expire_after = Harbor::Session.options[:expire_after]
-            ::Session.first(:id => cookie, :created_at.gte => Time.now - expire_after)
+            ::Session.first(:id => cookie, :updated_at.gte => Time.now - expire_after)
           else
             ::Session.get(cookie)
           end
