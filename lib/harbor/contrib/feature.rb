@@ -39,21 +39,21 @@ module Harbor
     #         merge!(Features::Feature.routes(services)) if Features::Feature.enabled?
     #       end
     #     end
+    #   end
     # 
     ##
     class Feature
-      @@enabled = false
       def self.enable
-        return false if @@enabled
-        @@enabled = true
+        return false if @enabled
+        @enabled = true
 
         yield self if block_given?
 
-        @@enabled
+        @enabled
       end
 
       def self.enabled?
-        @@enabled
+        !!@enabled
       end
     end
   end
