@@ -70,7 +70,8 @@ module Harbor
     end
 
     def remote_ip
-      env["REMOTE_ADDR"] || env["HTTP_CLIENT_IP"] || env["HTTP_X_FORWARDED_FOR"]
+      # handling proxied environments
+      env["HTTP_X_FORWARDED_FOR"] || env["HTTP_CLIENT_IP"] || env["REMOTE_ADDR"]
     end
 
     def request_method
