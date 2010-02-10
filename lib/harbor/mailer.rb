@@ -75,7 +75,7 @@ module Harbor
 
       [:@html, :@text].each do |ivar|
         if content = instance_variable_get(ivar)
-          new_content = content.to_s.gsub(/(https?:\/\/[^<"\s\n]+)(.{4}|$)/) do |url|
+          new_content = content.to_s.gsub(/(https?:\/\/[^<"\s\n]+)(.{4}|$)/m) do |url|
             # Don't tokenize the inner text of a link
             if $2 == '</a>'
               url
