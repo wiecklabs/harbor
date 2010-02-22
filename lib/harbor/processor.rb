@@ -30,6 +30,15 @@ module Harbor
     attr_accessor :log_level
     attr_accessor :log_file
 
+    ##
+    # Accepts an instance of OptionParser for wiring up options, like:
+    # 
+    #   processor = MyProcessor.new
+    #   OptionParser.new do |opts|
+    #     opts.banner = "Usage: my_processor [options]"
+    #     processor.options(opts)
+    #   end.parse!
+    ##
     def options(optparse)
       optparse.on("-n", "--no-daemon", "Run in the foreground") { self.daemonize = false }
       optparse.on("-w", "--workers=COUNT", Integer, "Number of workers to spawn (default: #{worker_count})") { |count| self.worker_count = count }
@@ -38,32 +47,35 @@ module Harbor
       optparse.on("-s", "--sleep=SECONDS", Integer, "Sleep s seconds between runs (default: #{sleep_time})") { |sleep_time| self.sleep_time = sleep_time }
     end
 
-    def logger
-      @logger ||= begin
-        logger = Logging::Logger[self.class]
-        logger.additive = false
-        logger.level = log_level
-        layout = Logging::Layouts::Pattern.new(:pattern => "%-5l %d: %m\n")
-
-        if daemonize
-          logger.add_appenders(Logging::Appenders::File.new(log_file, :layout => layout))
-        else
-          logger.add_appenders(Logging::Appenders::Stdout.new(:layout => layout))
-        end
-      end
-    end
-
+    ##
+    # This method must be over-ridden in your implementation of Harbor::Processor,
+    # and should return a task to be performed inside of a forked worker process.
+    # It should return nil when there are no available tasks.
+    ##
     def reserve
       raise NotImplementedError.new("You must implement #{self.class}#reserve")
     end
 
+    ##
+    # This method must be over-ridden in your implementation of Harbor::Processor.
+    # It will be called within the forked worker process, and accepts as its only
+    # argument a task returned by #reserve.
+    ##
     def process(task)
       raise NotImplementedError.new("You must implement #{self.class}#process(task)")
     end
 
+    ##
+    # This method can be over-ridden to define special behavior for when a task
+    # is interrupted, such as updating a value in the database.
+    ##
     def handle_interrupt(task)
     end
 
+    ##
+    # Method which can be over-ridden to define special behavior for unhandled exceptions,
+    # such as marking a task as failed in the database.
+    ##
     def handle_exception(task, exception)
       logger.error("#{exception}\n#{exception.backtrace.join("\n")}")
     end
@@ -79,10 +91,6 @@ module Harbor
       yield
     ensure
       trap(:INT, original_handler)
-    end
-
-    def alive?
-      defined?(@alive) ? @alive : (@alive = true)
     end
 
     def start
@@ -139,7 +147,26 @@ module Harbor
       logger.error("#{e}\n#{e.backtrace.join("\n")}")
     end
 
+    def logger
+      @logger ||= begin
+        logger = Logging::Logger[self.class]
+        logger.additive = false
+        logger.level = log_level
+        layout = Logging::Layouts::Pattern.new(:pattern => "%-5l %d: %m\n")
+
+        if daemonize
+          logger.add_appenders(Logging::Appenders::File.new(log_file, :layout => layout))
+        else
+          logger.add_appenders(Logging::Appenders::Stdout.new(:layout => layout))
+        end
+      end
+    end
+
     private
+
+    def alive?
+      defined?(@alive) ? @alive : (@alive = true)
+    end
 
     def spawn_worker(task)
       fork do
