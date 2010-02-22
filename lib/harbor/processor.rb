@@ -8,39 +8,31 @@ module Harbor
       raise "You must implement #{self.class}#reserve" unless self.class.instance_methods(false).include?("reserve")
       raise "You must implement #{self.class}#process" unless self.class.instance_methods(false).include?("process")
 
+      @worker_count ||= 2
+      @daemonize    ||= true
+      @sleep_time   ||= 60
+      @log_level    ||= :info
+      @log_file     ||= "log/processor.log"
+
       @workers = {}
     end
 
-    attr_accessor :worker_count
-    def worker_count
-      @worker_count ||= 2
-    end
+    ##
+    # CONFUGURATION OPTIONS
+    ##
 
+    attr_accessor :worker_count
     attr_accessor :daemonize
-    def daemonize?
-      defined?(@daemonize) ? @daemonize : (@daemonize = true)
-    end
+    attr_accessor :sleep_time
+    attr_accessor :log_level
+    attr_accessor :log_file
 
     def options(optparse)
       optparse.on("-n", "--no-daemon", "Run in the foreground") { self.daemonize = false }
       optparse.on("-w", "--workers=COUNT", Integer, "Number of workers to spawn (default: 2)") { |count| self.worker_count = count }
       optparse.on("-l", "--log-level=LEVEL", [:debug, :info, :error], "Set log level (default: info)") { |log_level| self.log_level = log_level }
       optparse.on("-s", "--sleep=SECONDS", Integer, "Sleep s seconds between runs (default: 60)") { |sleep_time| self.sleep_time = sleep_time }
-    end
-
-    attr_accessor :sleep_time
-    def sleep_time
-      @sleep_time ||= 60
-    end
-
-    attr_accessor :log_level
-    def log_level
-      @log_level ||= :info
-    end
-
-    attr_accessor :log_file
-    def log_file
-      @log_file ||= "log/processor.log"
+      optparse.on("-L", "--log-file=FILE", "Log file (default: log/processor.log)") { |file| self.log_file = file }
     end
 
     def logger
@@ -50,7 +42,7 @@ module Harbor
         logger.level = log_level
         layout = Logging::Layouts::Pattern.new(:pattern => "%-5l %d: %m\n")
 
-        if daemonize?
+        if daemonize
           logger.add_appenders(Logging::Appenders::File.new(log_file, :layout => layout))
         else
           logger.add_appenders(Logging::Appenders::Stdout.new(:layout => layout))
@@ -64,17 +56,6 @@ module Harbor
 
     def process(task)
       raise NotImplementedError.new("You must implement #{self.class}#process(task)")
-    end
-
-    def detach
-      srand
-      fork and exit
-      Process.setsid # detach -- we want to be able to close our shell!
-
-      log_directory = ::File.dirname(log_file)
-      FileUtils.mkdir_p(log_directory) unless ::File.directory?(log_directory)
-
-      redirect_io(log_file)
     end
 
     def handle_interrupt(task)
@@ -102,7 +83,7 @@ module Harbor
     end
 
     def start
-      detach if daemonize?
+      detach if daemonize
 
       logger.info "running at %s" % [Process.pid]
       logger.info "workers = #{worker_count}"
@@ -169,6 +150,17 @@ module Harbor
           raise
         end
       end
+    end
+
+    def detach
+      srand
+      fork and exit
+      Process.setsid # detach -- we want to be able to close our shell!
+
+      log_directory = ::File.dirname(log_file)
+      FileUtils.mkdir_p(log_directory) unless ::File.directory?(log_directory)
+
+      redirect_io(log_file)
     end
 
     def redirect_io(file = nil)
