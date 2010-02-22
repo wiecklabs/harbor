@@ -3,18 +3,21 @@ module Harbor
 
     include Harbor::Hooks
 
-    def initialize
-      raise "You must subclass Harbor::Processor and implement #reserve and #process" if self.class == Harbor::Processor
-      raise "You must implement #{self.class}#reserve" unless self.class.instance_methods(false).include?("reserve")
-      raise "You must implement #{self.class}#process" unless self.class.instance_methods(false).include?("process")
+    def self.new(*args)
+      raise "You must subclass Harbor::Processor and implement #reserve and #process" if self == Harbor::Processor
+      raise "You must implement #{self}#reserve" unless instance_methods(false).include?("reserve")
+      raise "You must implement #{self}#process" unless instance_methods(false).include?("process")
 
-      @worker_count ||= 2
-      @daemonize    ||= true
-      @sleep_time   ||= 60
-      @log_level    ||= :info
-      @log_file     ||= "log/processor.log"
+      processor = allocate
 
-      @workers = {}
+      processor.worker_count = 2
+      processor.daemonize    = true
+      processor.sleep_time   = 60
+      processor.log_level    = :info
+      processor.log_file     = "log/processor.log"
+
+      processor.send(:initialize, *args)
+      processor
     end
 
     ##
@@ -29,10 +32,10 @@ module Harbor
 
     def options(optparse)
       optparse.on("-n", "--no-daemon", "Run in the foreground") { self.daemonize = false }
-      optparse.on("-w", "--workers=COUNT", Integer, "Number of workers to spawn (default: 2)") { |count| self.worker_count = count }
-      optparse.on("-l", "--log-level=LEVEL", [:debug, :info, :error], "Set log level (default: info)") { |log_level| self.log_level = log_level }
-      optparse.on("-s", "--sleep=SECONDS", Integer, "Sleep s seconds between runs (default: 60)") { |sleep_time| self.sleep_time = sleep_time }
-      optparse.on("-L", "--log-file=FILE", "Log file (default: log/processor.log)") { |file| self.log_file = file }
+      optparse.on("-w", "--workers=COUNT", Integer, "Number of workers to spawn (default: #{worker_count})") { |count| self.worker_count = count }
+      optparse.on("-l", "--log-level=LEVEL", [:debug, :info, :error], "Set log level (default: #{log_level})") { |log_level| self.log_level = log_level }
+      optparse.on("-L", "--log-file=FILE", "Log file (default: #{log_file})") { |file| self.log_file = file }
+      optparse.on("-s", "--sleep=SECONDS", Integer, "Sleep s seconds between runs (default: #{sleep_time})") { |sleep_time| self.sleep_time = sleep_time }
     end
 
     def logger
@@ -89,6 +92,8 @@ module Harbor
       logger.info "workers = #{worker_count}"
 
       trap_signals
+
+      @workers = {}
 
       while alive?
         begin
