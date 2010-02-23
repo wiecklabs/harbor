@@ -139,16 +139,19 @@ module Harbor
       end
     end
 
+
+    HEADER_BLACKLIST = ['X-Sendfile', "Content-Disposition"]
     def redirect(url, params = {})
       if @request && !@request.session? && !messages.empty? && !messages.expired?
         messages.each { |key, value| params["messages[#{key}]"] = value }
       end
 
       self.status = 303
-      self.headers = {
+      self.headers.merge!({
         "Location" => (params && params.any? ? "#{url}?#{Rack::Utils::build_query(params)}" : url),
         "Content-Type" => "text/html"
-      }
+      })
+      HEADER_BLACKLIST.each{|banned_header| self.headers.delete(banned_header)}
       self.flush
       self
     end
@@ -221,6 +224,11 @@ module Harbor
       if @request.session?
         session = @request.session
         set_cookie(session.key, session.save)
+      end
+
+      # headers cannot be arrays
+      self.headers.each_pair do |key, value|
+        self.headers[key] = value.join("\n") if value.is_a?(Array)
       end
 
       [self.status, self.headers, self.buffer]
