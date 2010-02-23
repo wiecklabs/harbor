@@ -279,6 +279,21 @@ module Harbor
         self["Set-Cookie"] = cookie
       end
     end
+    
+    # from Rack::Response.delete_cookie
+    def delete_cookie(key, value={})
+      unless Array === self["Set-Cookie"]
+        self["Set-Cookie"] = [self["Set-Cookie"]].compact
+      end
+
+      self["Set-Cookie"].reject! { |cookie|
+        cookie =~ /\A#{Rack::Utils.escape(key)}=/
+      }
+
+      set_cookie(key,
+                 {:value => '', :path => nil, :domain => nil,
+                   :expires => Time.at(0) }.merge(value))
+    end
 
     private
 
