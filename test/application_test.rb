@@ -37,7 +37,8 @@ class ApplicationTest < Test::Unit::TestCase
   def test_call_returns_rack_response_array
     result = @application.call({ "PATH_INFO" => "/", "REQUEST_METHOD" => "GET" })
     assert_equal(200, result[0])
-    assert_equal({ "Content-Type" => "text/html", "Content-Length" => ("Hello World".size + 1).to_s }, result[1])
+    assert result[1]['Content-Type'] = 'text/html'
+    assert result[1]['Content-Length'] = ("Hello World".size + 1).to_s
     assert_equal("Hello World\n", result[2])
   end
 
