@@ -7,7 +7,7 @@ module Harbor
         # Query to create user_agents table
         CREATE_USER_AGENTS = <<-SQL.gsub(/(^\s+)|(\s+$)/, "").freeze
         create table user_agents (
-          created_at timestamp without time zone default 'now()',
+          created_at timestamp without time zone default now(),
           session_id character varying(36),
           remote_ip inet,
           raw text,

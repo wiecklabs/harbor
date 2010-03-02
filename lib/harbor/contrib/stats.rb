@@ -19,12 +19,13 @@ module Harbor
   end
 end
 
-Harbor::Application.register_event(:request_complete) do |request, |
+Harbor::Application.register_event(:request_complete) do |request, response, |
   if orm = Harbor::Contrib::Stats.orm
     if request.session?
       session = request.session
 
-      orm::PageView.create(session.id, request.uri, request.referrer)
+      # We only record a PageView if we get a 200 and it's an actual page rendering, not providing an image or downloading a file
+      orm::PageView.create(session.id, request.uri, request.referrer) if %w(text/html text/xml text/json).include?(response.content_type) && response.status == 200
       orm::UserAgent.create(session.id, request.remote_ip, request.env["HTTP_USER_AGENT"])
     end
   else    
