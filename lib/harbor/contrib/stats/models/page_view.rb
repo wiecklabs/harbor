@@ -6,7 +6,7 @@ module Harbor
         # Query to create page_view table
         CREATE_PAGE_VIEWS = <<-SQL.gsub(/(^\s+)|(\s+$)/, "").freeze
           create table page_views (
-            created_at timestamp without time zone default 'now()',
+            created_at timestamp without time zone default now(),
             session_id character varying(36),
             uri text,
             referrer text
