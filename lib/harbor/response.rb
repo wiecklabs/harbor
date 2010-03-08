@@ -141,8 +141,9 @@ module Harbor
 
 
     HEADER_BLACKLIST = ['X-Sendfile', "Content-Disposition"]
-    def redirect(url, params = {})
+    def redirect(url, params = nil)
       if @request && !@request.session? && !messages.empty? && !messages.expired?
+        params ||= {}
         messages.each { |key, value| params["messages[#{key}]"] = value }
       end
 
