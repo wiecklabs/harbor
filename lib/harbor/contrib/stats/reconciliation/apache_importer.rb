@@ -43,6 +43,7 @@ module Harbor
           end
           logger.info "Parsing complete!"
           logger.info "Apache lines parsed: #{i}, Requests imported: #{j}"
+          exit!(0)
           
         end
         
