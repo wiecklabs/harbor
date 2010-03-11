@@ -5,12 +5,12 @@ module Harbor
         
         attr_accessor :unprocessed_count, :offset
         
-        BLOCK_SIZE = 10000
+        BLOCK_SIZE = 50000
         
         def initialize
           self.unprocessed_count = Harbor::Contrib::Stats::ApacheRequest.unprocessed_count
           self.offset = 0
-          fill_queue!(BLOCK_SIZE, 0)
+          fill_queue!(self.unprocessed_count, 0)
         end
 
         def expanded_search(page_view)

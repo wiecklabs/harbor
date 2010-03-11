@@ -36,12 +36,12 @@ module Harbor
             page_views.map { |v| PageViewRequest.new(v.ctid, nil, nil, v.uri, v.referrer == "/" ? "-" : v.referrer, v.created_at, v.session_id) }.each_with_index do |page_view, j|
               match = queue.expanded_search(page_view)
               if match
-                logger.info "\tMatch found for page view #{i}#{j} with CTID #{page_view.id} -- #{match.id} -- QueueSize: #{queue.size}"
+                logger.info "\tMatch found for page view #{i}-#{j} with CTID #{page_view.id} -- #{match.id} -- QueueSize: #{queue.size}"
                 page_view.update!(match.remote_ip, match.request_date)
                 match.mark_as_processed!
                 matches += 1
               else
-                logger.info "\tNo match found for page view #{i}#{j} with CTID #{page_view.id}"
+                logger.info "\tNo match found for page view #{i}-#{j} with CTID #{page_view.id}"
                 non_matches += 1
               end
             end
