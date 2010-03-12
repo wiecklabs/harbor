@@ -60,7 +60,7 @@ spec = Gem::Specification.new do |s|
   s.platform = Gem::Platform::RUBY
   s.require_path = 'lib'
   s.files = %w(Rakefile) + Dir.glob("lib/**/*")
-  s.executables = ['harbor','apache_importer']
+  s.executables = ['harbor','apache_importer', 'page_view_reconciler']
 
   s.add_dependency "rack", "~> 1.0.0"
   s.add_dependency "erubis"
