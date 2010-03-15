@@ -12,12 +12,12 @@ module Harbor
           queue = RequestQueue.new
           logger.info "No apache requests found, you may need to run the apache_importer before reconciling page views." && break unless queue.size > 0
 
+          invalid_date = repository.adapter.query('select distinct created_at from page_views order by created_at asc limit 1').first + 1/60000.0
+          
           # Pull in the table in blocks of 1000 and work on those blocks at a time, better than trying to do it all at once
           page_view_size = repository.adapter.query('select count(*) from page_views where created_at <= ?', invalid_date).first
           block_size = 10000
           loops = (page_view_size / block_size) + 1
-          
-          invalid_date = repository.adapter.query('select distinct created_at from page_views order by created_at asc limit 1').first + 1/60000.0
 
           query = <<-SQL
             select *,ctid from page_views
@@ -30,6 +30,9 @@ module Harbor
           matches = 0
           loops.times do |i|
             logger.info "Batch #{i}:"
+            logger.info "Matches: #{matches}"
+            logger.info "NonMatches: #{non_matches}"
+            logger.info "Match %: #{matches / (matches + non_matches).to_f * 100}%"
             page_views = repository.adapter.query(query, invalid_date, block_size)
 
             # ctid, remote_ip, request_method, uri, referrer, date
@@ -49,7 +52,7 @@ module Harbor
 
           logger.info "Matches: #{matches}"
           logger.info "NonMatches: #{non_matches}"
-          logger.info "Ratio (M/N): #{matches / non_matches.to_f}"
+          logger.info "Match %: #{matches / (matches + non_matches).to_f * 100}%"
           
           exit!(0)
           

@@ -35,7 +35,7 @@ module Harbor
               uri = $4
               referrer = $5
               date = DateTime.parse($2.sub(":"," "))
-              break if date >= DateTime.parse('2010-02-26 00:00:00')
+              break if date >= DateTime.parse('2010-02-27 00:00:00')
               next unless unique_uris.include?(uri) && date > invalid_date
               j += 1
               Harbor::Contrib::Stats::ApacheRequest.create(j, ip_address, request_type, uri, referrer, date)
