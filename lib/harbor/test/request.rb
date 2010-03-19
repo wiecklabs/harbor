@@ -17,11 +17,15 @@ module Harbor
       end
 
       def session
-        @session || Session.new
+        session = @session || Session.new
+        session.request = self
+        session
       end
 
       def session=(session)
         @session = Session.new(session)
+        @session.request = self
+        @session
       end
     end
   end
