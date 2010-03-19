@@ -322,6 +322,16 @@ class ResponseTest < Test::Unit::TestCase
     response.redirect("/redirect", {})
     assert_equal "/redirect", response.headers["Location"]
   end
+  
+  def test_redirect_with_encoded_url_and_params
+    response = Harbor::Test::Response.new
+    request = Harbor::Test::Request.new
+    response.request = request
+    
+    response.message("error", "Error")
+    response.redirect("/redirect?key=Stuff", {})
+    assert_equal "/redirect?messages%5Berror%5D=Error&key=Stuff", response.headers["Location"]
+  end
 
   private
 

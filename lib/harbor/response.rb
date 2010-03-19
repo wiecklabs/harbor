@@ -139,17 +139,25 @@ module Harbor
       end
     end
 
-
     HEADER_BLACKLIST = ['X-Sendfile', "Content-Disposition"]
     def redirect(url, params = nil)
+      url = URI.parse(url)
+      params ||= {}
+
+      if url.query
+        params.merge!(Rack::Utils.parse_query(url.query))
+        url.query = nil
+      end
+
       if @request && !@request.session? && !messages.empty? && !messages.expired?
-        params ||= {}
         messages.each { |key, value| params["messages[#{key}]"] = value }
       end
 
+      url.query = Rack::Utils::build_query(params) if params && params.any?
+
       self.status = 303
       self.headers.merge!({
-        "Location" => (params && params.any? ? "#{url}?#{Rack::Utils::build_query(params)}" : url),
+        "Location" => url.to_s,
         "Content-Type" => "text/html"
       })
       HEADER_BLACKLIST.each{|banned_header| self.headers.delete(banned_header)}
