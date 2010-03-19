@@ -8,6 +8,9 @@ module Harbor
         @data = session_data
       end
 
+      def save
+      end
+
     end
   end
 end
