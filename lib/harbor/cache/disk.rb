@@ -41,6 +41,38 @@ class Harbor::Cache::Disk
       FileUtils.rm(path) rescue nil
     end
   end
+  
+  def lock(key)
+    if (item = get(key)) && !locked?(path = lock_file_for_item(item))
+      FileUtils.touch(path)
+      return true
+    end
+    
+    false
+  end
+  
+  LOCK_TIMEOUT = 30
+  
+  def locked?(key)
+    if (item = get(key)) && (path = lock_file_for_item(item))
+      return File.file?(path) && (Time.now - File.mtime(path)) < LOCK_TIMEOUT
+    end
+    
+    false
+  end
+
+  def unlock(key)
+    if (item = get(key)) && (path = lock_file_for_item(item))
+      if File.file?(path)
+        FileUtils.rm(path)
+        true
+      else
+        false
+      end
+    end
+    
+    false
+  end
 
   def bump(key)
     if item = get(key)
@@ -94,6 +126,10 @@ class Harbor::Cache::Disk
 
   def path_for_item(item)
     @path + "c_#{item.key}.__INFO__.#{item.ttl}.#{item.maximum_age}.#{item.cached_at.strftime('%Y%m%dT%H%M%S%Z')}.#{item.expires_at.strftime('%Y%m%dT%H%M%S%Z')}"
+  end
+
+  def lock_file_for_item(item)
+    @path + "l_#{item.key}"
   end
 
 end

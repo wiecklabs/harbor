@@ -35,12 +35,12 @@ module Harbor
       content
     end
 
-    def get(key)
+    def get(key, return_even_if_stale = false)
       if item = @store.get(key)
-        if item.fresh?
+        if item.fresh? || return_even_if_stale
           @semaphore.synchronize do
             @store.bump(key)
-          end
+          end unless return_even_if_stale
 
           item
         else
@@ -75,6 +75,18 @@ module Harbor
       log("Harbor::Cache#put unable to delete cached content.", $!)
     ensure
       nil
+    end
+    
+    def lock(key)
+      @store.lock(key)
+    end
+    
+    def locked?(key)
+      @store.locked?(key)
+    end
+    
+    def unlock(key)
+      @store.unlock(key)
     end
 
     private
