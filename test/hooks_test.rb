@@ -186,6 +186,74 @@ class HooksTest < Test::Unit::TestCase
     assert_equal(1, hooked_instance.after_hook_calls)
   end
 
+  def test_hooks_are_run_when_class_is_subclassed
+    subclass = Class.new(@hooked_class)
+
+    hooked_instance = subclass.new
+
+    assert_equal(0, hooked_instance.before_hook_calls)
+    assert_equal(0, hooked_instance.hooked_method_calls)
+    assert_equal(0, hooked_instance.after_hook_calls)
+
+    hooked_instance.hooked_method
+
+    assert_equal(1, hooked_instance.before_hook_calls)
+    assert_equal(1, hooked_instance.hooked_method_calls)
+    assert_equal(1, hooked_instance.after_hook_calls)
+  end
+
+  def test_hooks_are_additive_in_subclass
+    subclass = Class.new(@hooked_class) do
+      before(:hooked_method) { |receiver| receiver.before_hook_calls += 1 }
+    end
+
+    hooked_instance = subclass.new
+
+    assert_equal(0, hooked_instance.before_hook_calls)
+    assert_equal(0, hooked_instance.hooked_method_calls)
+    assert_equal(0, hooked_instance.after_hook_calls)
+
+    hooked_instance.hooked_method
+
+    assert_equal(2, hooked_instance.before_hook_calls)
+    assert_equal(1, hooked_instance.hooked_method_calls)
+    assert_equal(1, hooked_instance.after_hook_calls)
+  end
+
+  def test_hooks_are_clearable
+    @hooked_class.hooks[:hooked_method].clear!
+    hooked_instance = @hooked_class.new
+
+    assert_equal(0, hooked_instance.before_hook_calls)
+    assert_equal(0, hooked_instance.hooked_method_calls)
+    assert_equal(0, hooked_instance.after_hook_calls)
+
+    hooked_instance.hooked_method
+
+    assert_equal(0, hooked_instance.before_hook_calls)
+    assert_equal(1, hooked_instance.hooked_method_calls)
+    assert_equal(0, hooked_instance.after_hook_calls)
+  end
+
+  def test_hooks_are_clearble_from_subclass
+    subclass = Class.new(@hooked_class) do
+      hooks[:hooked_method].clear!
+      before(:hooked_method) { |receiver| receiver.before_hook_calls += 1 }
+    end
+
+    hooked_instance = subclass.new
+
+    assert_equal(0, hooked_instance.before_hook_calls)
+    assert_equal(0, hooked_instance.hooked_method_calls)
+    assert_equal(0, hooked_instance.after_hook_calls)
+
+    hooked_instance.hooked_method
+
+    assert_equal(1, hooked_instance.before_hook_calls)
+    assert_equal(1, hooked_instance.hooked_method_calls)
+    assert_equal(0, hooked_instance.after_hook_calls)
+  end
+
   def test_throw_halt_is_caught_and_returned
     hooked_instance = @hooked_class.new
 

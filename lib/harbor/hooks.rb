@@ -40,7 +40,25 @@ module Harbor
         @before = []
         @after = []
 
-        bind! if target.instance_methods.include?(method_name.to_s)
+        if (superclass = target.superclass) && Harbor::Hooks > superclass
+          @before = superclass.hooks[method_name].before_hooks.dup
+          @after = superclass.hooks[method_name].after_hooks.dup
+        end
+
+        bind! if target.instance_methods(false).include?(method_name.to_s)
+      end
+
+      def before_hooks
+        @before
+      end
+
+      def after_hooks
+        @after
+      end
+
+      def clear!
+        @before = []
+        @after = []
       end
 
       def before(block)
