@@ -257,7 +257,16 @@ module Harbor
       case value
       when Hash
         domain    = "; domain="  + value[:domain]    if value[:domain]
-        path      = "; path="    + value[:path]      if value[:path]
+
+        #   According to http://curl.haxx.se/rfc/cookie_spec.html, some browsers have issues when setting
+        # expire property without setting path, look under expire notes on that link 
+        if value[:path]
+          path      = "; path="    + value[:path]      
+        elsif value[:expires]
+          path      = "; path=/"
+        end
+
+        
         http_only = value[:http_only] ? "; HTTPOnly=" : nil
         # According to RFC 2109, we need dashes here.
         # N.B.: cgi.rb uses spaces...

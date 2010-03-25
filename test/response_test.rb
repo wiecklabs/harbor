@@ -57,6 +57,21 @@ class ResponseTest < Test::Unit::TestCase
     @response['Set-Cookie'] = nil
   end
 
+  def test_set_cookie_get_path_when_not_specified_and_expiring
+    cookie_expires_on = Time.now
+    expires_gmt_string = cookie_expires_on.gmtime.strftime("%a, %d-%b-%Y %H:%M:%S GMT")
+
+    @response.set_cookie('session_id', { :value => '', :domain => 'www.example.com', :expires => cookie_expires_on})
+    assert_equal("session_id=; domain=www.example.com; path=/; expires=#{expires_gmt_string}", @response['Set-Cookie'])
+    @response['Set-Cookie'] = nil    
+  end
+
+  def test_delete_cookie
+    @response.delete_cookie('session_id')
+    assert_equal(["session_id=; path=/; expires=Thu, 01-Jan-1970 00:00:00 GMT"], @response['Set-Cookie'])
+    @response['Set-Cookie'] = nil
+  end
+
   def test_standard_headers
     @response.print "Hello World"
     assert_equal({ "Content-Type" => "text/html", "Content-Length" => "Hello World".size.to_s }, @response.headers)
