@@ -72,6 +72,8 @@ module Harbor
     def dispatch_request(handler, request, response)
       start = Time.now
 
+      raise_event(:request_dispatch, request, response, start)
+
       return handle_not_found(request, response) unless handler
 
       handler.call(request, response)
