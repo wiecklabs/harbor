@@ -4,6 +4,7 @@ require "pathname"
 $:.unshift(Pathname(__FILE__).dirname.expand_path)
 
 require "harbor/version"
+require "harbor/support/array"
 require "harbor/hooks"
 require "harbor/file_store"
 require "harbor/shellwords"
