@@ -109,11 +109,7 @@ module Harbor
             break if worker_count == 0 && @workers.empty?
 
             (worker_count - @workers.size).times do
-              unless task = reserve
-                self.worker_count = 0
-                break
-              end
-
+              break unless task = reserve
               @workers[spawn_worker(task)] = task
             end
 
@@ -125,9 +121,9 @@ module Harbor
             when 0   # success
               logger.info "[worker#%-5s] %s: completed" % [Process.pid, task.inspect]
             when 1   # exception
-              logger.info "[worker#%-5s] %s: failed" % [Process.pid, task.inspect]
+              logger.error "[worker#%-5s] %s: failed" % [Process.pid, task.inspect]
             when 130 # interrupt
-              logger.info "[worker#%-5s] %s: interrupted" % [Process.pid, task.inspect]
+              logger.warn "[worker#%-5s] %s: interrupted" % [Process.pid, task.inspect]
             end
           end
         rescue Errno::ECHILD
