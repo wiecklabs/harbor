@@ -33,7 +33,11 @@ class Time
       @warp = nil
     end
 
-    alias original_now now
+    # class load mojo to prevent multiple-aliasing of Time.now when helper.rb gets reloaded between tests
+    unless @included
+      alias original_now now
+    end
+    @included = true
 
     def now
       @warp || original_now
