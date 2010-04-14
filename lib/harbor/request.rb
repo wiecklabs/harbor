@@ -108,7 +108,7 @@ module Harbor
     def uri
       @env['REQUEST_URI'] || @env['REQUEST_PATH']
     end
-
+    
     def messages
       @messages ||= session[:messages] = Messages.new(session[:messages])
     end
@@ -127,9 +127,14 @@ module Harbor
       path
     end
 
+    def preferred_locales
+      Harbor::I18n.parse(@env)
+    end
+
     private
     def request_method_in_params?
       @env["REQUEST_METHOD"] == "POST" && self.POST && %w(PUT DELETE).include?((self.POST['_method'] || "").upcase)
     end
+    
   end
 end

@@ -64,6 +64,7 @@ spec = Gem::Specification.new do |s|
 
   s.add_dependency "rack", "~> 1.0.0"
   s.add_dependency "erubis"
+  s.add_dependency "r18n-core"
 end
 
 Rake::GemPackageTask.new(spec) do |pkg|

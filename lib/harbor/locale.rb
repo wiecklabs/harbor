@@ -34,6 +34,10 @@ module Harbor
     def self.default_culture_code=(value)
       @default_culture_code = value
     end
+    
+    def ==(other_locale)
+      culture_code == other_locale.culture_code && abbreviation == other_locale.abbreviation && description == other_locale.description
+    end
 
     attr_reader :culture_code, :abbreviation, :description
 

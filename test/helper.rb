@@ -10,6 +10,7 @@ require "lib/harbor/logging/appenders/email"
 require "harbor/cache/memory"
 require "harbor/cache/disk"
 require "harbor/test/test"
+require "harbor/locale"
 
 class Time
 

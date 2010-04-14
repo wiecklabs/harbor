@@ -25,7 +25,7 @@ class RequestTest < Test::Unit::TestCase
     assert_equal('diced', request.fetch('preperation', 'diced'))
     assert_equal(4, request.fetch('servings', 4))
   end
-
+  
   def get(path, options = {})
     request(path, "GET", options)
   end
