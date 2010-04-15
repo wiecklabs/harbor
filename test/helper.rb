@@ -93,3 +93,5 @@ EOF
                     "CONTENT_LENGTH" => input.size,
                     :input => input)
 end
+
+Harbor::Locale.default_culture_code = 'en-US'

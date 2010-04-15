@@ -21,7 +21,9 @@ module Harbor
         end
       end
       locale_preferences.sort! { |a, b| b[1] <=> a[1] }
-      locale_preferences.map! { |i| Harbor::Locale[i[0]] }
+      locale_preferences.map! { |i| 
+        Harbor::Locale.active_locales[i[0]] 
+      }
 
       new locale_preferences.compact
     end
@@ -36,12 +38,12 @@ module Harbor
       "<Harbor::I18n @locales=#{@locales.inspect}>"
     end
     
-    # for translating a string or count
+    # iterates on the @locales searching for a translation of a path or string
     def translate(path)
       
     end
     
-    # for working with native representations of data types (dates, floats, times)
+    # iterates on the @locales searching for the proper localization of the object provided
     def localize(object, variation = nil)
       
     end

@@ -4,17 +4,25 @@ require Pathname(__FILE__).dirname + "helper"
 class I18nTest < Test::Unit::TestCase
   
   def setup
-    Harbor::Locale.activate!("en-US","ja","en-GB","en-AU")
+    Harbor::Locale.default_culture_code = 'en-US'
   end
   
   def test_preferred_locales_returns_default_locale_when_none_specified
-    test = Harbor::I18n.new(Harbor::Locale.default)
-    assert_equal test, get("/", {'HTTP_ACCEPT_LANGUAGE' => ''}).preferred_locales
-    assert_equal test, get("/", {'HTTP_ACCEPT_LANGUAGE' => nil}).preferred_locales
+    preferred_locales = get("/", {'HTTP_ACCEPT_LANGUAGE' => nil}).preferred_locales
+    
+    assert_equal Harbor::I18n.new(Harbor::Locale.default), preferred_locales
   end
+
+  def test_preferred_locales_returns_default_locale_when_blank_specified
+    preferred_locales = get("/", {'HTTP_ACCEPT_LANGUAGE' => ''}).preferred_locales
+    
+    assert_equal Harbor::I18n.new(Harbor::Locale.default), preferred_locales
+  end
+
   
   def test_preferred_locales_returns_default_locale_when_invalid_locale_string_provided
-    assert_equal Harbor::I18n.new(Harbor::Locale.default), get("/", {'HTTP_ACCEPT_LANGUAGE' => 'ru'}).preferred_locales
+    preferred_locales = get("/", {'HTTP_ACCEPT_LANGUAGE' => 'ru'}).preferred_locales
+    assert_equal Harbor::I18n.new(Harbor::Locale.default), preferred_locales
   end
   
   def test_preferred_locales_returns_harbor_locales_as_specified_in_headers
@@ -40,6 +48,5 @@ class I18nTest < Test::Unit::TestCase
   def request(path, method, options)
     Harbor::Request.new(Class.new, Rack::MockRequest.env_for(path, options.merge(:method => method)))
   end
-  
   
 end
