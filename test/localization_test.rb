@@ -54,7 +54,7 @@ class LocalizationHelpersTest < Test::Unit::TestCase
     @locale.culture_code        = 'en-US'
     @locale.time_formats        = {:long => "%m/%d/%Y %h:%m:%s", :default => "%h:%m:%s"}
     @locale.date_formats        = {:default => '%m/%d/%Y'}
-    @locale.decimal_formats     = {:default => "%8.2f", :currency => "$%8.2f", :percent => "%d%%"}
+    @locale.decimal_formats     = {:default => "%s", :currency => "$%01.2f", :percent => "%s%%"}
     @locale.wday_names          = %w(Sunday Monday Tuesday Wednesday Thursday Friday Saturday)
     @locale.wday_abbrs          = %w(Sun Mon Tue Wed Thur Fri Sat)
     @locale.month_names         = %w{January February March April May June July August September October November December}
@@ -85,6 +85,13 @@ class LocalizationHelpersTest < Test::Unit::TestCase
     date = Date.civil(2010, 4, 15)
     expectation = Harbor::Locale::LocalizedString.new("4/15/2010 is the day you should give me gifts")
     assert_equal expectation, @view_context.t("{{birthday}} is my birthday", :birthday => date)
+  end
+  
+  def test_direct_interpolation
+    assert_equal @locale.localize(10), '10'
+    assert_equal @locale.localize(10.0), '10.0'
+    assert_equal @locale.localize(10.0, :currency), "$10.00"
+    assert_equal @locale.localize(10.0, :percent), "10.0%"
   end
   
   # I think I should stop there...further testing here would just reproduce what's already in localization_test.rb

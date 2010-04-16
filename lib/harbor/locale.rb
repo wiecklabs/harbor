@@ -132,9 +132,11 @@ module Harbor
 
     class LocalizedString < String
       
-      def initialize(string, translated = false)
-        raise ArgumentError, "Harbor::Locale::LocalizedString was initialized with #{string.inspect} which wasn't a String" unless string.is_a?(String)
-        @string = string
+      def initialize(raw, translated = false)
+        raise ArgumentError, "Harbor::Locale::LocalizedString was initialized with #{raw.inspect} which wasn't a String" unless raw.is_a?(String)
+        # intentionally allowing blank values
+        
+        @raw = raw
         @translated = translated
       end
       
@@ -143,7 +145,7 @@ module Harbor
       end
       
       def to_s
-        translated? ? @string : "<span class='untranslated'>#{@string}</span>"
+        translated? ? @raw : "<span class='untranslated'>#{@raw}</span>"
       end
       
       def ==(other)
@@ -178,11 +180,8 @@ module Harbor
     #
     # @param [string] path to retrieve from the stored replacements
     def get(path)
-      if retrieval = @entries[path]
-        LocalizedString.new(retrieval, true)
-      else
-        nil
-      end
+      retrieval = @entries[path]
+      # retrieval ? LocalizedString.new(retrieval, true) : nil
     end
     
     
@@ -201,7 +200,7 @@ module Harbor
     # @param [String] path to retrieve from @entries
     # @param [Hash <Symbol => String>] args hash retrieve named interpolation values from
     def translate(path, interpolation_hash = nil)
-      interpolate(search(path) || (get(path) || LocalizedString.new(path)), interpolation_hash)
+      interpolate((search(path) || get(path) || LocalizedString.new(path)), interpolation_hash)
     end
     
     

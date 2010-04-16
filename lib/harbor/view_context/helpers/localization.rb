@@ -8,7 +8,7 @@ module Harbor::ViewContext::Helpers::Localization
   end
 
   def l(object, variation = :default)
-    
+    request.locale.localize(object, variation)
   end
   
 end
