@@ -46,7 +46,7 @@ require 'bigdecimal'
 #   2. new/organization
 #   3. organization
 # 
-# === Named Interpolation ===
+# === Named Interpolation 
 # 
 # Localization sometimes requires interpolating a value into a string.  To
 # support this, Harbor::Locale uses a simple {{key}} syntax in it's t()
@@ -63,9 +63,19 @@ require 'bigdecimal'
 # 
 #  <%= t('{{birthday}} is my birthday', :birthday => ("%Y/%m/%d" % Date.today))
 # 
-# === Data Type Localization ===
+# But, to be honest, you'd be better off registering a date_format with your locale like this:
+# 
+#   en_au.date_formats[:long] = "%Y/%m/%d"
+# 
+# ...and then specifically localizing your data before performing the interpolation:
+# 
+#  <%= t('{{birthday}} is my birthday', :birthday => l(Date.today, :long))
+# 
+# === Data Type Localization 
 # TODO: write this section
 # 
+# === View Helpers
+# TODO: write this section
 # 
 ##
 module Harbor
