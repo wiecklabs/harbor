@@ -4,5 +4,5 @@ module Harbor::ViewContext::Helpers
   autoload :Html, (Pathname(__FILE__).dirname + "helpers/html").to_s
   autoload :Url, (Pathname(__FILE__).dirname + "helpers/url").to_s
   autoload :Cache, (Pathname(__FILE__).dirname + "helpers/cache").to_s
-  autoload :I18n, (Pathname(__FILE__).dirname + "helpers/i18n").to_s
+  autoload :Localization, (Pathname(__FILE__).dirname + "helpers/localization").to_s
 end

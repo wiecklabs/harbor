@@ -1,11 +1,55 @@
 require "pathname"
 require Pathname(__FILE__).dirname + "helper"
 
+class LocaleClassTest < Test::Unit::TestCase
+  def setup
+    en_au = Harbor::Locale.new
+    en_au.culture_code        = 'en-AU'
+    en_au.time_formats        = {:long => "%d/%m/%Y %h:%m:%s", :default => "%h:%m:%s"}
+    en_au.date_formats        = {:default => '%d/%m/%Y'}
+    en_au.decimal_formats     = {:default => "%8.2f", :currency => "$%8.2f"}
+    en_au.wday_names          = %w(Sunday Monday Tuesday Wednesday Thursday Friday Saturday)
+    en_au.wday_abbrs          = %w(Sun Mon Tue Wed Thur Fri Sat)
+    en_au.month_names         = %w{January February March April May June July August September October November December}
+    en_au.month_abbrs         = %w{Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec}
+
+    Harbor::Locale.register(en_au)
+  end
+  
+  def test_preferred_locales_returns_default_locale_when_none_specified
+    assert_equal Harbor::Locale.default, get("/", {'HTTP_ACCEPT_LANGUAGE' => nil}).locale
+  end
+
+  def test_preferred_locales_returns_default_locale_when_blank_specified
+    assert_equal Harbor::Locale.default, get("/", {'HTTP_ACCEPT_LANGUAGE' => ''}).locale
+  end
+
+  
+  def test_preferred_locales_returns_default_locale_when_invalid_locale_string_provided
+    assert_equal Harbor::Locale.default, get("/", {'HTTP_ACCEPT_LANGUAGE' => 'ru'}).locale
+  end
+    
+  def test_parse_should_sort_by_q_before_picking
+    assert_equal Harbor::Locale['en-AU'], get("/", {'HTTP_ACCEPT_LANGUAGE' => 'en-AU,en-US;q=0.9'}).locale
+    assert_equal Harbor::Locale['en-AU'], get("/", {'HTTP_ACCEPT_LANGUAGE' => 'en-AU;q=0.9,en-US;q=0.8'}).locale
+    assert_equal Harbor::Locale['en-US'], get("/", {'HTTP_ACCEPT_LANGUAGE' => 'en-AU;q=0.8,en-US;q=0.9'}).locale
+  end
+  
+  def get(path, options = {})
+    request(path, "GET", options)
+  end
+
+  def request(path, method, options)
+    Harbor::Request.new(Class.new, Rack::MockRequest.env_for(path, options.merge(:method => method)))
+  end
+  
+end
+
 class LocaleTest < Test::Unit::TestCase
   
   def setup
     @locale = Harbor::Locale.new
-    @locale.culture_code        = 'en-US'
+    @locale.culture_code        = 'en-CA'
     @locale.time_formats        = {:long => "%m/%d/%Y %h:%m:%s", :default => "%h:%m:%s"}
     @locale.date_formats        = {:default => '%m/%d/%Y'}
     @locale.decimal_formats     = {:default => "%8.2f", :currency => "$%8.2f", :percent => "%d%%"}

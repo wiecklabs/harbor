@@ -1,3 +1,4 @@
+require 'bigdecimal'
 module Harbor
   class Locale
     
@@ -16,11 +17,11 @@ module Harbor
       end
 
       def flush!
-        @@active_locales = {}
+        @@active_locales = []
       end
 
       def default
-        active_locales[default_culture_code]
+        self[default_culture_code]
       end
 
       def default_culture_code
@@ -31,6 +32,44 @@ module Harbor
         @@default_culture_code = value
       end
       
+      def parse(env)
+        return self.default if env['HTTP_ACCEPT_LANGUAGE'].nil? || env['HTTP_ACCEPT_LANGUAGE'] == ''
+
+        locale_preferences = env['HTTP_ACCEPT_LANGUAGE'].split(',')
+        locale_preferences.map! do |locale|
+          locale = locale.split ';q='
+          if 1 == locale.size
+            [locale[0], 1.0]
+          else
+            [locale[0], locale[1].to_f]
+          end
+        end
+        locale_preferences.sort! { |a, b| b[1] <=> a[1] }
+        self[locale_preferences[0][0]] || self.default
+      end
+      
+      
+    end
+
+    class LocalizedString < String
+      
+      def initialize(string, translated = false)
+        raise ArgumentError, "Harbor::Locale::LocalizedString was initialized with #{string.inspect} which wasn't a String" unless string.is_a?(String)
+        @string = string
+        @translated = translated
+      end
+      
+      def translated?
+        @translated
+      end
+      
+      def to_s
+        translated? ? @string : "<span class='untranslated'>#{@string}</span>"
+      end
+      
+      def ==(other)
+        other.inspect == inspect
+      end
     end
 
     attr_accessor :culture_code, :decimal_formats, :time_formats, :date_formats
@@ -42,11 +81,7 @@ module Harbor
     end
     
     def ==(other_locale)
-      [
-        culture_code == other_locale.culture_code,
-        abbreviation == other_locale.abbreviation,
-        description == other_locale.description
-      ].all?
+      culture_code == other_locale.culture_code
     end
     
     #
@@ -64,12 +99,16 @@ module Harbor
     #
     # @param [string] path to retrieve from the stored replacements
     def get(path)
-      @entries[path]
+      if retrieval = @entries[path]
+        LocalizedString.new(retrieval, true)
+      else
+        nil
+      end
     end
     
     
     #
-    # Loads a hash into the available replacements
+    # Merges a hash into the available replacements
     #
     # @param [Hash <String => String>] replacements_hash to store and retrieve translations from
     def load(replacements_hash)
@@ -83,7 +122,7 @@ module Harbor
     # @param [String] path to retrieve from @entries
     # @param [Hash <Symbol => String>] args hash retrieve named interpolation values from
     def translate(path, interpolation_hash = nil)
-      interpolate((get(path) || search(path) || path), interpolation_hash)
+      interpolate((get(path) || search(path) || LocalizedString.new(path)), interpolation_hash)
     end
     
     
@@ -110,6 +149,10 @@ module Harbor
       end
     end
     
+    def inspect
+      "<Harbor::Locale[#{culture_code.inspect}]>"
+    end
+    
     private
     
     def format_date(date, variation)
@@ -131,11 +174,12 @@ module Harbor
     def search(path)
       result = nil
       path_prefix = path.split("/")
+      
       until result || path_prefix.empty?
         result = get(path_prefix.join("/"))
         path_prefix.shift
       end
-      result
+      result ? LocalizedString.new(result, path_prefix.empty?) : result
     end
     
     def interpolate(string, interpolation_hash)
@@ -150,5 +194,4 @@ module Harbor
   end
 end
 
-require Pathname(__FILE__).dirname + "locales/en_us"
-require Pathname(__FILE__).dirname + "locales/en_au"
+require Pathname(__FILE__).dirname + "locales/en_us" # Harbor-wide default locale

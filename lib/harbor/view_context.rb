@@ -7,6 +7,7 @@ module Harbor
     include Helpers::Html
     include Helpers::Url
     include Helpers::Cache
+    include Helpers::Localization
 
     attr_accessor :view, :keys
 

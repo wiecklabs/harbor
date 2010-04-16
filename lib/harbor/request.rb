@@ -127,8 +127,8 @@ module Harbor
       path
     end
 
-    def preferred_locales
-      Harbor::I18n.parse(@env)
+    def locale
+      Harbor::Locale.parse(@env)
     end
 
     private
