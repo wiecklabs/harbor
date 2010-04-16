@@ -1,4 +1,73 @@
 require 'bigdecimal'
+##
+# = Harbor::Localization
+#
+# Harbor supports the English-US locale by default, but adding locales (even replacing the default) is easy.
+# 
+# To configure a new locale, do the following:
+# 
+#   en_au = Harbor::Locale.new
+#   en_au.culture_code        = 'en-AU'
+#   en_au.time_formats        = {:long => "%d/%m/%Y %h:%m:%s", :default => "%h:%m:%s"}
+#   en_au.date_formats        = {:default => '%d/%m/%Y'}
+#   en_au.decimal_formats     = {:default => "%8.2f", :currency => "$%8.2f"}
+#   en_au.wday_names          = %w(Sunday Monday Tuesday Wednesday Thursday Friday Saturday)
+#   en_au.wday_abbrs          = %w(Sun Mon Tue Wed Thur Fri Sat)
+#   en_au.month_names         = %w{January February March April May June July August September October November December}
+#   en_au.month_abbrs         = %w{Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec}
+#   
+#   Harbor::Locale.register(en_au)
+# 
+# To load up string replacements into the locale, do:
+# 
+#   en_au.load({'key' => 'value', ...}) # to load a hash into the locale
+#   en_au.set('organization', 'organisation')  # to set an individual key => value pair
+# 
+# = Features 
+# 
+# == Path Prefixing
+# 
+# Sometimes the translated word for "organization" is different depending on
+# the context. For example, "organization" when used in the sentence "The user
+# belongs to the Initech organization" is different than "organization" when
+# used in "The organization of the photos in my library is superb".  To
+# support this, Harbor::Locale automatically adds the file path as a prefix to
+# whatever you provide to the t() helper.  When specifying a localization,
+# take advantage of this by setting string replacements like this:
+# 
+#   en_au.set('account/new/organization', 'organisation')
+#   en_au.set('tasks/organization', 'order')
+#   en_au.set('organization', 'organisation')
+# 
+# When you call t('organization'), Harbor::Locale will search for variations of the path prefix in the
+# following order and return the first non-nil value it finds:
+# 
+#   1. account/new/organization
+#   2. new/organization
+#   3. organization
+# 
+# === Named Interpolation ===
+# 
+# Localization sometimes requires interpolating a value into a string.  To
+# support this, Harbor::Locale uses a simple {{key}} syntax in it's t()
+# helper.  For example:
+# 
+#   <%= t('{{birthday}} is my birthday', :birthday => Date.today) %>
+# 
+# will output:  "September 30 1983 is my birthday".
+# 
+# NOTE: Harbor::Locale does NOT support positioned or sprintf-style
+# interpolation because the syntax is annoyingly hard and not eye-parseable no
+# matter how l33t you are. Always use Named Interpolation. You'll thank us
+# later. If you really really want it, do:
+# 
+#  <%= t('{{birthday}} is my birthday', :birthday => ("%Y/%m/%d" % Date.today))
+# 
+# === Data Type Localization ===
+# TODO: write this section
+# 
+# 
+##
 module Harbor
   class Locale
     
@@ -122,7 +191,7 @@ module Harbor
     # @param [String] path to retrieve from @entries
     # @param [Hash <Symbol => String>] args hash retrieve named interpolation values from
     def translate(path, interpolation_hash = nil)
-      interpolate((get(path) || search(path) || LocalizedString.new(path)), interpolation_hash)
+      interpolate(search(path) || (get(path) || LocalizedString.new(path)), interpolation_hash)
     end
     
     
