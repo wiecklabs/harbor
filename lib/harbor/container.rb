@@ -88,6 +88,14 @@ module Harbor
       service
     end
 
+    def method_missing(method, *args, &block)
+      if registered?(method.to_s)
+        get(method.to_s, args[0] || {})
+      else
+        raise NoMethodError.new("undefined method '#{method}' for #{self}", method)
+      end
+    end
+
     ##
     # Register a service by name, with an optional initializer block.
     # 
