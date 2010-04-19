@@ -83,7 +83,7 @@ class LocalizationHelpersTest < Test::Unit::TestCase
   def test_translation_interpolation
     @locale.set("{{birthday}} is my birthday", "{{birthday}} is the day you should give me gifts")
     date = Date.civil(2010, 4, 15)
-    expectation = Harbor::Locale::LocalizedString.new("4/15/2010 is the day you should give me gifts")
+    expectation = Harbor::Locale::LocalizedString.new("04/15/2010 is the day you should give me gifts", true)
     assert_equal expectation, @view_context.t("{{birthday}} is my birthday", :birthday => date)
   end
   

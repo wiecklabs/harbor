@@ -148,8 +148,20 @@ module Harbor
         translated? ? @raw : "<span class='untranslated'>#{@raw}</span>"
       end
       
+      def gsub(key, value)
+        @raw.gsub(key, value)
+      end
+      
+      def gsub!(key, value)
+        @raw.gsub!(key, value)
+      end
+      
       def ==(other)
-        other.inspect == inspect
+        other.to_s == to_s
+      end
+      
+      def inspect
+        "Harbor::Locale::LocalizedString @raw=#{@raw.inspect} @translated=#{translated?}"
       end
     end
 
@@ -200,7 +212,7 @@ module Harbor
     # @param [String] path to retrieve from @entries
     # @param [Hash <Symbol => String>] args hash retrieve named interpolation values from
     def translate(path, interpolation_hash = nil)
-      interpolate((search(path) || get(path) || LocalizedString.new(path)), interpolation_hash)
+      interpolate((search(path) || get(path) || LocalizedString.new(path.split("/")[-1])), interpolation_hash)      
     end
     
     
@@ -257,14 +269,14 @@ module Harbor
         result = get(path_prefix.join("/"))
         path_prefix.shift
       end
-      result ? LocalizedString.new(result, path_prefix.empty?) : result
+      result ? LocalizedString.new(result, true) : result
     end
     
     def interpolate(string, interpolation_hash)
       return string if interpolation_hash.nil? || interpolation_hash.empty?
       interpolation_hash.each_pair do |key, value|
         pattern = "{{" + key.to_s + "}}"
-        string.gsub! pattern, localize(value)
+        string.gsub!(pattern, localize(value))
       end
       string
     end

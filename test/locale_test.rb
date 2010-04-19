@@ -103,14 +103,23 @@ class LocaleTest < Test::Unit::TestCase
     assert_equal w('organisation', true), @locale.translate('account/organization')
   end
   
+  def test_returns_just_the_key_portion_of_a_path_when_searching_fails
+    assert_equal w('organization', false), @locale.translate('account/organization')
+  end
+  
   def test_interpolates_named_positions
-    assert_equal w('12 records', true), @locale.translate('{{count}} records', {:count => 12})
-    assert_equal w('12 records, 24 pages', true), @locale.translate('{{count}} records, {{total}} pages', {:count => 12, :total => 24})
+    assert_equal w('12 records'), @locale.translate('{{count}} records', {:count => 12})
+    assert_equal w('12 records, 24 pages'), @locale.translate('{{count}} records, {{total}} pages', {:count => 12, :total => 24})
+    
+    @locale.set("{{count}} records", "ze {{count}} recordos")
+    assert_equal w('ze 12 recordos', true), @locale.translate('{{count}} records', {:count => 12})
+    
+    assert_equal w('12 records, 24 pages, 12 records'), @locale.translate('{{count}} records, {{total}} pages, {{count}} records', {:count => 12, :total => 24})
   end
   
   def test_localize_values_before_interpolating_named_positions
     assert_equal w("12.2 is a decimal"), @locale.translate('{{decimal}} is a decimal', :decimal => 12.2)
-    assert_equal w("4/15/2010 is d-day"), @locale.translate('{{date}} is d-day', :date => Date.civil(2010, 4, 15))
+    assert_equal w("04/15/2010 is d-day"), @locale.translate('{{date}} is d-day', :date => Date.civil(2010, 4, 15))
     assert_equal w("11:00 PM is t-time"), @locale.translate('{{time}} is t-time', :time => Time.at(946702800))
   end
   
@@ -147,5 +156,10 @@ class LocalizedStringTest < Test::Unit::TestCase
   def test_translated
     assert Harbor::Locale::LocalizedString.new("test", true).translated?
     assert !Harbor::Locale::LocalizedString.new("test").translated?
+  end
+  
+  def test_to_string
+    assert_equal "test", Harbor::Locale::LocalizedString.new("test", true).to_s
+    assert_equal "<span class='untranslated'>test</span>", Harbor::Locale::LocalizedString.new("test").to_s
   end
 end
