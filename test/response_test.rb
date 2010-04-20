@@ -170,35 +170,111 @@ class ResponseTest < Test::Unit::TestCase
     file.close
   end
 
-  def test_stream_file_with_filename_and_x_sendfile
+  ##
+  # Apache X-Sendfile Tests
+  ##
+  def test_apache_stream_file_with_filename_and_x_sendfile
     @request.env["HTTP_X_SENDFILE_TYPE"] = "X-Sendfile"
     @response.stream_file(__FILE__)
-
+  
     assert_equal __FILE__, @response.headers["X-Sendfile"]
     assert_equal File.size(__FILE__).to_s, @response.headers["Content-Length"]
     assert_equal "text/x-script.ruby", @response.headers["Content-Type"]
   end
-
-  def test_stream_file_with_pathname_and_x_sendfile
+  
+  def test_apache_stream_file_with_pathname_and_x_sendfile
     @request.env["HTTP_X_SENDFILE_TYPE"] = "X-Sendfile"
     @response.stream_file(Pathname(__FILE__))
-
+  
     assert_equal Pathname(__FILE__).expand_path.to_s, @response.headers["X-Sendfile"]
     assert_equal File.size(__FILE__).to_s, @response.headers["Content-Length"]
     assert_equal "text/x-script.ruby", @response.headers["Content-Type"]
   end
-
-  def test_stream_file_with_harbor_file_and_x_sendfile
+  
+  def test_apache_stream_file_with_harbor_file_and_x_sendfile
     @request.env["HTTP_X_SENDFILE_TYPE"] = "X-Sendfile"
     store = Harbor::FileStore::Local.new(File.dirname(__FILE__))
     file = store.get(File.basename(__FILE__))
-
+  
     @response.stream_file(file)
-
+  
     assert_equal __FILE__, @response.headers["X-Sendfile"]
     assert_equal File.size(__FILE__).to_s, @response.headers["Content-Length"]
     assert_equal "text/x-script.ruby", @response.headers["Content-Type"]
   end
+
+  ##
+  # nginx X-Sendfile tests NOT using X-Accel-Mapping
+  ##
+  def test_nginx_stream_file_with_filename_and_x_sendfile
+    @request.env["HTTP_X_SENDFILE_TYPE"] = "X-Accel-Redirect"
+    @response.stream_file(__FILE__)
+  
+    assert_equal __FILE__, @response.headers["X-Accel-Redirect"]
+    assert_equal File.size(__FILE__).to_s, @response.headers["Content-Length"]
+    assert_equal "text/x-script.ruby", @response.headers["Content-Type"]
+  end
+  
+  def test_nginx_stream_file_with_pathname_and_x_sendfile
+    @request.env["HTTP_X_SENDFILE_TYPE"] = "X-Accel-Redirect"
+    @response.stream_file(Pathname(__FILE__))
+  
+    assert_equal Pathname(__FILE__).expand_path.to_s, @response.headers["X-Accel-Redirect"]
+    assert_equal File.size(__FILE__).to_s, @response.headers["Content-Length"]
+    assert_equal "text/x-script.ruby", @response.headers["Content-Type"]
+  end
+  
+  def test_nginx_stream_file_with_harbor_file_and_x_sendfile
+    @request.env["HTTP_X_SENDFILE_TYPE"] = "X-Accel-Redirect"
+    store = Harbor::FileStore::Local.new(File.dirname(__FILE__))
+    file = store.get(File.basename(__FILE__))
+  
+    @response.stream_file(file)
+  
+    assert_equal __FILE__, @response.headers["X-Accel-Redirect"]
+    assert_equal File.size(__FILE__).to_s, @response.headers["Content-Length"]
+    assert_equal "text/x-script.ruby", @response.headers["Content-Type"]
+  end
+
+  ##
+  # nginx X-Sendfile tests using X-Accel-Mapping
+  ##
+  def test_nginx_stream_file_with_filename_and_x_sendfile_with_mapping
+    @request.env["HTTP_X_SENDFILE_TYPE"] = "X-Accel-Redirect"
+    @request.env["HTTP_X_ACCEL_MAPPING"] = "#{Pathname(__FILE__).dirname}=/some/other/path"
+    
+    @response.stream_file(__FILE__)
+  
+    assert_equal File.join("/some/other/path", File.basename(__FILE__)), @response.headers["X-Accel-Redirect"]
+    assert_equal File.size(__FILE__).to_s, @response.headers["Content-Length"]
+    assert_equal "text/x-script.ruby", @response.headers["Content-Type"]
+  end
+  
+  def test_nginx_stream_file_with_pathname_and_x_sendfile_with_mapping
+    @request.env["HTTP_X_SENDFILE_TYPE"] = "X-Accel-Redirect"
+    @request.env["HTTP_X_ACCEL_MAPPING"] = "#{Pathname(__FILE__).dirname}=/some/other/path"
+    
+    @response.stream_file(Pathname(__FILE__))
+  
+    assert_equal Pathname(__FILE__).expand_path.to_s, @response.headers["X-Accel-Redirect"]
+    assert_equal File.size(__FILE__).to_s, @response.headers["Content-Length"]
+    assert_equal "text/x-script.ruby", @response.headers["Content-Type"]
+  end
+  
+  def test_nginx_stream_file_with_harbor_file_and_x_sendfile_with_mapping
+    @request.env["HTTP_X_SENDFILE_TYPE"] = "X-Accel-Redirect"
+    @request.env["HTTP_X_ACCEL_MAPPING"] = "#{Pathname(__FILE__).dirname}=/some/other/path"
+    
+    store = Harbor::FileStore::Local.new(File.dirname(__FILE__))
+    file = store.get(File.basename(__FILE__))
+  
+    @response.stream_file(file)
+  
+    assert_equal "/some/other/path/#{File.basename(__FILE__)}", @response.headers["X-Accel-Redirect"]
+    assert_equal File.size(__FILE__).to_s, @response.headers["Content-Length"]
+    assert_equal "text/x-script.ruby", @response.headers["Content-Type"]
+  end
+
 
   ##
   # CACHE
