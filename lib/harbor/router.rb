@@ -19,6 +19,7 @@ module Harbor
     # Matches a GET request
     def get(matcher, &handler)
       register(:get, matcher, &handler)
+      register(:head, matcher, &handler)
     end
 
     # Matches a POST (create) request
