@@ -8,10 +8,11 @@ class LocaleClassTest < Test::Unit::TestCase
     en_au.time_formats        = {:long => "%d/%m/%Y %h:%m:%s", :default => "%h:%m:%s"}
     en_au.date_formats        = {:default => '%d/%m/%Y'}
     en_au.decimal_formats     = {:default => "%8.2f", :currency => "$%8.2f"}
-    en_au.wday_names          = %w(Sunday Monday Tuesday Wednesday Thursday Friday Saturday)
-    en_au.wday_abbrs          = %w(Sun Mon Tue Wed Thur Fri Sat)
-    en_au.month_names         = %w{January February March April May June July August September October November December}
-    en_au.month_abbrs         = %w{Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec}
+    en_au.wday_names          = [nil, 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+    en_au.wday_abbrs          = [nil, 'Sun', 'Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat']
+    en_au.month_names         = [nil, 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'Steptember', 'October', 'November', 'December']
+    en_au.month_abbrs         = [nil, 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    en_au.meridian_indicator = {"AM" => "AM", "PM" => "PM"}
 
     Harbor::Locale.register(en_au)
   end
@@ -53,10 +54,11 @@ class LocaleTest < Test::Unit::TestCase
     @locale.time_formats        = {:long => "%m/%d/%Y %I:%M %p", :default => "%I:%M %p"}
     @locale.date_formats        = {:default => '%m/%d/%Y'}
     @locale.decimal_formats     = {:default => "%s", :currency => "$%01.2f", :percent => "%s%%"}
-    @locale.wday_names          = %w(Sunday Monday Tuesday Wednesday Thursday Friday Saturday)
-    @locale.wday_abbrs          = %w(Sun Mon Tue Wed Thur Fri Sat)
-    @locale.month_names         = %w{January February March April May June July August September October November December}
-    @locale.month_abbrs         = %w{Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec}
+    @locale.wday_names          = [nil, 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+    @locale.wday_abbrs          = [nil, 'Sun', 'Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat']
+    @locale.month_names         = [nil, 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'Steptember', 'October', 'November', 'December']
+    @locale.month_abbrs         = [nil, 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    @locale.meridian_indicator = {"AM" => "AM", "PM" => "PM"}
 
     Harbor::Locale.register(@locale)
   end
@@ -161,5 +163,92 @@ class LocalizedStringTest < Test::Unit::TestCase
   def test_to_string
     assert_equal "test", Harbor::Locale::LocalizedString.new("test", true).to_s
     assert_equal "<span class='untranslated'>test</span>", Harbor::Locale::LocalizedString.new("test").to_s
+  end
+end
+
+class LocalizedDateTest < Test::Unit::TestCase
+  
+  def setup
+    @locale = Harbor::Locale.new
+    @locale.culture_code        = 'fr-FR'
+    @locale.time_formats        = {:long => "%m/%d/%Y %I:%M %p", :default => "%I:%M %p"}
+    @locale.date_formats        = {:default => '%m/%d/%Y', :proper => "%B %d %Y", :long => "%A, %B %d %Y"}
+    @locale.decimal_formats     = {:default => "%s", :currency => "$%01.2f", :percent => "%s%%"}
+    @locale.wday_names          = [nil, 'Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi']
+    @locale.wday_abbrs          = [nil, 'Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam']
+    @locale.month_names         = [nil, 'Janvier', 'f&eacute;vrier', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Ao&ucirc;t', 'Septembre', 'Octobre', 'Novembre', 'D&eacute;cembre']
+    @locale.month_abbrs         = [nil, 'Jan', 'F&eacute;v', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul', 'Ao&ucirc;', 'Sep', 'Oct', 'Nov', 'D&eacute;c']
+    @locale.meridian_indicator = {"AM" => "du matin", "PM" => "du soir"}
+
+    Harbor::Locale.register(@locale)
+    
+    @unlocalized_date = Date.parse("1999-12-31") # 1999-12-31
+  end
+  
+  def test_strftime
+    localized_date = Harbor::Locale::LocalizedDate.new(@unlocalized_date, @locale)
+    assert_equal localized_date.strftime("%B"), "D&eacute;cembre"
+    assert_equal localized_date.strftime("%a"), "Jeu"
+    assert_equal localized_date.strftime("%A"), "Jeudi"
+    assert_equal localized_date.strftime("%b"), "D&eacute;c"
+    assert_equal localized_date.strftime("%B"), "D&eacute;cembre"
+
+    assert_equal localized_date.strftime(@locale.date_formats[:default]), "12/31/1999"
+  end
+end
+
+class LocalizedTimeTest < Test::Unit::TestCase
+  
+  def setup
+    @locale = Harbor::Locale.new
+    @locale.culture_code        = 'fr-FR'
+    @locale.time_formats        = {:long => "%m/%d/%Y %I:%M %p", :default => "%I:%M %p"}
+    @locale.date_formats        = {:default => '%m/%d/%Y', :proper => "%B %d %Y", :long => "%A, %B %d %Y"}
+    @locale.decimal_formats     = {:default => "%s", :currency => "$%01.2f", :percent => "%s%%"}
+    @locale.wday_names          = [nil, 'Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi']
+    @locale.wday_abbrs          = [nil, 'Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam']
+    @locale.month_names         = [nil, 'Janvier', 'f&eacute;vrier', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Ao&ucirc;t', 'Septembre', 'Octobre', 'Novembre', 'D&eacute;cembre']
+    @locale.month_abbrs         = [nil, 'Jan', 'F&eacute;v', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul', 'Ao&ucirc;', 'Sep', 'Oct', 'Nov', 'D&eacute;c']
+    @locale.meridian_indicator = {"AM" => "du matin", "PM" => "du soir"}
+
+    Harbor::Locale.register(@locale)
+    
+    @unlocalized_time = Time.at(946702800) # 1999-12-31 23:00:00
+  end
+  
+  def test_strftime
+    localized_time = Harbor::Locale::LocalizedTime.new(@unlocalized_time, @locale)
+    assert_equal localized_time.strftime("%p"), "du soir"
+
+    assert_equal localized_time.strftime(@locale.time_formats[:default]), "11:00 du soir"
+    assert_equal localized_time.strftime(@locale.time_formats[:long]), "12/31/1999 11:00 du soir"
+  end
+end
+
+class LocalizedDateTimeTest < Test::Unit::TestCase
+  
+  def setup
+    @locale = Harbor::Locale.new
+    @locale.culture_code        = 'fr-FR'
+    @locale.time_formats        = {:long => "%m/%d/%Y %I:%M %p", :default => "%I:%M %p"}
+    @locale.date_formats        = {:default => '%m/%d/%Y', :proper => "%B %d %Y", :long => "%A, %B %d %Y"}
+    @locale.decimal_formats     = {:default => "%s", :currency => "$%01.2f", :percent => "%s%%"}
+    @locale.wday_names          = [nil, 'Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi']
+    @locale.wday_abbrs          = [nil, 'Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam']
+    @locale.month_names         = [nil, 'Janvier', 'f&eacute;vrier', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Ao&ucirc;t', 'Septembre', 'Octobre', 'Novembre', 'D&eacute;cembre']
+    @locale.month_abbrs         = [nil, 'Jan', 'F&eacute;v', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul', 'Ao&ucirc;', 'Sep', 'Oct', 'Nov', 'D&eacute;c']
+    @locale.meridian_indicator = {"AM" => "du matin", "PM" => "du soir"}
+
+    Harbor::Locale.register(@locale)
+    
+    @unlocalized_time = DateTime.parse("1999-12-31 23:00:00") # 1999-12-31 23:00:00
+  end
+  
+  def test_strftime
+    localized_time = Harbor::Locale::LocalizedDateTime.new(@unlocalized_time, @locale)
+    assert_equal localized_time.strftime("%p"), "du soir"
+
+    assert_equal localized_time.strftime(@locale.time_formats[:default]), "11:00 du soir"
+    assert_equal localized_time.strftime(@locale.time_formats[:long]), "12/31/1999 11:00 du soir"
   end
 end

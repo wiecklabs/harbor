@@ -161,8 +161,52 @@ module Harbor
       end
     end
 
+    class LocalizedDate
+      def initialize(raw, locale)
+        raise ArgumentError, "Harbor::Locale::LocalizedDate was initialized with #{raw.inspect} which wasn't a Date" unless raw.is_a?(Date)
+        
+        @raw = raw
+        @locale = locale
+      end
+      
+      def strftime(format)
+        format = format.dup
+        format.gsub!(/%a/, @locale.wday_abbrs[@raw.wday])
+        format.gsub!(/%A/, @locale.wday_names[@raw.wday])
+        format.gsub!(/%b/, @locale.month_abbrs[@raw.mon])
+        format.gsub!(/%B/, @locale.month_names[@raw.mon])
+        @raw.strftime(format)
+      end
+    end
+    
+    
+    class LocalizedTime
+      def initialize(raw, locale)
+        raise ArgumentError, "Harbor::Locale::LocalizedDate was initialized with #{raw.inspect} which wasn't a Time" unless raw.is_a?(Time) || raw.is_a?(DateTime)
+        
+        @raw = raw
+        @locale = locale
+      end
+      
+      def strftime(format)
+        format = format.dup
+        # date
+        format.gsub!(/%a/, @locale.wday_abbrs[@raw.wday])
+        format.gsub!(/%A/, @locale.wday_names[@raw.wday])
+        format.gsub!(/%b/, @locale.month_abbrs[@raw.mon])
+        format.gsub!(/%B/, @locale.month_names[@raw.mon])
+        
+        # time
+        format.gsub!(/%p/, @locale.meridian_indicator[@raw.strftime("%p")])
+        @raw.strftime(format)
+      end
+    end
+    
+    LocalizedDateTime = LocalizedTime
+    
+
     attr_accessor :culture_code, :decimal_formats, :time_formats, :date_formats
-    attr_accessor :wday_names, :wday_abbrs, :month_names, :month_abbrs
+    attr_accessor :wday_names, :wday_abbrs, :month_names, :month_abbrs, :meridian_indicator
     attr_reader :entries
     
     def initialize
@@ -242,15 +286,15 @@ module Harbor
     private
     
     def format_date(date, variation)
-      date.strftime @date_formats[variation]
+      Harbor::Locale::LocalizedDate.new(date, self).strftime @date_formats[variation]
     end
     
     def format_time(time, variation)
-      time.strftime @time_formats[variation]
+      Harbor::Locale::LocalizedTime.new(time, self).strftime @time_formats[variation]
     end
     
     def format_date_time(date_time, variation)
-      date_time.strftime time_formats[variation]
+      Harbor::Locale::LocalizedDateTime.new(date_time, self).strftime time_formats[variation]
     end
     
     def format_decimal(float, variation)
