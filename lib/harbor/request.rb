@@ -128,7 +128,7 @@ module Harbor
     end
 
     def locale
-      Harbor::Locale.parse(@env)
+      session.locale
     end
 
     private

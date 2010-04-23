@@ -16,16 +16,16 @@ class LocaleClassTest < Test::Unit::TestCase
     Harbor::Locale.register(en_au)
   end
   
-  def test_preferred_locales_returns_default_locale_when_none_specified
+  def test_locale_returns_default_locale_when_none_specified
     assert_equal Harbor::Locale.default, get("/", {'HTTP_ACCEPT_LANGUAGE' => nil}).locale
   end
 
-  def test_preferred_locales_returns_default_locale_when_blank_specified
+  def test_locales_returns_default_locale_when_blank_specified
     assert_equal Harbor::Locale.default, get("/", {'HTTP_ACCEPT_LANGUAGE' => ''}).locale
   end
 
   
-  def test_preferred_locales_returns_default_locale_when_invalid_locale_string_provided
+  def test_locales_returns_default_locale_when_invalid_locale_string_provided
     assert_equal Harbor::Locale.default, get("/", {'HTTP_ACCEPT_LANGUAGE' => 'ru'}).locale
   end
     

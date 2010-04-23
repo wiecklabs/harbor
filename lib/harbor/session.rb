@@ -71,5 +71,13 @@ module Harbor
     def destroy
       @data.clear
     end
+    
+    def locale
+      Harbor::Locale[@data[:locale]] || Harbor::Locale.parse(@request.env) || Harbor::Locale.default
+    end
+    
+    def locale=(locale)
+      @data[:locale] = locale.culture_code
+    end
   end
 end

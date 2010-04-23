@@ -124,13 +124,13 @@ module Harbor
           end
         end
         locale_preferences.sort! { |a, b| b[1] <=> a[1] }
-        self[locale_preferences[0][0]] || self.default
+        self[locale_preferences[0][0]]
       end
       
       
     end
 
-    class LocalizedString < String
+    class LocalizedString
       
       def initialize(raw, translated = false)
         raise ArgumentError, "Harbor::Locale::LocalizedString was initialized with #{raw.inspect} which wasn't a String" unless raw.is_a?(String)
@@ -148,20 +148,16 @@ module Harbor
         translated? ? @raw : "<span class='untranslated'>#{@raw}</span>"
       end
       
-      def gsub(key, value)
-        @raw.gsub(key, value)
-      end
-      
-      def gsub!(key, value)
-        @raw.gsub!(key, value)
-      end
-      
       def ==(other)
         other.to_s == to_s
       end
       
       def inspect
         "Harbor::Locale::LocalizedString @raw=#{@raw.inspect} @translated=#{translated?}"
+      end
+      
+      def method_missing(name, *args, &block)
+        @raw.send(name, *args, &block)
       end
     end
 
@@ -284,4 +280,4 @@ module Harbor
   end
 end
 
-require Pathname(__FILE__).dirname + "locales/en_us" # Harbor-wide default locale
+require Pathname(__FILE__).dirname + "locales/en-US" # Harbor-wide default locale
