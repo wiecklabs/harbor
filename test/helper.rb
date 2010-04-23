@@ -1,6 +1,7 @@
 require "rubygems"
 require "pathname"
 require "test/unit"
+require "uri"
 require Pathname(__FILE__).dirname.parent + "lib/harbor"
 require "harbor/xml_view"
 require "harbor/mailer"

@@ -5,6 +5,12 @@ module Harbor
   class Response
 
     attr_accessor :status, :headers, :errors
+    
+    class UnsupportedSendfileTypeError < StandardError
+      def initialize(header)
+        super("An unsupported HTTP_X_SENDFILE_TYPE header was found: #{header}")
+      end
+    end
 
     def initialize(request)
       @request = request
@@ -58,16 +64,27 @@ module Harbor
 
     def stream_file(path_or_io, content_type = nil)
       io = BlockIO.new(path_or_io)
-      content_type ||= Harbor::Mime.mime_type(::File.extname(io.path.to_s))
 
-      if io.path && @request.env.has_key?("HTTP_X_SENDFILE_TYPE")
-        @headers["X-Sendfile"] = io.path
+      if io.path && (header = @request.env["HTTP_X_SENDFILE_TYPE"])
+        case header
+        when "X-Sendfile"
+          @headers["X-Sendfile"] = io.path
+        when "X-Accel-Redirect"
+          if mapping = @request.env['HTTP_X_ACCEL_MAPPING']
+            internal, external = mapping.split('=', 2).map { |p| p.strip }
+            @headers["X-Accel-Redirect"] = io.path.sub(/^#{internal}/i, external)
+          else
+            @headers["X-Accel-Redirect"] = io.path
+          end
+        else
+          raise UnsupportedSendfileTypeError.new(header)
+        end
       else
         @io = io
       end
      
       self.size = io.size
-      self.content_type = content_type
+      self.content_type = content_type || Harbor::Mime.mime_type(::File.extname(io.path.to_s))
       nil
     end
 
