@@ -252,7 +252,11 @@ module Harbor
     # @param [String] path to retrieve from @entries
     # @param [Hash <Symbol => String>] args hash retrieve named interpolation values from
     def translate(path, interpolation_hash = nil)
-      interpolate((search(path) || get(path) || LocalizedString.new(path.split("/")[-1])), interpolation_hash)      
+      if !path.is_a?(String)
+        localize(path)
+      else
+        interpolate((search(path) || get(path) || LocalizedString.new(path.split("/")[-1])), interpolation_hash)
+      end
     end
     
     
