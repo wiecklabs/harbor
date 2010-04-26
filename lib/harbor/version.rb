@@ -1,3 +1,3 @@
 module Harbor
-  VERSION = "0.18.21"
+  VERSION = "0.18.22"
 end
