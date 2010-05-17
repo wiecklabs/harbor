@@ -7,6 +7,12 @@ module Harbor
     end
 
     def raise_event(name, *args)
+      if args.size == 1 && args.first.is_a?(Hash)
+        args = EventContext.new(args.first)
+      else
+        warn "Using ordinal arguments when calling Harbor::Events#raise_event is deprecated. Harbor::Events#raise_event expects the name of the event, and a hash representing the context."
+      end
+
       if self.class.events[name.to_s].nil?
         return false
       else

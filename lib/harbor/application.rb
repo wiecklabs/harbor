@@ -8,6 +8,7 @@ require Pathname(__FILE__).dirname + "response"
 require Pathname(__FILE__).dirname + "block_io"
 require Pathname(__FILE__).dirname + "zipped_io"
 require Pathname(__FILE__).dirname + "events"
+require Pathname(__FILE__).dirname + "event_context"
 require Pathname(__FILE__).dirname + "messages"
 
 module Harbor

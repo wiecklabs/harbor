@@ -55,7 +55,7 @@ class EventsTest < Test::Unit::TestCase
 
   end
 
-  class HandlerTwo < Handler
+  class HandlerTwo
 
     class << self
 
@@ -77,9 +77,50 @@ class EventsTest < Test::Unit::TestCase
 
   end
 
+  class ContextualHandler
+
+    class << self
+
+      attr_accessor :called
+
+      def called?
+        @called
+      end
+
+    end
+
+    def initialize(context)
+      @context = context
+    end
+
+    def call
+      @context.foo
+      ContextualHandler.called = true
+    end
+
+  end
+
   def teardown
     Application.clear_event_handlers!
     Controller.clear_event_handlers!
+  end
+
+  def test_single_hash_argument_is_converted_to_event_context_for_classy_handlers
+    Application.register_event_handler(:my_event, ContextualHandler)
+
+    Application.new.raise_event(:my_event, :foo => 1, :bar => 2)
+
+    assert ContextualHandler.called?
+  end
+
+  def test_single_hash_argument_is_converted_to_event_context_for_lambda_handlers
+    raised = nil
+
+    Application.register_event_handler(:my_event) { |context| raised = context.foo }
+
+    Application.new.raise_event(:my_event, :foo => 1, :bar => 2)
+
+    assert_equal 1, raised
   end
 
   def test_classy_event_handlers_with_zero_arguments
@@ -145,6 +186,16 @@ class EventsTest < Test::Unit::TestCase
     assert_nil Application.events['foo']
   end
 
+  def test_events_are_inherited
+    not_found = false
+    Application.register_event_handler(:not_found) { not_found = true }
+
+    my_application = Class.new(Application).new
+    my_application.raise_event(:not_found)
+
+    assert_equal true, not_found
+  end
+
   def test_named_events_are_not_shared_across_classes
     raised_in_application = raised_in_controller = false
     Application.register_event_handler(:event_one) { raised_in_application = true }
@@ -155,16 +206,6 @@ class EventsTest < Test::Unit::TestCase
 
     assert_equal true, raised_in_application
     assert_equal false, raised_in_controller
-  end
-
-  def test_events_are_inherited
-    not_found = false
-    Application.register_event_handler(:not_found) { not_found = true }
-
-    my_application = Class.new(Application).new
-    my_application.raise_event(:not_found)
-
-    assert_equal true, not_found
   end
 
   def test_registering_a_class_and_a_block_fails
