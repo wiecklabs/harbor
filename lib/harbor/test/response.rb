@@ -10,8 +10,21 @@ module Harbor
       ##
       def initialize
         super(nil)
-      end
 
+        @deleted_cookies = []
+        @set_cookies = {}
+      end
+      
+      def delete_cookie(key, value={})
+        super(key, value)
+        @deleted_cookies << key
+      end
+      
+      def set_cookie(key, value)
+        super(key, value)
+        @set_cookies[key] = value
+      end
+      
     end
   end
 end
