@@ -2,7 +2,7 @@ module Harbor
   module Test
     class Response < Harbor::Response
 
-      attr_accessor :request, :context
+      attr_accessor :request, :context, :deleted_cookies, :set_cookies
 
       ##
       # We redefine Harbor::Response.initialize(request) with an empty arg
