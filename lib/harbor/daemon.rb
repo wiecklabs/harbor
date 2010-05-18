@@ -25,7 +25,11 @@ module Harbor
     end
     
     def log_file
-      @log_file ||= @log_file_template.gsub('%PID', Process.pid.to_s)      
+      @log_file ||= if @log_file_template.is_a?(::File)
+        @log_file_template
+      else
+        @log_file_template.gsub('%PID', Process.pid.to_s)
+      end
     end
     
     def detach
@@ -33,8 +37,10 @@ module Harbor
       fork and exit
       Process.setsid # detach -- we want to be able to close our shell!
 
-      log_directory = ::File.dirname(self.log_file)
-      ::File.mkdir_p(log_directory) unless ::File.directory?(log_directory)
+      unless self.log_file.is_a?(::File)
+        log_directory = ::File.dirname(self.log_file)
+        ::File.mkdir_p(log_directory) unless ::File.directory?(log_directory)
+      end
 
       redirect_io(@log_file)
     end

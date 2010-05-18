@@ -17,7 +17,8 @@ class RouterTest < Test::Unit::TestCase
       get("/") {}
     end
     
-    assert_equal(1, router.routes.size)
+    # get() now creates a route for get and head methods
+    assert_equal(2, router.routes.size)
   end
 
   def test_registering_a_route_adds_matchers_and_handlers

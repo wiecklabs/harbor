@@ -78,6 +78,34 @@ class HarborTestTest < Test::Unit::TestCase
     assert_equal "PUT", request.request_method
   end
 
+  def test_response_context_can_be_accessed
+    Harbor::View::path.unshift Pathname(__FILE__).dirname + "views"
+
+    container = Harbor::Container.new
+    container.register(:request, Harbor::Test::Request)
+    container.register(:response, Harbor::Test::Response)
+    response = container.get(:response)
+    
+    response.render "index", :var => "test"
+    assert_equal response.render_context[:var], "test"
+  end
+
+  def test_response_context_can_be_accessed_with_multiple_renders
+    Harbor::View::path.unshift Pathname(__FILE__).dirname + "views"
+
+    container = Harbor::Container.new
+    container.register(:request, Harbor::Test::Request)
+    container.register(:response, Harbor::Test::Response)
+    response = container.get(:response)
+    
+    response.render "index", :var => "test1"
+    response.render "index", :var => "test2"
+    
+    assert_equal response.render_context[:var], "test1"
+    assert_equal response.render_context(0)[:var], "test1"
+    assert_equal response.render_context(1)[:var], "test2"
+  end
+
   # SESSION
   def test_session
     container = Harbor::Container.new
