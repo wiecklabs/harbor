@@ -61,6 +61,10 @@ module Harbor
       BOT_AGENTS.any? { |bot_agent| user_agent =~ bot_agent }
     end
 
+    def unload_session
+      @session = nil
+    end
+
     def session
       @session ||= Harbor::Session.new(self)
     end
