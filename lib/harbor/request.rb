@@ -65,8 +65,8 @@ module Harbor
       @session = nil
     end
 
-    def session
-      @session ||= Harbor::Session.new(self)
+    def session(key = nil)
+      @session ||= Harbor::Session.new(self, key)
     end
 
     def session?

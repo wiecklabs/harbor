@@ -31,9 +31,9 @@ module Harbor
       @options
     end
 
-    def initialize(request)
+    def initialize(request, key = nil)
       @options = self.class.options.dup
-      @cookie = request.cookies[@options[:key]]
+      @cookie = request.cookies[key] || request.cookies[@options[:key]]
       @store = self.class.options[:store]
       @request = request
       @data ||= @store.load_session(@cookie)
