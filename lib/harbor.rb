@@ -1,7 +1,7 @@
 require "rubygems"
 require "pathname"
 
-$:.unshift(Pathname(__FILE__).dirname.expand_path)
+$:.unshift(Pathname(__FILE__).dirname.expand_path.to_s)
 
 require "harbor/version"
 require "harbor/support/array"
