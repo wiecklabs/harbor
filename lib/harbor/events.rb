@@ -10,7 +10,7 @@ module Harbor
       if args.size == 1 && args.first.is_a?(Hash)
         args = EventContext.new(args.first)
       else
-        warn "Using ordinal arguments when calling Harbor::Events#raise_event is deprecated. Harbor::Events#raise_event expects the name of the event, and a hash representing the context."
+        warn "Using ordinal arguments when calling Harbor::Events#raise_event is deprecated. Harbor::Events#raise_event expects the name of the event, and a hash representing the context. (event name: #{name.inspect})\n\t#{caller.join("\n\t")}"
       end
 
       if self.class.events[name.to_s].nil?
@@ -24,6 +24,25 @@ module Harbor
             event.new(*args).call
           else
             raise "Unsupported handler class (#{event.class}) for event (#{name})"
+          end
+        end
+        return true
+      end
+    end
+    
+    def raise_event2(name, event)
+      registered_handlers = self.class.events[name.to_s]
+      if registered_handlers.nil?
+        false
+      else
+        registered_handlers.each do |handler|
+          case handler
+          when Proc
+            handler.call(event)
+          when Class
+            handler.new(event).call
+          else
+            raise "Unsupported handler class (#{handler.class}) for event (#{name})"
           end
         end
         return true

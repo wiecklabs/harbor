@@ -23,7 +23,7 @@ class EventsTest < Test::Unit::TestCase
 
     end
 
-    def initialize
+    def initialize(event)
       Handler.called = false
     end
 
@@ -45,7 +45,7 @@ class EventsTest < Test::Unit::TestCase
 
     end
 
-    def initialize(arg1)
+    def initialize(event)
       HandlerOne.called = false
     end
 
@@ -67,7 +67,7 @@ class EventsTest < Test::Unit::TestCase
 
     end
 
-    def initialize(arg1, arg2, arg3)
+    def initialize(event)
       HandlerTwo.called = false
     end
 
@@ -89,12 +89,12 @@ class EventsTest < Test::Unit::TestCase
 
     end
 
-    def initialize(context)
-      @context = context
+    def initialize(event)
+      @event = event
     end
 
     def call
-      @context.foo
+      @event.foo
       ContextualHandler.called = true
     end
 
@@ -105,28 +105,10 @@ class EventsTest < Test::Unit::TestCase
     Controller.clear_event_handlers!
   end
 
-  def test_single_hash_argument_is_converted_to_event_context_for_classy_handlers
-    Application.register_event_handler(:my_event, ContextualHandler)
-
-    Application.new.raise_event(:my_event, :foo => 1, :bar => 2)
-
-    assert ContextualHandler.called?
-  end
-
-  def test_single_hash_argument_is_converted_to_event_context_for_lambda_handlers
-    raised = nil
-
-    Application.register_event_handler(:my_event) { |context| raised = context.foo }
-
-    Application.new.raise_event(:my_event, :foo => 1, :bar => 2)
-
-    assert_equal 1, raised
-  end
-
   def test_classy_event_handlers_with_zero_arguments
     Application.register_event_handler(:foo, Handler)
 
-    Application.new.raise_event(:foo)
+    Application.new.raise_event2(:foo, nil)
 
     assert_equal true, Handler.called?
   end
@@ -134,33 +116,16 @@ class EventsTest < Test::Unit::TestCase
   def test_classy_event_handlers_with_one_argument
     Application.register_event_handler(:foo, HandlerOne)
 
-    Application.new.raise_event(:foo, "bar")
+    Application.new.raise_event2(:foo, nil)
 
     assert_equal true, HandlerOne.called?
-  end
-
-  def test_classy_event_handlers_with_more_than_one_argument
-    Application.register_event_handler(:foo, HandlerTwo)
-
-    Application.new.raise_event(:foo, "bar", 1, [1, 2, 3])
-
-    assert_equal true, HandlerTwo.called?
-  end
-
-  def test_depracated_handler_registration
-    raised = false
-    Application.register_event(:foo) { raised = true }
-
-    Application.new.raise_event(:foo)
-
-    assert_equal true, raised
   end
 
   def test_event_named_by_string_can_be_handled_by_symbol
     raised = false
     Application.register_event_handler('foo') { raised = true }
 
-    Application.new.raise_event(:foo)
+    Application.new.raise_event2(:foo, nil)
 
     assert_equal true, raised
   end
@@ -169,7 +134,7 @@ class EventsTest < Test::Unit::TestCase
     raised = false
     Application.register_event_handler(:foo) { raised = true }
 
-    Application.new.raise_event('foo')
+    Application.new.raise_event2('foo', nil)
 
     assert_equal true, raised
   end
@@ -181,17 +146,17 @@ class EventsTest < Test::Unit::TestCase
 
     assert_equal 1, Application.events['foo'].size
 
-    Application.clear_events!
+    Application.clear_event_handlers!
 
     assert_nil Application.events['foo']
   end
 
   def test_events_are_inherited
     not_found = false
-    Application.register_event_handler(:not_found) { not_found = true }
+    Application.register_event_handler(:not_found) { |event| not_found = true }
 
     my_application = Class.new(Application).new
-    my_application.raise_event(:not_found)
+    my_application.raise_event2(:not_found, nil)
 
     assert_equal true, not_found
   end
@@ -202,7 +167,7 @@ class EventsTest < Test::Unit::TestCase
     Controller.register_event_handler(:event_one) { raised_in_controller = true }
 
     application = Application.new
-    application.raise_event(:event_one)
+    application.raise_event2(:event_one, nil)
 
     assert_equal true, raised_in_application
     assert_equal false, raised_in_controller

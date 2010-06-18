@@ -1,5 +1,6 @@
 require "dm-core"
 require "dm-timestamps"
+require "dm-migrations"
 
 module Harbor
   module Contrib
@@ -56,7 +57,7 @@ module Harbor
 
         def self.commit_session(data, request)
           record = data.instance
-          record.update_attributes(:data => data.to_hash)
+          record.update!(:data => data.to_hash)
           record.id
         end
       end
@@ -66,7 +67,7 @@ module Harbor
       include DataMapper::Resource
       
       property :id, String, :key => true, :default => lambda { `uuidgen`.chomp }
-      property :data, Object, :default => {}
+      property :data, DataMapper::Types::Object, :default => lambda { {} }
       property :created_at, DateTime
       property :updated_at, DateTime
     end

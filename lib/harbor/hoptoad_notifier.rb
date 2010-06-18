@@ -43,4 +43,4 @@ module Harbor
   end
 end
 
-Harbor::Application.register_event(:exception) { |*args| Harbor::HoptoadNotifier.notify(*args) }
+Harbor::Application.register_event_handler(:exception) { |event| Harbor::HoptoadNotifier.notify(event.exception, event.request, event.response, event.trace) }

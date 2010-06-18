@@ -8,6 +8,9 @@ require Pathname(__FILE__).dirname + "response"
 require Pathname(__FILE__).dirname + "block_io"
 require Pathname(__FILE__).dirname + "zipped_io"
 require Pathname(__FILE__).dirname + "events"
+require Pathname(__FILE__).dirname + "events" + "dispatch_request_event"
+require Pathname(__FILE__).dirname + "events" + "not_found_event"
+require Pathname(__FILE__).dirname + "events" + "application_exception_event"
 require Pathname(__FILE__).dirname + "event_context"
 require Pathname(__FILE__).dirname + "messages"
 
@@ -71,17 +74,16 @@ module Harbor
     # and logs requests.
     ##
     def dispatch_request(handler, request, response)
-      start = Time.now
-
-      raise_event(:request_dispatch, request, response, start)
+      dispatch_request_event = Events::DispatchRequestEvent.new(request, response)
+      raise_event2(:request_dispatch, dispatch_request_event)
 
       return handle_not_found(request, response) unless handler
-
+      
       handler.call(request, response)
     rescue StandardError, LoadError, SyntaxError => e
       handle_exception(e, request, response)
     ensure
-      raise_event(:request_complete, request, response, start, Time.now)
+      raise_event2(:request_complete, dispatch_request_event.complete!)
     end
 
     ##
@@ -93,7 +95,7 @@ module Harbor
     # To use a custom 404 message, create a view "exceptions/404.html.erb", and
     # optionally create a view "layouts/exception.html.erb" to style it.
     ##
-    def handle_not_found(request, response)
+    def handle_not_found(request, response)      
       response.flush
       response.status = 404
 
@@ -105,7 +107,7 @@ module Harbor
         response.puts "The page you requested could not be found"
       end
 
-      raise_event(:not_found, request, response)
+      raise_event2(:not_found, Events::NotFoundEvent.new(request, response))
     end
 
     ##
@@ -122,8 +124,6 @@ module Harbor
       response.flush
       response.status = 500
 
-      trace = build_exception_trace(exception, request)
-
       if environment == "development"
         response.content_type = "text/html"
         response.puts(Rack::ShowExceptions.new(nil).pretty(request.env, exception))
@@ -137,7 +137,7 @@ module Harbor
         end
       end
 
-      raise_event(:exception, exception, request, response, trace)
+      raise_event2(:exception, ApplicationExceptionEvent.new(request, response, exception))
 
       nil
     end
@@ -151,24 +151,6 @@ module Harbor
 
     def default_layout
       warn "Harbor::Application#default_layout has been deprecated. See Harbor::Layouts."
-    end
-
-    private
-
-    def build_exception_trace(exception, request)
-      trace = ""
-      trace << "="*80
-      trace << "\n"
-      trace << "== [ #{self.class}: #{exception} @ #{Time.now} ] =="
-      trace << "\n"
-      trace << exception.backtrace.join("\n")
-      trace << "\n"
-      trace << "== [ Request ] =="
-      trace << "\n"
-      trace << request.env.to_yaml
-      trace << "\n"
-      trace << "="*80
-      trace << "\n"
     end
 
   end

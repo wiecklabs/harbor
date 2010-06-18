@@ -110,7 +110,7 @@ module Harbor
     end
 
     def uri
-      @env['REQUEST_URI'] || @env['REQUEST_PATH']
+      @env['REQUEST_URI'] || @env['REQUEST_PATH'] || @env['PATH_INFO']
     end
 
     def messages

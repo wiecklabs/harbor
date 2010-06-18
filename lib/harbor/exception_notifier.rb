@@ -56,4 +56,4 @@ module Harbor
   end
 end
 
-Harbor::Application.register_event(:exception) { |*args| Harbor::ExceptionNotifier.notify(*args) }
+Harbor::Application.register_event_handler(:exception) { |event| Harbor::ExceptionNotifier.notify(event.exception, event.request, event.response, event.trace) }

@@ -19,7 +19,7 @@ module Harbor
   end
 end
 
-Harbor::Application.register_event(:request_complete) do |request, response, |
+Harbor::Application.register_event_handler(:request_complete) do |request, response, |
   if orm = Harbor::Contrib::Stats.orm
     if request.session?
       session = request.session
