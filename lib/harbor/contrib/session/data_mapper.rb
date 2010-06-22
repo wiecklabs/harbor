@@ -1,6 +1,6 @@
 require "dm-core"
 require "dm-timestamps"
-require "dm-migrations"
+#require "dm-migrations"
 
 module Harbor
   module Contrib
@@ -57,7 +57,7 @@ module Harbor
 
         def self.commit_session(data, request)
           record = data.instance
-          record.update!(:data => data.to_hash)
+          record.update_attributes(:data => data.to_hash)
           record.id
         end
       end
