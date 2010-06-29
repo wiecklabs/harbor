@@ -64,6 +64,7 @@ spec = Gem::Specification.new do |s|
 
   s.add_dependency "builder"
   s.add_dependency "erubis"
+  s.add_dependency "logging"
   s.add_dependency "mail_builder"
   s.add_dependency "rack", "~> 1.0.0"
   s.add_dependency "thin"
