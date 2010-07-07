@@ -13,8 +13,7 @@ module Harbor
       
       def trace
         <<-EOS
-================================================================================
-== [ ApplicationExceptionEvent: #{@exception} @ #{@occurred} ] ==
+#{@exception} (#{@exception.backtrace.first})
 
 #{@exception.backtrace.join("\n")}
 

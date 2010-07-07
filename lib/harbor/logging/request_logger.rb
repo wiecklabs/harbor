@@ -21,12 +21,12 @@ module Harbor
       message << "\n"
 
       if (request_logger = Logging::Logger["request"]).info?
-        request_logger << message
+        request_logger.info { message }
       end
     end
 
     def self.error(event)
-      Logging::Logger['error'] << event.trace
+      Logging::Logger['error'].error { event.trace }
     end
   end
 end
