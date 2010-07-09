@@ -255,7 +255,7 @@ class ResponseTest < Test::Unit::TestCase
     @request.env["HTTP_X_ACCEL_MAPPING"] = "#{Pathname(__FILE__).dirname}=/some/other/path"
     
     @response.stream_file(Pathname(__FILE__))
-  
+        
     assert_equal Pathname(__FILE__).expand_path.to_s, @response.headers["X-Accel-Redirect"]
     assert_equal File.size(__FILE__).to_s, @response.headers["Content-Length"]
     assert_equal "text/x-script.ruby", @response.headers["Content-Type"]
@@ -274,7 +274,30 @@ class ResponseTest < Test::Unit::TestCase
     assert_equal File.size(__FILE__).to_s, @response.headers["Content-Length"]
     assert_equal "text/x-script.ruby", @response.headers["Content-Type"]
   end
-
+  
+  ##
+  # nginx ModZip tests
+  ##
+  
+  def test_nginx_mod_zip_send_files_has_properly_formatting_body
+    @request.env["HTTP_MOD_ZIP_ENABLED"] = "True"
+    
+    file = Harbor::File.new(Pathname(__FILE__))
+    
+    @response.send_files("test", [file])
+    
+    assert_equal @response.buffer, "#{Zlib.crc32(File.read(file.path))} #{File.size(file.path)} #{File.expand_path(file.path)} #{File.basename(file.path)}\n"
+  end
+  
+  def test_nginx_mod_zip_has_appropriate_header
+    @request.env["HTTP_MOD_ZIP_ENABLED"] = "True"
+    
+    file = Harbor::File.new(Pathname(__FILE__))
+    
+    @response.send_files("test", [file])
+    
+    assert_equal "zip", @response.headers["X-Archive-Files"]
+  end
 
   ##
   # CACHE
