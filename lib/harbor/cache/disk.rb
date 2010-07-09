@@ -18,6 +18,10 @@ class Harbor::Cache::Disk
 
   alias [] get
 
+  def keys_matching(key_regex)
+    Dir[@path + "*"].select { |path| path[/.*?__INFO__/] }.select{|path| path[key_regex]}
+  end
+
   def put(key, ttl, maximum_age, content, cached_at)
     item = Harbor::Cache::Item.new(key, ttl, maximum_age, content, cached_at)
 

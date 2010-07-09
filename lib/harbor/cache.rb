@@ -11,6 +11,7 @@ module Harbor
 
     def initialize(store)
       raise ArgumentError.new("Harbor::Cache.new expects a non-null 'store' parameter") unless store
+      logger.debug "INIT: #{store.inspect}" if logger
 
       @store = store
       @semaphore = Mutex.new
@@ -25,6 +26,8 @@ module Harbor
       @semaphore.synchronize do
         # Prevent multiple writes of similar content to the cache
         return true if (cached_item = @store.get(key)) && cached_item.fresh? && cached_item.content.hash == content.hash
+
+        logger.debug "PUT: #{key}  (ttl:#{ttl.inspect} maximum_age:#{maximum_age.inspect})" if logger
         @store.put(key, ttl, maximum_age, content, Time.now)
       end
     rescue
@@ -37,7 +40,9 @@ module Harbor
 
     def get(key)
       if item = @store.get(key)
+        logger.debug "HIT: #{key.inspect}" if logger
         if item.fresh?
+          logger.debug "BUMP: #{key.inspect}" if logger
           @semaphore.synchronize do
             @store.bump(key)
           end
@@ -58,6 +63,7 @@ module Harbor
     end
 
     def delete(key)
+      logger.debug "DELETE: #{key.inspect}" if logger
       @semaphore.synchronize do
         @store.delete(key)
       end
@@ -68,6 +74,7 @@ module Harbor
     end
 
     def delete_matching(key)
+      logger.debug "DELETE MATCHING: #{key.inspect} (#{@store.keys.select{|k| k =~ key}.inspect})" if logger
       @semaphore.synchronize do
         @store.delete_matching(key)
       end

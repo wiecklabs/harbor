@@ -7,7 +7,14 @@ class MemoryCacheTest < Test::Unit::TestCase
   include SynchronizedCacheTestBootstrap
 
   def setup
-    @cache = Harbor::Cache.new(Harbor::Cache::Memory.new)
+    @store = Harbor::Cache::Memory.new
+    @cache = Harbor::Cache.new(@store)
+  end
+
+  def test_keys_matching
+    @store.put('test_key', 10, 100, CACHE_CONTENT, Time.now)
+
+    assert !@store.keys_matching(/.*test_key.*/).empty?
   end
 
 end

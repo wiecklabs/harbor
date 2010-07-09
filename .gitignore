@@ -5,3 +5,5 @@ doc
 log/*
 tmp
 .bundle
+*.swp
+*.swo

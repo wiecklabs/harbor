@@ -6,6 +6,10 @@ class Harbor::Cache::Memory
     @cache = {}
   end
 
+  def keys_matching(key_regex)
+    @cache.keys.select { |key| key =~ key_regex }
+  end
+
   def put(key, ttl, maximum_age, content, cached_at)
     @cache[key] = Harbor::Cache::Item.new(key, ttl, maximum_age, content, cached_at)
   end
