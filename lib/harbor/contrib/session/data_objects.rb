@@ -1,4 +1,3 @@
-require "base64"
 require "data_objects"
 
 module Harbor
@@ -65,9 +64,9 @@ module Harbor
         end
 
         def self.commit_session(data, request)
-          cmd = connection.create_command("UPDATE sessions SET data = ?, updated_at = ?;")
+          cmd = connection.create_command("UPDATE sessions SET data = ?, updated_at = ? WHERE id = ?;")
           
-          cmd.execute_non_query(self.dump(data.to_hash), Time.now)
+          cmd.execute_non_query(self.dump(data.to_hash), Time.now, data[:session_id])
           
           data[:session_id]
         end
@@ -134,11 +133,11 @@ module Harbor
         end
         
         def self.dump(data)
-          Base64.encode64(Marshal.dump(data))
+          Marshal.dump(data)
         end
         
         def self.load(data)
-          Marshal.load(Base64.decode64(data))
+          Marshal.load(data)
         end
         
       protected 
