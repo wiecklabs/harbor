@@ -1,0 +1,85 @@
+#!/usr/bin/env ruby
+
+require 'benchmark'
+
+require 'rubygems'
+
+gem 'data_objects', '=0.9.12'
+gem 'dm-core', '=0.9.11'
+
+require 'pathname'
+require Pathname(__FILE__).dirname.parent + 'lib/harbor'
+
+require 'harbor/test/request'
+
+@n = 10
+@datamapper_db = "#{Pathname(__FILE__).dirname.expand_path}/benchmark_dm.db"
+@do_marshal_db = "#{Pathname(__FILE__).dirname.expand_path}/benchmark_do_marshal.db"
+@do_json_db = "#{Pathname(__FILE__).dirname.expand_path}/benchmark_do_json.db"
+
+def run_test
+  for i in 1..@n
+    session = Harbor::Session.new(Harbor::Test::Request.new)
+    
+    session.save
+    
+    session[:user_id] = i
+    session[:user_name] = "user #{i}"
+    
+    session.save
+    
+    session[:user_name] = "user #{i+50}"
+    
+    session.save
+  end
+end
+
+Benchmark.bm(30) do |b|
+
+  b.report("Cookie:") do
+    Harbor::Session.configure do |session|
+      session[:store] = Harbor::Session::Cookie
+    end
+
+    run_test
+  end
+  
+  
+  `rm -f #{@datamapper_db}`
+  
+  require 'harbor/contrib/session/data_mapper'
+  DataMapper.setup :default, "sqlite3://#{@datamapper_db}"
+  DataMapper.auto_migrate!
+  
+  b.report("DataMapper:") do
+    Harbor::Session.configure do |session|
+      session[:store] = Harbor::Contrib::Session::DataMapper
+    end
+
+    run_test
+  end
+  
+  require 'harbor/contrib/session/data_objects'
+  
+  `rm -f #{@do_marshal_db}`
+  
+  b.report("DataObjects (Marshal+Base64):") do
+    Harbor::Session.configure do |session|
+      session[:store] = Harbor::Contrib::Session::DataObjects
+      session[:connection] = DataObjects::Connection.new("sqlite3://#{@do_marshal_db}")
+    end
+    
+    run_test
+  end
+  
+#  
+#  b.report("DataObjects+json:") do
+#  
+#  end
+#  
+#  
+#  b.report("DataObjects+xml:") do
+#  
+#  end
+end
+
