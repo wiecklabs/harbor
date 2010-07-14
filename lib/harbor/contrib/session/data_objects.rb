@@ -15,40 +15,53 @@ module Harbor
       ##
       class DataObjects < Harbor::Session::Abstract
 
-        class SessionHash < Hash
-          def initialize(instance)
-            super()
-            @instance = instance
-            merge!(@instance[:data])
+        class SessionHash
+          def initialize(raw)
+            @raw = raw
+            @data = nil
           end
           
           def [](key)
-            key == :session_id ? @instance[:session_id] : super
+            if key == :session_id
+              @raw[:session_id]
+            else
+              load_data![key]
+            end
           end
 
           def []=(key, value)
             raise ArgumentError.new("You cannot manually set the session_id for a session.") if key == :session_id
 
-            super
+            load_data![key] = value
+          end
+          
+          def data_loaded?
+            not @data.nil?
+          end
+          
+          def load_data!
+            return @data if data_loaded?
+            
+            @data = DataObjects.load(@raw[:data])
           end
 
           def to_hash
-            {}.merge(reject { |key,| key == :session_id })
+            @data
           end
         end
 
         def self.load_session(cookie)
           create_session_table unless session_table_exists?
         
-          session = if expire_after = Harbor::Session.options[:expire_after]
+          raw_session = if expire_after = Harbor::Session.options[:expire_after]
             get_raw_session(cookie, Time.now - expire_after)
           else
             get_raw_session(cookie)
           end
           
-          session ||= create_session
+          raw_session ||= create_session
 
-          SessionHash.new(session)
+          SessionHash.new(raw_session)
         end
 
         def self.commit_session(data, request)
@@ -85,10 +98,10 @@ module Harbor
         
         def self.create_session(data = {})
           session_id = `uuidgen`.chomp
+          data = self.dump(data)
 
-          cmd = connection.create_command("INSERT INTO sessions (id, data, created_at, updated_at) VALUES (?, ?, ?, ?);")
-          
-          cmd.execute_non_query(session_id, self.dump(data), Time.now, Time.now)
+          cmd = connection.create_command("INSERT INTO sessions (id, data, created_at, updated_at) VALUES (?, ?, ?, ?);")          
+          cmd.execute_non_query(session_id, data, Time.now, Time.now)
           
           {:session_id => session_id, :data => data}
         end
@@ -113,17 +126,11 @@ module Harbor
           
           raw = {}
           raw[:session_id] = reader.values[0]          
-          raw[:data] = self.load(reader.values[1])
+          raw[:data] = reader.values[1]
           
           reader.close
           
           raw
-        end
-        
-      protected 
-        
-        def self.connection
-          Harbor::Session.options[:connection]
         end
         
         def self.dump(data)
@@ -132,6 +139,12 @@ module Harbor
         
         def self.load(data)
           Marshal.load(Base64.decode64(data))
+        end
+        
+      protected 
+        
+        def self.connection
+          Harbor::Session.options[:connection]
         end
       end
     end
