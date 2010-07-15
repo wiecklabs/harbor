@@ -15,18 +15,18 @@ module Contrib
       end
 
       def setup
-        @connection = DataObjects::Connection.new('sqlite3::memory:')
+#        @connection = DataObjects::Connection.new('sqlite3::memory:')
         
         Harbor::Session.configure do |session|
           session[:store] = Harbor::Contrib::Session::DataObjects
-          session[:connection] = @connection
+          session[:connection_uri] = 'sqlite3::memory:'
         end
       end
 
       def teardown
-        # This should be done otherwise we might have trouble with connection pool
-        @connection.create_command('DROP TABLE sessions').execute_non_query if Harbor::Contrib::Session::DataObjects.session_table_exists?
-        @connection.close
+        Harbor::Contrib::Session::DataObjects.with_connection do |connection|
+          connection.create_command('DROP TABLE sessions').execute_non_query if Harbor::Contrib::Session::DataObjects.session_table_exists?
+        end
       
         Harbor::Contrib::Session::DataObjects.instance_eval do
           @table_exists = nil
@@ -34,7 +34,7 @@ module Contrib
       
         Harbor::Session.configure do |session|
           session[:store] = Harbor::Session::Cookie
-          session[:connection] = nil
+          session.delete(:connection_uri)
         end
       end
       
@@ -88,13 +88,13 @@ module Contrib
 
       def test_commit_session
         session = Harbor::Session.new(Harbor::Test::Request.new)
-        session[:user_id] = 10
+        session[:value] = 10
         
         cookie = session.save
         
         session_from_db = get_raw_session(session[:session_id])
         
-        expected_data = Harbor::Contrib::Session::DataObjects.dump({ :user_id => 10 })
+        expected_data = Harbor::Contrib::Session::DataObjects.dump({ :value => 10 })
         
         assert_equal expected_data, session_from_db[:data]
         assert_equal cookie[:value], session_from_db[:session_id]
@@ -111,16 +111,16 @@ module Contrib
         
         Harbor::Contrib::Session::DataObjects.create_session_table
         
-        user_id = 4        
-        session = create_session({ :user_id => user_id })        
+        value = 5
+        session = create_session({ :value => value })        
         request = CookieRequest.new
         request.cookies["harbor.session"] = session[:session_id]
         
         time_elapsed = timeout-10
-        assert_session_valid_and_save(time_elapsed, request, user_id)
+        assert_session_valid_and_save(time_elapsed, request, value, value+1)
         
         time_elapsed += timeout-10
-        assert_session_valid_and_save(time_elapsed, request, user_id)
+        assert_session_valid_and_save(time_elapsed, request, value+1, value+2)
 
         time_elapsed += timeout+1
         assert_session_expired(time_elapsed, request)
@@ -128,7 +128,7 @@ module Contrib
         Harbor::Session.options[:expire_after] = nil
       end
       
-      def test_data_is_lazy_parsed
+      def test_user_id_is_not_lazy_parsed
         Harbor::Contrib::Session::DataObjects.create_session_table
         
         session = create_session({ :user_id => 4 })        
@@ -142,16 +142,35 @@ module Contrib
         # Parses data
         request_session[:user_id]
         
+        assert request_session.data.instance_variable_get(:@data).nil?
+      end
+      
+      def test_data_is_lazy_parsed
+        Harbor::Contrib::Session::DataObjects.create_session_table
+        
+        session = create_session({ :other => 4 })        
+        request = CookieRequest.new
+        request.cookies["harbor.session"] = session[:session_id]
+        
+        request_session = Harbor::Session.new(request)
+        
+        assert request_session.data.instance_variable_get(:@data).nil?
+        
+        # Parses data
+        request_session[:other]
+        
         assert ! request_session.data.instance_variable_get(:@data).nil?
       end
 
     protected
-      def assert_session_valid_and_save(time_elapsed, request, user_id)
+      def assert_session_valid_and_save(time_elapsed, request, value, new_value)
         Time.warp(time_elapsed) do
           request_session = Harbor::Session.new(request)
         
           assert_equal 1, session_records_count
-          assert_equal user_id, request_session[:user_id]
+          assert_equal value, request_session[:value]
+          
+          request_session[:value] = new_value
           
           request_session.save
         end
@@ -175,15 +194,15 @@ module Contrib
       end
       
       def session_records_count
-        cmd = @connection.create_command("SELECT COUNT(id) FROM sessions;")
-        
-        reader = cmd.execute_reader
-        
         count = 0
-        if reader.next! then count = reader.values[0] end
-        
-        reader.close
-        
+      
+        Harbor::Contrib::Session::DataObjects.with_connection do |connection|
+          cmd = connection.create_command("SELECT COUNT(id) FROM sessions;")        
+          reader = cmd.execute_reader        
+          if reader.next! then count = reader.values[0] end
+          reader.close
+        end
+                
         count
       end
     end

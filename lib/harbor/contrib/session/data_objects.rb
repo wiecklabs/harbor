@@ -9,7 +9,7 @@ module Harbor
       # 
       #   Harbor::Session.configure do |session|
       #     session[:store] = Harbor::Contrib::Session::DataObjects
-      #     session[:connection] = DataObjects::Connection.new('sqlite3://session.db')
+      #     session[:connection_uri] = 'sqlite3://session.db'
       #   end
       ##
       class DataObjects < Harbor::Session::Abstract
@@ -18,11 +18,12 @@ module Harbor
           def initialize(raw)
             @raw = raw
             @data = nil
+            @dirty = false
           end
           
           def [](key)
-            if key == :session_id
-              @raw[:session_id]
+            if key == :session_id or key == :user_id
+              @raw[key]
             else
               load_data![key]
             end
@@ -31,11 +32,21 @@ module Harbor
           def []=(key, value)
             raise ArgumentError.new("You cannot manually set the session_id for a session.") if key == :session_id
 
-            load_data![key] = value
+            @dirty = true
+            
+            if key == :user_id
+              @raw[:user_id] = value
+            else
+              load_data![key] = value
+            end
+          end
+          
+          def dirty?
+            @dirty
           end
           
           def data_loaded?
-            not @data.nil?
+            ! @data.nil?
           end
           
           def load_data!
@@ -52,10 +63,12 @@ module Harbor
         def self.load_session(cookie)
           create_session_table unless session_table_exists?
         
-          raw_session = if expire_after = Harbor::Session.options[:expire_after]
-            get_raw_session(cookie, Time.now - expire_after)
-          else
-            get_raw_session(cookie)
+          if cookie
+            raw_session = if expire_after = Harbor::Session.options[:expire_after]
+              get_raw_session(cookie, Time.now - expire_after)
+            else
+              get_raw_session(cookie)
+            end
           end
           
           raw_session ||= create_session
@@ -64,23 +77,32 @@ module Harbor
         end
 
         def self.commit_session(data, request)
-          cmd = connection.create_command("UPDATE sessions SET data = ?, updated_at = ? WHERE id = ?;")
+          session_id = data[:session_id]
+        
+          if data.dirty?
+            user_id = data[:user_id]
+            statement = "UPDATE sessions SET data = ?, user_id = ?, updated_at = ? WHERE id = ?;"
+            execute(statement, self.dump(data.to_hash), user_id, Time.now, session_id)
+#          else
+#            statement = "UPDATE sessions SET updated_at = ? WHERE id = ?;"
+#            execute(statement, Time.now, session_id)
+          end
           
-          cmd.execute_non_query(self.dump(data.to_hash), Time.now, data[:session_id])
-          
-          data[:session_id]
+          session_id
         end
         
         def self.session_table_exists?        
           return @table_exists unless @table_exists.nil?
-        
-          table_exists_sql = "SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'sessions';"
-          cmd = connection.create_command(table_exists_sql)
-          reader = cmd.execute_reader
           
-          @table_exists = (reader.next! != false)
-          
-          reader.close
+          with_connection do |connection|
+            table_exists_sql = "SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'sessions';"
+            cmd = connection.create_command(table_exists_sql)
+            reader = cmd.execute_reader
+            
+            @table_exists = (reader.next! != false)
+            
+            reader.close
+          end
           
           @table_exists
         end
@@ -88,25 +110,31 @@ module Harbor
         def self.create_session_table
           return if (@table_exists == true)
         
-          create_table_sql = "CREATE TABLE IF NOT EXISTS sessions (id VARCHAR(50) NOT NULL, data TEXT, created_at DATETIME, updated_at DATETIME, PRIMARY KEY(id))"
-          cmd = connection.create_command(create_table_sql)
-          cmd.execute_non_query
+          create_table_sql = "CREATE TABLE IF NOT EXISTS sessions (id VARCHAR(50) NOT NULL, user_id INTEGER, data TEXT, created_at DATETIME, updated_at DATETIME, PRIMARY KEY(id))"
+          
+          with_connection do |connection|
+            cmd = connection.create_command(create_table_sql)
+            cmd.execute_non_query
+          end
           
           @table_exists = true
         end
         
         def self.create_session(data = {})
           session_id = `uuidgen`.chomp
-          data = self.dump(data)
-
-          cmd = connection.create_command("INSERT INTO sessions (id, data, created_at, updated_at) VALUES (?, ?, ?, ?);")          
-          cmd.execute_non_query(session_id, data, Time.now, Time.now)
           
-          {:session_id => session_id, :data => data}
+          user_id = data.delete(:user_id)
+          data = self.dump(data)
+          now = Time.now
+          
+          statement = "INSERT INTO sessions (id, data, user_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?);"
+          execute(statement, session_id, data, user_id, now, now)
+          
+          {:session_id => session_id, :data => data, :user_id => user_id}
         end
         
         def self.get_raw_session(cookie, updated_at=nil)
-          query = "SELECT id, data FROM sessions WHERE id = ? "
+          query = "SELECT id, data, user_id FROM sessions WHERE id = ? "
           params = [cookie]
           
           if updated_at
@@ -115,19 +143,21 @@ module Harbor
           end
           query << ' LIMIT 1'
         
-          cmd = connection.create_command(query)
-          reader = cmd.execute_reader(*params)
-          
-          if ! reader.next!
-            reader.close
-            return nil
-          end          
-          
           raw = {}
-          raw[:session_id] = reader.values[0]          
-          raw[:data] = reader.values[1]
-          
-          reader.close
+          with_connection do |connection|
+            cmd = connection.create_command(query)
+            reader = cmd.execute_reader(*params)
+            
+            if reader.next!
+              raw[:session_id] = reader.values[0]
+              raw[:data] = reader.values[1]
+              raw[:user_id] = reader.values[2]
+            else
+              raw = nil
+            end
+            
+            reader.close
+          end
           
           raw
         end
@@ -140,10 +170,26 @@ module Harbor
           Marshal.load(data)
         end
         
-      protected 
-        
-        def self.connection
-          Harbor::Session.options[:connection]
+      protected
+        def self.execute(statement, *bind_values)
+          with_connection do |connection|
+            command = connection.create_command(statement)
+            command.execute_non_query(*bind_values)
+          end
+        end
+      
+        def self.with_connection
+          conn = nil
+          begin
+            conn = ::DataObjects::Connection.new(Harbor::Session.options[:connection_uri])
+            
+            return yield(conn)
+#          rescue => e
+#            DataMapper.logger.error(e.to_s)
+#            raise e
+          ensure
+            conn.close if conn
+          end
         end
       end
     end
