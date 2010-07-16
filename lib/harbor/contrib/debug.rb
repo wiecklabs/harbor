@@ -196,14 +196,14 @@ module Harbor
 </div>
 <script type="text/javascript" charset="utf-8">
   var _body = document.body;
-  var _html = $("html").get(0);
-  $(window).keyup(function(event) {
+  var _html = JQuery("html").get(0);
+  JQuery(window).keyup(function(event) {
     if ( event.which == 76 && (event.target == _body || event.target == _html) ) {
-      $("#logger").slideToggle();
+      JQuery("#logger").slideToggle();
     }
   });
-  $("#logger li a").click(function() {
-    var info = $("#logger div." + $(this).parent().attr("class"));
+  JQuery("#logger li a").click(function() {
+    var info = JQuery("#logger div." + JQuery(this).parent().attr("class"));
     if ( info.get(0) ) {
       if ( (siblings = info.siblings("div:visible")).get(0) ) {
         siblings.hide();          
@@ -211,19 +211,19 @@ module Harbor
       }
       else {
         if ( info.css("display") == "block" ) {
-          $("#logger > div").slideToggle(function() {
+          JQuery("#logger > div").slideToggle(function() {
             info.hide();
           });
         }
         else {
           info.show();
-          $("#logger > div").slideToggle();
+          JQuery("#logger > div").slideToggle();
         }
       }
     }
     else {
-      $("#logger > div:visible").slideToggle(function() {
-        $("#logger > div div").hide();
+      JQuery("#logger > div:visible").slideToggle(function() {
+        JQuery("#logger > div div").hide();
       });
     }
     return false;
