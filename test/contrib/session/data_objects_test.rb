@@ -19,17 +19,17 @@ module Contrib
           session[:store] = Harbor::Contrib::Session::DataObjects
           session[:connection_uri] = 'sqlite3::memory:'
         end
-      end
-
-      def teardown
+        
         if Harbor::Contrib::Session::DataObjects.session_table_exists?
           Harbor::Contrib::Session::DataObjects.execute('DROP TABLE sessions')
         end
-      
+        
         Harbor::Contrib::Session::DataObjects.instance_eval do
           @table_exists = nil
         end
-      
+      end
+
+      def teardown      
         Harbor::Session.configure do |session|
           session[:store] = Harbor::Session::Cookie
           session.delete(:connection_uri)
