@@ -74,7 +74,7 @@ module Harbor
     end
 
     def delete_matching(key)
-      logger.debug "DELETE MATCHING: #{key.inspect} (#{@store.keys.select{|k| k =~ key}.inspect})" if logger
+      logger.debug "DELETE MATCHING: #{key.inspect}" if logger
       @semaphore.synchronize do
         @store.delete_matching(key)
       end
