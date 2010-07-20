@@ -14,9 +14,7 @@ module Contrib
         end
       end
 
-      def setup
-#        @connection = DataObjects::Connection.new('sqlite3::memory:')
-        
+      def setup        
         Harbor::Session.configure do |session|
           session[:store] = Harbor::Contrib::Session::DataObjects
           session[:connection_uri] = 'sqlite3::memory:'
@@ -24,8 +22,8 @@ module Contrib
       end
 
       def teardown
-        Harbor::Contrib::Session::DataObjects.with_connection do |connection|
-          connection.create_command('DROP TABLE sessions').execute_non_query if Harbor::Contrib::Session::DataObjects.session_table_exists?
+        if Harbor::Contrib::Session::DataObjects.session_table_exists?
+          Harbor::Contrib::Session::DataObjects.execute('DROP TABLE sessions')
         end
       
         Harbor::Contrib::Session::DataObjects.instance_eval do
@@ -139,7 +137,6 @@ module Contrib
         
         assert request_session.data.instance_variable_get(:@data).nil?
         
-        # Parses data
         request_session[:user_id]
         
         assert request_session.data.instance_variable_get(:@data).nil?

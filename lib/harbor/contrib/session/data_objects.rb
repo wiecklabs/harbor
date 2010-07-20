@@ -1,4 +1,5 @@
 require "data_objects"
+require 'yaml'
 
 module Harbor
   module Contrib
@@ -83,9 +84,6 @@ module Harbor
             user_id = data[:user_id]
             statement = "UPDATE sessions SET data = ?, user_id = ?, updated_at = ? WHERE id = ?;"
             execute(statement, self.dump(data.to_hash), user_id, Time.now, session_id)
-#          else
-#            statement = "UPDATE sessions SET updated_at = ? WHERE id = ?;"
-#            execute(statement, Time.now, session_id)
           end
           
           session_id
@@ -162,15 +160,14 @@ module Harbor
           raw
         end
         
-        def self.dump(data)
-          Marshal.dump(data)
+        def self.dump(value)
+          YAML::dump value
         end
         
-        def self.load(data)
-          Marshal.load(data)
+        def self.load(value)
+          YAML::load value
         end
         
-      protected
         def self.execute(statement, *bind_values)
           with_connection do |connection|
             command = connection.create_command(statement)
