@@ -14,6 +14,7 @@ module Harbor
       #   end
       ##
       class DataObjects < Harbor::Session::Abstract
+        class UnsupportedDatabaseError < StandardError; end
 
         class SessionHash
           def initialize(raw)
@@ -93,8 +94,7 @@ module Harbor
           return @table_exists unless @table_exists.nil?
           
           with_connection do |connection|
-            table_exists_sql = "SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'sessions';"
-            cmd = connection.create_command(table_exists_sql)
+            cmd = connection.create_command(session_table_exists_sql)
             reader = cmd.execute_reader
             
             @table_exists = (reader.next! != false)
@@ -107,11 +107,9 @@ module Harbor
         
         def self.create_session_table
           return if (@table_exists == true)
-        
-          create_table_sql = "CREATE TABLE IF NOT EXISTS sessions (id VARCHAR(50) NOT NULL, user_id INTEGER, data TEXT, created_at DATETIME, updated_at DATETIME, PRIMARY KEY(id))"
           
           with_connection do |connection|
-            cmd = connection.create_command(create_table_sql)
+            cmd = connection.create_command(create_session_table_sql)
             cmd.execute_non_query
           end
           
@@ -188,6 +186,35 @@ module Harbor
             conn.close if conn
           end
         end
+        
+      private
+        # TODO we could create some kind of adapter when we get to add more supported DBs
+      
+        def self.create_session_table_sql
+          case scheme
+          when :sqlite3
+            "CREATE TABLE sessions (id VARCHAR(50) NOT NULL, user_id INTEGER, data TEXT, created_at DATETIME, updated_at DATETIME, PRIMARY KEY(id))"
+          when :postgres
+            "CREATE TABLE sessions (id VARCHAR(50) NOT NULL, user_id INTEGER, data TEXT, created_at TIMESTAMP, updated_at TIMESTAMP, PRIMARY KEY(id))"
+          else
+            raise UnsupportedDatabaseError.new("Only SQLite3 and PostgreSQL are supported at the moment")
+          end
+        end
+      
+        def self.session_table_exists_sql
+          case scheme
+          when :sqlite3
+            "SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'sessions';"
+          when :postgres
+            "SELECT * FROM pg_tables WHERE schemaname = 'public' AND tablename = 'sessions';"
+          else
+            raise UnsupportedDatabaseError.new("Only SQLite3 and PostgreSQL are supported at the moment")
+          end
+        end
+        
+        def self.scheme
+          @scheme ||= ::DataObjects::URI::parse(Harbor::Session.options[:connection_uri]).scheme.to_sym
+        end        
       end
     end
   end
