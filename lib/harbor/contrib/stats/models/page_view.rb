@@ -9,7 +9,7 @@ module Harbor
             created_at timestamp without time zone default now(),
             session_id character varying(36),
             uri text,
-            referrer text
+            referrer text default 'NA'
           );
         SQL
 
