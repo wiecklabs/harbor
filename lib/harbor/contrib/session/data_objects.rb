@@ -129,11 +129,15 @@ module Harbor
           data = self.dump(data)
           now = Time.now
           
+          # We split in case X-Forwarded-For is a list, and rescue any errors
+          # by setting the IP to 0.0.0.0 (which we'll treat as 'unknown').
+          clean_ip = IPAddr.new(remote_ip.split(/,/, 2).first).to_s rescue '127.0.0.1'
+          
           statement = "INSERT INTO sessions (id, data, user_id, remote_ip, user_agent_raw, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?);"
-          execute(statement, session_id, data, user_id, remote_ip, user_agent_raw, now, now)
+          execute(statement, session_id, data, user_id, clean_ip, user_agent_raw, now, now)
           delegate.session_created(session_id, remote_ip, user_agent_raw)
           
-          {:session_id => session_id, :data => data, :user_id => user_id, :remote_ip => remote_ip, :user_agent_raw => user_agent_raw}
+          {:session_id => session_id, :data => data, :user_id => user_id, :remote_ip => clean_ip, :user_agent_raw => user_agent_raw}
         end
         
         def self.get_raw_session(cookie, updated_at=nil)
