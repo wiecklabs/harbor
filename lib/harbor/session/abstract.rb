@@ -10,7 +10,7 @@ module Harbor
       # Receives the raw cookie data, and should return a hash
       # of the data for the session.
       ##
-      def self.load_session(cookie)
+      def self.load_session(delegate, cookie, request = nil)
         Marshal.load(cookie.unpack("m*")[0]) rescue {}
       end
 

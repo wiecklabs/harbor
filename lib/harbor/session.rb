@@ -4,6 +4,8 @@ require Pathname(__FILE__).dirname + 'session/cookie'
 module Harbor
 
   class Session
+    include Harbor::Events
+    
     DEFAULT_OPTIONS = {
       :key => "harbor.session",
       :domain => nil,
@@ -36,9 +38,13 @@ module Harbor
       @cookie = request.cookies[key] || request.cookies[@options[:key]]
       @store = self.class.options[:store]
       @request = request
-      @data ||= @store.load_session(@cookie)
+      @data ||= @store.load_session(self, @cookie, @request)
     end
 
+    def session_created(session_id, remote_ip, user_agent_raw)
+      raise_event2(:session_created, Harbor::Events::SessionCreatedEventContext.new(session_id, remote_ip, user_agent_raw))
+    end
+    
     def key
       @options[:key]
     end
