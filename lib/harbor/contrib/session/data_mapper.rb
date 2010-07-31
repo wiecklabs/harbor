@@ -16,7 +16,7 @@ module Harbor
       # A basic Session resource is defined for you.
       ##
       class DataMapper < Harbor::Session::Abstract
-
+        
         class SessionHash < Hash
           def initialize(instance)
             super()
@@ -43,14 +43,17 @@ module Harbor
           end
         end
 
-        def self.load_session(cookie)
+        def self.load_session(delegate, cookie, request = nil)
           session = if expire_after = Harbor::Session.options[:expire_after]
             ::Session.first(:id => cookie, :updated_at.gte => Time.now - expire_after)
           else
             ::Session.get(cookie)
           end
 
-          session ||= ::Session.create
+          unless session
+            session = ::Session.create
+            delegate.session_created(session.id, request.remote_ip, request.env["HTTP_USER_AGENT"])
+          end
 
           SessionHash.new(session)
         end

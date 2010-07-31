@@ -3,14 +3,15 @@ require "rack"
 
 require "yaml"
 
+require Pathname(__FILE__).dirname + "events"
 require Pathname(__FILE__).dirname + "request"
 require Pathname(__FILE__).dirname + "response"
 require Pathname(__FILE__).dirname + "block_io"
 require Pathname(__FILE__).dirname + "zipped_io"
-require Pathname(__FILE__).dirname + "events"
 require Pathname(__FILE__).dirname + "events" + "dispatch_request_event"
 require Pathname(__FILE__).dirname + "events" + "not_found_event"
 require Pathname(__FILE__).dirname + "events" + "application_exception_event"
+require Pathname(__FILE__).dirname + "events" + "session_created_event_context"
 require Pathname(__FILE__).dirname + "event_context"
 require Pathname(__FILE__).dirname + "messages"
 

@@ -29,7 +29,7 @@ module Contrib
         end
       end
 
-      def teardown      
+      def teardown
         Harbor::Session.configure do |session|
           session[:store] = Harbor::Session::Cookie
           session.delete(:connection_uri)
@@ -163,7 +163,7 @@ module Contrib
       def assert_session_valid_and_save(time_elapsed, request, value, new_value)
         Time.warp(time_elapsed) do
           request_session = Harbor::Session.new(request)
-        
+
           assert_equal 1, session_records_count
           assert_equal value, request_session[:value]
           
@@ -187,15 +187,16 @@ module Contrib
       end
       
       def create_session(data = {})
-        Harbor::Contrib::Session::DataObjects.create_session(data)
+        @_session = Harbor::Session.new(CookieRequest.new)
+        Harbor::Contrib::Session::DataObjects.create_session(@_session, data)
       end
       
       def session_records_count
         count = 0
       
         Harbor::Contrib::Session::DataObjects.with_connection do |connection|
-          cmd = connection.create_command("SELECT COUNT(id) FROM sessions;")        
-          reader = cmd.execute_reader        
+          cmd = connection.create_command("SELECT COUNT(id) FROM sessions WHERE id NOT IN (?);")
+          reader = cmd.execute_reader(@_session ? @_session.id : '')
           if reader.next! then count = reader.values[0] end
           reader.close
         end
