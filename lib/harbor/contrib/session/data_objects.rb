@@ -57,7 +57,9 @@ module Harbor
           end
 
           def clear
-            @data.clear
+            @data = {}
+            @raw[:user_id] = nil
+            @dirty = true
           end
           
           def to_hash

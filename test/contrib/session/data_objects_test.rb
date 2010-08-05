@@ -158,6 +158,20 @@ module Contrib
         
         assert ! request_session.data.instance_variable_get(:@data).nil?
       end
+      
+      def test_user_id_is_set_to_nil_when_destroying
+        Harbor::Contrib::Session::DataObjects.create_session_table
+        
+        session = create_session({ :user_id => 4 })        
+        request = CookieRequest.new
+        request.cookies["harbor.session"] = session[:session_id]
+        
+        request_session = Harbor::Session.new(request)
+        
+        request_session.destroy
+        
+        assert_nil request_session[:user_id]
+      end
 
     protected
       def assert_session_valid_and_save(time_elapsed, request, value, new_value)
