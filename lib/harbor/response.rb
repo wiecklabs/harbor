@@ -210,7 +210,7 @@ module Harbor
     end
 
     def unauthorized!
-      unauthorized and throw(:abort_request)
+      abort!(401)
     end
 
     # Headers that MUST NOT be included with 304 Not Modified responses.
