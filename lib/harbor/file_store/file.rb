@@ -84,6 +84,11 @@ module Harbor
         @stream ||= store.open(path, mode)
       end
 
+      def close
+        @stream.close if @stream
+        @stream = nil
+      end
+
       ##
       # Returns the full path to this file
       ##
