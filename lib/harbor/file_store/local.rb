@@ -4,6 +4,24 @@ module Harbor
 
       attr_accessor :root, :options
 
+      @@file_mask = 0640
+      def self.file_mask
+        @@file_mask
+      end
+
+      def self.file_mask=(value)
+        @@file_mask = value
+      end
+
+      @@dir_mask = 0750
+      def self.dir_mask
+        @@dir_mask
+      end
+
+      def self.dir_mask=(value)
+        @@dir_mask = value
+      end
+
       def initialize(path, options = {})
         path = "#{path}/" unless path =~ /.*\/$/
         @root = Pathname(path)
@@ -23,9 +41,13 @@ module Harbor
         path = strip_leading_slash(path)
         file = Harbor::FileStore::File.new(self, path)
 
-        ::FileUtils.mkdir_p((@root + path).parent.to_s) unless (@root + path).parent.exist?
+        unless (@root + path).parent.exist?
+          ::FileUtils.mkdir_p((@root + path).parent.to_s) 
+          ::FileUtils::chmod_R(Harbor::FileStore::Local.dir_mask, (@root + path).parent.to_s)
+        end
 
         ::FileUtils::cp(absolute_path, file.absolute_path)
+        ::FileUtils::chmod(Harbor::FileStore::Local.file_mask, file.absolute_path)
         file
       end
 
