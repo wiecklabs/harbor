@@ -13,15 +13,6 @@ module Harbor
         @@file_mask = value
       end
 
-      @@dir_mask = 0750
-      def self.dir_mask
-        @@dir_mask
-      end
-
-      def self.dir_mask=(value)
-        @@dir_mask = value
-      end
-
       def initialize(path, options = {})
         path = "#{path}/" unless path =~ /.*\/$/
         @root = Pathname(path)
@@ -43,7 +34,6 @@ module Harbor
 
         unless (@root + path).parent.exist?
           ::FileUtils.mkdir_p((@root + path).parent.to_s) 
-          ::FileUtils::chmod_R(Harbor::FileStore::Local.dir_mask, (@root + path).parent.to_s)
         end
 
         ::FileUtils::cp(absolute_path, file.absolute_path)
