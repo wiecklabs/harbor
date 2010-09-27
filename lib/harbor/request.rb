@@ -97,6 +97,16 @@ module Harbor
       params || {}
     end
 
+
+    # holdover method until Harbor::Router moves to oniguruma and can use named captures
+    def route_captures
+      @route_captures || []
+    end
+
+    def route_captures=(value)
+      @route_captures = value
+    end
+
     def protocol
       ssl? ? 'https://' : 'http://'
     end

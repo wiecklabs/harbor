@@ -36,6 +36,14 @@ class RouterTest < Test::Unit::TestCase
     assert_equal("Index", @router.match(request).call)
   end
 
+  def test_regex_routes_should_mutate_request_route_captures
+    request = Harbor::Request.new(@application, "PATH_INFO" => "/users/1234/posts/4321", "REQUEST_METHOD" => "GET")
+
+    @router.register(:get, /^\/users\/(\d*)\/posts\/(\d*)$/) { "Index" }
+    @router.match(request).call
+    assert_equal(["1234", "4321"], request.route_captures)
+  end
+
   def test_request_should_match_route_defined_with_a_normal_string
     request = Harbor::Request.new(@application, "PATH_INFO" => "/users", "REQUEST_METHOD" => "GET")
     

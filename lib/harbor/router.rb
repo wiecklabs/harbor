@@ -87,7 +87,8 @@ module Harbor
 
         next unless request_path =~ matcher
 
-        request.params.update(Hash[*param_keys.zip($~.captures).flatten])
+        request.route_captures = $~.captures
+        request.params.update(Hash[*param_keys.zip(request.route_captures).flatten])
         return handler
       end
 
