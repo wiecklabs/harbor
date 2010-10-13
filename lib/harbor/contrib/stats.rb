@@ -58,7 +58,9 @@ module Harbor
           /WhistleBlower/i,
           /Pingdom/,
           /discobot/i,
-          /charlotte.*searchme/i
+          /charlotte.*searchme/i,
+          /speedy spider/i,
+          /psbot/
         ]
       end
       
