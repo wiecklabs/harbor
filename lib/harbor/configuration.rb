@@ -15,7 +15,19 @@ module Harbor
     
     def load!(path)
       env = Pathname(path)  
-      cascade = [ "default.rb", "#{ENV["ENVIRONMENT"]}.rb", "#{`hostname`}.rb" ]
+      register("hostname", `hostname`.strip)
+      
+      host_configs = if hostname =~ /\./
+        # If the hostname is something like "stage.demo", then we want to load our
+        # configs in order of least specific to most specific. So we want:
+        # [ "stage", "demo", "stage.demo" ]
+        [ *hostname.split(".").map { |part| "#{part}.rb" } << "#{hostname}.rb" ]
+      else
+        [ "#{hostname}.rb" ]
+      end
+      
+      # It could be that the hostname split above duplicates an environment based config name.
+      cascade = [ "default.rb", "#{ENV["ENVIRONMENT"]}.rb", *host_configs ].uniq
       
       cascade.each do |file|
         configuration_file = Pathname(path) + file
