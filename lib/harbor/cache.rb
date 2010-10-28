@@ -95,3 +95,7 @@ module Harbor
   end
 
 end
+
+Dir[Pathname(__FILE__).dirname + "cache" + "*.rb"].each do |file|
+  require Pathname(file).dirname + File.basename(file)
+end

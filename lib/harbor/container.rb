@@ -89,10 +89,14 @@ module Harbor
     end
 
     def method_missing(method, *args, &block)
-      if registered?(method.to_s)
-        get(method.to_s, args[0] || {})
+      if method.to_s =~ /^(.*)\=$/
+        register($1, *args, &block)
       else
-        raise NoMethodError.new("undefined method '#{method}' for #{self}", method)
+        if registered?(method.to_s)
+          get(method.to_s, args[0] || {})
+        else
+          raise NoMethodError.new("undefined method '#{method}' for #{self}", method)
+        end
       end
     end
 

@@ -1,5 +1,3 @@
-require Pathname(__FILE__).dirname.parent + "cache"
-
 class Harbor::Cache::Disk
 
   def initialize(path)

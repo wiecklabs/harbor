@@ -12,10 +12,6 @@ class ConfigurationTest < Test::Unit::TestCase
   # config.hostname
   # config.mail.server
   
-  def setup
-    config.load!(Harbor::env_path)
-  end
-  
   def test_container_is_present
     assert_kind_of(Harbor::Configuration, config)
   end
@@ -30,5 +26,17 @@ class ConfigurationTest < Test::Unit::TestCase
   
   def test_default_cache_is_present
     assert_kind_of(Harbor::Cache, config.cache)
+  end
+  
+  def test_hostname_is_present
+    assert_equal(`hostname`.strip, config.hostname)
+  end
+  
+  def test_method_missing_setter
+    assert_nothing_raised do
+      config.test_setter = true
+    end
+    
+    assert(config.test_setter)
   end
 end
