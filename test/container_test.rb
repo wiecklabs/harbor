@@ -43,7 +43,7 @@ class ContainerTest < Test::Unit::TestCase
       attr_accessor :component
     end
     component = Class.new
- 
+
     container.register("service", service)
     component_instance = component.new
     
