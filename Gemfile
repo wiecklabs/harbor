@@ -1,5 +1,6 @@
 source :gemcutter
 
+gem "testdrive"
 gem "builder"
 gem "data_objects", "0.9.12"
 gem "dm-core", "0.9.11"

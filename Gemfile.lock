@@ -1,0 +1,49 @@
+GEM
+  remote: http://rubygems.org/
+  specs:
+    abstract (1.0.0)
+    addressable (2.0.2)
+    builder (2.1.2)
+    data_objects (0.9.12)
+      addressable (~> 2.0.0)
+      extlib (~> 0.9.12)
+    dm-core (0.9.11)
+      addressable (~> 2.0.2)
+      data_objects (~> 0.9.11)
+      extlib (~> 0.9.11)
+    dm-timestamps (0.9.11)
+      dm-core (= 0.9.11)
+    do_sqlite3 (0.9.12)
+      addressable (~> 2.0.0)
+      data_objects (= 0.9.12)
+      extlib (~> 0.9.12)
+    erubis (2.6.6)
+      abstract (>= 1.0.0)
+    extlib (0.9.15)
+    little-plugger (1.1.2)
+    logging (1.4.3)
+      little-plugger (>= 1.1.2)
+    mail_builder (0.3)
+      mime-types
+      uuidtools
+    mime-types (1.16)
+    rack (1.0.1)
+    rake (0.8.7)
+    testdrive (0.2)
+    uuidtools (2.1.1)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  builder
+  data_objects (= 0.9.12)
+  dm-core (= 0.9.11)
+  dm-timestamps (= 0.9.11)
+  do_sqlite3 (= 0.9.12)
+  erubis
+  logging
+  mail_builder
+  rack (~> 1.0.0)
+  rake
+  testdrive
