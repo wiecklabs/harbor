@@ -39,10 +39,11 @@ module Harbor
           mailer = @container.get(:mailer)
           mailer.from = @from
           mailer.to = @addresses
+          host = `hostname`.chomp
+          
+          data << "\n(from: #{host}, PID: #{Process.pid})"
 
-          data << "\n(from: #{`hostname`.chomp}, PID: #{Process.pid})"
-
-          mailer.subject = "[ERROR] #{subject}"
+          mailer.subject = "[ERROR] [#{host}] #{subject}"
           mailer["x_priority"] = "1 (Highest)"
           mailer["x_msmail_priority"] = "High"
           mailer.text = if tracked_subject.occurances.size > 1
