@@ -21,15 +21,6 @@ module Harbor
   ##
   class Container
     
-    class RegistrationTypeMismatchError < StandardError
-      def initialize(registration_name, previously_registered_type, mismatched_type)
-        super(<<-EOS.split($/).join(' '))
-          "#{registration_name}" has already been registered as a #{previously_registered_type.inspect}
-          but a modification of Type to #{mismatched_type.inspect} was attempted.
-        EOS
-      end
-    end
-
     class ServiceRegistration
 
       attr_reader :name, :service, :initializers
@@ -111,9 +102,6 @@ module Harbor
     #   services.get("mailer") # => #<Harbor::Mailer @from="admin@example.com" @mail_server=#<SendmailServer...>>
     ##
     def register(name, service, &setup)
-      if (existing_registration = @services[name]) && existing_registration.service != service
-        raise RegistrationTypeMismatchError.new(name, existing_registration.service, service)
-      end
 
       type_dependencies = dependencies(name)
       type_methods = service.is_a?(Class) ? service.instance_methods.grep(/\=$/) : []
