@@ -29,6 +29,10 @@ module Harbor
       # It could be that the hostname split above duplicates an environment based config name.
       cascade = [ "default.rb", "#{ENV["ENVIRONMENT"]}.rb", *host_configs ].uniq
       
+      if ENV["DEBUG"] then
+        puts "env search cascade is #{cascade.inspect}"
+      end
+      
       cascade.each do |file|
         configuration_file = Pathname(path) + file
         if ::File.exists?(configuration_file.to_s)
