@@ -71,30 +71,4 @@ class ContainerTest < Test::Unit::TestCase
     assert(instance.setup)
   end
 
-  def test_duplicate_registrations_with_unique_setup_blocks
-    container = Harbor::Container.new
-  
-    service = Class.new do
-      attr_accessor :component, :sms_server_initialized, :mail_server_initialized
-    end
-  
-    sms_server_initializer = lambda do |s|
-      s.sms_server_initialized = true
-    end
-  
-    mail_server_initializer = lambda do |s|
-      s.mail_server_initialized = true
-    end
-  
-    component = Class.new
-    container.register("component", component)
-    container.register("service", service, &sms_server_initializer)
-    container.register("service", service, &mail_server_initializer)
-  
-    instance = container.get("service")
-    assert_kind_of(component, instance.component)
-    assert(instance.sms_server_initialized)
-    assert(instance.mail_server_initialized)
-  end
-
 end

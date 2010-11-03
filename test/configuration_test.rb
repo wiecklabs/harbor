@@ -39,4 +39,13 @@ class ConfigurationTest < Test::Unit::TestCase
     
     assert(config.test_setter)
   end
+  
+  def test_can_re_register_services
+    assert_nothing_raised do
+      config.reregistered = false
+      config.reregistered = true
+    end
+    
+    assert(config.reregistered)
+  end
 end

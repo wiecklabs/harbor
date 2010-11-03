@@ -34,7 +34,7 @@ class EmailAppenderTestTest < Test::Unit::TestCase
     delivery = @mail_server.last_delivery
     assert_equal(["to1@example.com", "to2@example.com"], delivery.to)
     assert_equal("from@example.com", delivery.from)
-    assert_equal("[ERROR] Some error", delivery.subject)
+    assert_equal("[ERROR] [#{`hostname`.strip}] Some error", delivery.subject)
     assert(delivery.text["Some error\nSome Details"])
     assert_equal(nil, delivery.html)
   end

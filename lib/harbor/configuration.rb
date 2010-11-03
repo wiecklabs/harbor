@@ -11,11 +11,11 @@ module Harbor
     def initialize
       super
       @debug = false
+      register("hostname", `hostname`.strip)
     end
     
     def load!(path)
-      env = Pathname(path)  
-      register("hostname", `hostname`.strip)
+      env = Pathname(path)
       
       host_configs = if hostname =~ /\./
         # If the hostname is something like "stage.demo", then we want to load our

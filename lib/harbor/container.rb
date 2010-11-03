@@ -116,7 +116,7 @@ module Harbor
         end
       end
 
-      @services[name] ||= ServiceRegistration.new(name, service)
+      @services[name] = ServiceRegistration.new(name, service)
       @services[name].initializers << setup if setup
 
       self
