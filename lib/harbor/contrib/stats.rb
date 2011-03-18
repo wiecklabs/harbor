@@ -93,7 +93,7 @@ Harbor::Application.register_event_handler(:request_complete) do |event|
 
       # We only record a PageView if we get a 200 and it's an actual page rendering, not providing an image or downloading a file
       unless Harbor::Contrib::Stats.denied_user?(request.ip, request.env["HTTP_USER_AGENT"])
-        orm::PageView.create(session.id, request.uri, request.referrer) if %w(text/html text/xml text/json).include?(response.content_type) && response.status == 200
+        orm::PageView.create(session.id, request.uri, request.referrer) if %w(text/html text/xml text/json).include?(response.content_type) && response.status == 200 && request.health_check? == false
       end
     end
   else    

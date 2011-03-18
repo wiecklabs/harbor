@@ -87,6 +87,10 @@ module Harbor
       @env['APP_ENVIRONMENT'] || (@application ? @application.environment : "development")
     end
 
+    def health_check?
+      !params["health_check"].nil?
+    end
+    
     def params
       params = begin
         self.GET && self.GET.update(self.POST || {})
