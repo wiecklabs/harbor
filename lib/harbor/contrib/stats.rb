@@ -78,7 +78,7 @@ end
 
 Harbor::Session.register_event_handler(:session_created) do |event|
   if orm = Harbor::Contrib::Stats.orm
-    orm::UserAgent.create(event.session_id, event.remote_ip, event.user_agent) unless Harbor::Contrib::Stats.denied_user?(event.remote_ip, event.user_agent)
+    orm::UserAgent.create(event.session_id, event.remote_ip, event.user_agent) unless Harbor::Contrib::Stats.denied_user?(event.remote_ip, event.user_agent) || request.health_check?
   else    
     warn "Harbor::Contrib::Stats::orm must be set to generate statistics."
   end

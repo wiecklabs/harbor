@@ -38,7 +38,11 @@ module Harbor
       @cookie = request.cookies[key] || request.cookies[@options[:key]]
       @store = self.class.options[:store]
       @request = request
-      @data ||= @store.load_session(self, @cookie, @request)
+      if @request.health_check? then
+        @data ||= {}
+      else
+        @data ||= @store.load_session(self, @cookie, @request)
+      end
     end
 
     def session_created(session_id, remote_ip, user_agent_raw)
