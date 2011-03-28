@@ -3,13 +3,16 @@ $:.unshift lib unless $:.include?(lib)
 
 require 'harbor/version'
 
+NAME = 'harbor'
+GEM_VERSION = Harbor::VERSION
+
 Gem::Specification.new do |s|
-  s.name = 'harbor'
+  s.name = NAME
   s.summary = s.description = 'Harbor Framework'
   s.author = "Wieck Media"
   s.homepage = "http://wiecklabs.com"
   s.email = "dev@wieck.com"
-  s.version = Harbor::VERSION
+  s.version = GEM_VERSION
   s.platform = Gem::Platform::RUBY
   s.require_path = 'lib'
   s.files = %w(Rakefile) + Dir.glob("lib/**/*")
