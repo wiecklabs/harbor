@@ -74,7 +74,9 @@ module Harbor
       cookie[:domain] = @options[:domain]
       cookie[:path] = @options[:path]
       cookie[:expires] = Time.now + @options[:expire_after] unless @options[:expire_after].nil?
-      cookie[:value] = @store.commit_session(@data, @request)
+      unless @request.health_check?
+        cookie[:value] = @store.commit_session(@data, @request)
+      end
       cookie
     end
 
