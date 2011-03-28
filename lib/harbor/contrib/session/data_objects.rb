@@ -68,9 +68,9 @@ module Harbor
         end
 
         def self.load_session(delegate, cookie, request = nil)
-          create_session_table unless session_table_exists?
+          # create_session_table unless session_table_exists?
           
-          if cookie
+          if cookie && cookie.strip != ''
             raw_session = if expire_after = Harbor::Session.options[:expire_after]
               get_raw_session(cookie, Time.now - expire_after)
             else

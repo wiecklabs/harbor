@@ -46,7 +46,7 @@ module Harbor
     end
 
     def session_created(session_id, remote_ip, user_agent_raw)
-      raise_event2(:session_created, Harbor::Events::SessionCreatedEventContext.new(session_id, remote_ip, user_agent_raw))
+      raise_event2(:session_created, Harbor::Events::SessionCreatedEventContext.new(session_id, remote_ip, user_agent_raw)) unless @request.health_check?
     end
     
     def key
