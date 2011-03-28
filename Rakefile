@@ -4,6 +4,13 @@ require "rake"
 require "rake/rdoctask"
 require "rake/testtask"
 
+def gemspec
+  @gemspec ||= begin
+    file = File.expand_path('../harbor.gemspec', __FILE__)
+    eval(File.read(file), binding, file)
+  end
+end
+
 # Tests
 task :default => [:test]
 
@@ -42,39 +49,12 @@ task :performance do
 end
 
 # Gem
-
-require "lib/harbor/version"
 require "rake/gempackagetask"
-
-NAME = "harbor"
-SUMMARY = "Harbor Framework"
-GEM_VERSION = Harbor::VERSION
-
-spec = Gem::Specification.new do |s|
-  s.name = NAME
-  s.summary = s.description = SUMMARY
-  s.author = "Wieck Media"
-  s.homepage = "http://wiecklabs.com"
-  s.email = "dev@wieck.com"
-  s.version = GEM_VERSION
-  s.platform = Gem::Platform::RUBY
-  s.require_path = 'lib'
-  s.files = %w(Rakefile) + Dir.glob("lib/**/*")
-  s.executables = ['harbor','apache_importer','page_view_reconciler']
-
-  s.add_dependency "builder"
-  s.add_dependency "erubis"
-  s.add_dependency "logging"
-  s.add_dependency "mail_builder"
-  s.add_dependency "rack", "~> 1.0.0"
-  s.add_dependency "thin"
-end
-
-Rake::GemPackageTask.new(spec) do |pkg|
-  pkg.gem_spec = spec
+Rake::GemPackageTask.new(gemspec) do |pkg|
+  pkg.gem_spec = gemspec
 end
 
 desc "Install Harbor as a gem"
 task :install => [:repackage] do
-  sh %{gem install pkg/#{NAME}-#{GEM_VERSION}}
+  sh %{gem install pkg/#{gemspec.full_name}}
 end
