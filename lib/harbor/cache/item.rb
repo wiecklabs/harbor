@@ -19,15 +19,16 @@ class Harbor::Cache
       @ultimate_expiration_time = (maximum_age ? cached_at + maximum_age : nil)
 
       if string_or_io.respond_to?(:read)
-        @io = string_or_io
+        # @io = string_or_io
+        @content = string_or_io.read
       else
         @content = string_or_io
       end
     end
 
-    def content
-      @content ||= @io.read
-    end
+    # def content
+      # @content ||= @io.read
+    # end
 
     def fresh?
       Time.now < expires_at

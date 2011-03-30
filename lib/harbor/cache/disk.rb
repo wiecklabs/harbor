@@ -91,7 +91,13 @@ class Harbor::Cache::Disk
 
     key = components.reject { |c| c == "__INFO__" }.join('.').sub(/^c\_/, '')
 
-    Harbor::Cache::Item.new(key, ttl, maximum_age, Pathname(path), cached_at, expires_at)
+    begin
+      content = Pathname(path).read
+    rescue
+      return nil
+    end
+
+    Harbor::Cache::Item.new(key, ttl, maximum_age, content, cached_at, expires_at)
   end
 
   def path_for_item(item)
