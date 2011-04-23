@@ -5,7 +5,7 @@ module Harbor
   class Response
 
     attr_accessor :status, :headers, :errors
-    
+
     class UnsupportedSendfileTypeError < StandardError
       def initialize(header)
         super("An unsupported HTTP_X_SENDFILE_TYPE header was found: #{header}")
@@ -82,7 +82,7 @@ module Harbor
       else
         @io = io
       end
-     
+
       self.size = io.size
       self.content_type = content_type || Harbor::Mime.mime_type(::File.extname(io.path.to_s))
       nil
@@ -95,13 +95,35 @@ module Harbor
       nil
     end
 
-    # Zip up the files (with no compression) and send it the client
-    # files should be an enumerable collection of Harbor::File instances
+    ##
+    #
+    # Harbor::Response#send_files
+    #
+    #   name:     filename presented to the browser for the download
+    #   files:    Enumerable of Harbor::File instances.  The files are expected to
+    #             exist on disk.
+    #
+    # If Nginx sends a HTTP_MOD_ZIP_ENABLED header, build a list of files compatible
+    # with the format specified @ https://github.com/evanmiller/mod_zip:
+    #
+    #    1034ab38 428    /foo.txt   My Document1.txt
+    #    83e8110b 100339 /bar.txt   My Other Document1.txt
+    #
+    # Where the components are, in order: CRC32 (in hexadecimal), uncompressed file size, path or
+    # URL to file that can be found by Nginx, and filename (with optional relative path information
+    # to be used when building the zip file).  The mod_zip documentation claims that the CRC32 is
+    # optional, but in practice, zip files generated w/out the CRC value on Ubuntu won't open on
+    # at least Mac OSX 10.6.
+    #
+    # If no HTTP_MOD_ZIP_ENABLED is sent, use the ZippedIO class to generate the zip file.  This is extremely
+    # inefficient and should never be used in a produciton environment.
+    #
+    ##
     def send_files(name, files)
       if @request.env["HTTP_MOD_ZIP_ENABLED"]
-        files.each do |file| 
+        files.each do |file|
           path = ::File.expand_path(file.path)
-          puts("#{Zlib.crc32(::File.read(path))} #{::File.size(path)} #{path} #{::File.basename(path)}")
+          puts("#{Zlib.crc32(::File.read(path)).to_s(16)} #{::File.size(path)} #{path} #{::File.basename(path)}")
         end
         headers["X-Archive-Files"] = "zip"
         self.content_type = "application/zip"
@@ -243,9 +265,9 @@ module Harbor
     ##
     # Calling reponse.message forces a session to load. The reasoning is as follows:
     # 1) This will eliminate the majority of ugly query-string messages.
-    # 2) Calling response.message in an action assumes a human receiver and thus the 
+    # 2) Calling response.message in an action assumes a human receiver and thus the
     #    use of a session is valid
-    # 
+    #
     # Nonetheless, control is left to app. Use use_session = false to use query-string
     # based messages instead.
     ##
@@ -286,14 +308,14 @@ module Harbor
         domain    = "; domain="  + value[:domain]    if value[:domain]
 
         #   According to http://curl.haxx.se/rfc/cookie_spec.html, some browsers have issues when setting
-        # expire property without setting path, look under expire notes on that link 
+        # expire property without setting path, look under expire notes on that link
         if value[:path]
-          path      = "; path="    + value[:path]      
+          path      = "; path="    + value[:path]
         elsif value[:expires]
           path      = "; path=/"
         end
 
-        
+
         http_only = value[:http_only] ? "; HTTPOnly=" : nil
         # According to RFC 2109, we need dashes here.
         # N.B.: cgi.rb uses spaces...
@@ -324,7 +346,7 @@ module Harbor
         self["Set-Cookie"] = cookie
       end
     end
-    
+
     # from Rack::Response.delete_cookie
     def delete_cookie(key, value={})
       unless Array === self["Set-Cookie"]
@@ -346,7 +368,7 @@ module Harbor
       @io ||= StringIO.new("")
     end
 
-    # 
+    #
     def escape_filename_for_http_header(filename)
       # This would work great if IE6 could unescape the Content-Disposition filename field properly,
       # but it can't, so we use the terribly weak version instead, until IE6 dies off...
