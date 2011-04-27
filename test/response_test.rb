@@ -279,14 +279,19 @@ class ResponseTest < Test::Unit::TestCase
   # nginx ModZip tests
   ##
 
-  def test_nginx_mod_zip_send_files_has_properly_formatting_body
+  def test_nginx_mod_zip_send_files_has_properly_formatted_body
     @request.env["HTTP_MOD_ZIP_ENABLED"] = "True"
 
     file = Harbor::File.new(Pathname(__FILE__))
+    file.name = "My Custom Filename.rb"
 
-    @response.send_files("test", [file])
+    @response.send_files("test.zip", [file])
 
-    assert_equal @response.buffer, "#{Zlib.crc32(File.read(file.path)).to_s(16)} #{File.size(file.path)} #{File.expand_path(file.path)} #{File.basename(file.path)}\n"
+    assert_equal "#{Zlib.crc32(File.read(file.path)).to_s(16)} #{File.size(file.path)} #{File.expand_path(file.path)} #{file.name}\n", @response.buffer
+
+    assert_equal "zip", @response.headers["X-Archive-Files"]
+    assert_equal "attachment; filename=\"test.zip\"", @response.headers["Content-Disposition"]
+    assert_equal "application/zip", @response.headers["Content-Type"]
   end
 
   def test_nginx_mod_zip_has_appropriate_header
