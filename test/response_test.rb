@@ -416,6 +416,28 @@ class ResponseTest < Test::Unit::TestCase
       end
     end
   end
+  
+  def test_content_type_header_deleted_with_204
+    response = Harbor::Test::Response.new
+    request = Harbor::Test::Request.new
+    response.request = request
+    
+    response.status = 204
+    
+    assert_nil response.headers["Content-Type"]
+    assert_nil response.headers["Content-Length"]
+  end
+  
+  def test_content_type_header_deleted_with_304
+    response = Harbor::Test::Response.new
+    request = Harbor::Test::Request.new
+    response.request = request
+    
+    response.status = 304
+    
+    assert_nil response.headers["Content-Type"]
+    assert_nil response.headers["Content-Length"]
+  end
 
   ##
   # Messages

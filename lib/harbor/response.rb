@@ -361,6 +361,15 @@ module Harbor
                  {:value => '', :path => nil, :domain => nil,
                    :expires => Time.at(0) }.merge(value))
     end
+    
+    def status=(new_status)
+      @status = new_status
+      if @status == 204 || @status == 304
+        @headers.delete "Content-Type"
+        @headers.delete "Content-Length"
+        string.truncate(0)
+      end
+    end
 
     private
 
