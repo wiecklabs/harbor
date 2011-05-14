@@ -12,6 +12,31 @@ module Harbor
       super
       @debug = false
       register("hostname", `hostname`.strip)
+      
+      case ENV["ENVIRONMENT"]
+      when "production"
+        @environment = PRODUCTION
+      when "stage"
+        @environment = STAGE
+      when "development" 
+        @environment = DEVELOPMENT
+      else
+        if ENV["ENVIRONMENT"].blank?
+          @environment = DEVELOPMENT
+        end
+      end
+    end
+    
+    def development?
+      @environment = DEVELOPMENT
+    end
+    
+    def stage?
+      @environment = STAGE
+    end
+    
+    def production?
+      @environment = PRODUCTION
     end
     
     def load!(path)
@@ -48,11 +73,15 @@ module Harbor
     def debug?
       @debug
     end
+    
+    private
+    
+    DEVELOPMENT = "development".freeze
+    STAGE = "stage".freeze
+    PRODUCTION = "production".freeze
   end
 end
 
 def config
   Harbor::Configuration::instance
 end
-
-config.load!(Harbor::env_path)
