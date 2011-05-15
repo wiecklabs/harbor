@@ -21,7 +21,7 @@ module Harbor
       when "development" 
         @environment = DEVELOPMENT
       else
-        if ENV["ENVIRONMENT"].blank?
+        if ENV["ENVIRONMENT"].to_s.empty?
           @environment = DEVELOPMENT
         end
       end
