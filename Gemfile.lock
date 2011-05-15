@@ -7,19 +7,42 @@ GEM
     data_objects (0.9.12)
       addressable (~> 2.0.0)
       extlib (~> 0.9.12)
-    dm-core (0.9.11)
-      addressable (~> 2.0.2)
-      data_objects (~> 0.9.11)
-      extlib (~> 0.9.11)
-    dm-timestamps (0.9.11)
-      dm-core (= 0.9.11)
+    datamapper (0.10.0)
+      dm-aggregates (= 0.10.0)
+      dm-constraints (= 0.10.0)
+      dm-core (= 0.10.0)
+      dm-core (= 0.10.0)
+      dm-migrations (= 0.10.0)
+      dm-serializer (= 0.10.0)
+      dm-timestamps (= 0.10.0)
+      dm-types (= 0.10.0)
+      dm-validations (= 0.10.0)
+    dm-aggregates (0.10.0)
+    dm-constraints (0.10.0)
+    dm-core (0.10.0)
+    dm-migrations (0.10.0)
+    dm-serializer (0.10.0)
+    dm-timestamps (0.10.0)
+    dm-types (0.10.0)
+    dm-validations (0.10.0)
+    do_jdbc (0.9.12-java)
+      addressable (~> 2.0.0)
+      data_objects (= 0.9.12)
+      extlib (~> 0.9.12)
     do_sqlite3 (0.9.12)
       addressable (~> 2.0.0)
       data_objects (= 0.9.12)
       extlib (~> 0.9.12)
+    do_sqlite3 (0.9.12-java)
+      addressable (~> 2.0.0)
+      data_objects (= 0.9.12)
+      do_jdbc (= 0.9.12)
+      extlib (~> 0.9.12)
+      jdbc-sqlite3 (>= 3.5.8)
     erubis (2.6.6)
       abstract (>= 1.0.0)
     extlib (0.9.15)
+    jdbc-sqlite3 (3.6.14.2.056-java)
     little-plugger (1.1.2)
     logging (1.4.3)
       little-plugger (>= 1.1.2)
@@ -33,17 +56,16 @@ GEM
     uuidtools (2.1.1)
 
 PLATFORMS
+  java
   ruby
 
 DEPENDENCIES
   builder
-  data_objects (= 0.9.12)
-  dm-core (= 0.9.11)
-  dm-timestamps (= 0.9.11)
-  do_sqlite3 (= 0.9.12)
+  datamapper
+  do_sqlite3
   erubis
   logging
   mail_builder
-  rack (~> 1.0.0)
+  rack
   rake
   testdrive
