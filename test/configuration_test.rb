@@ -12,6 +12,11 @@ class ConfigurationTest < Test::Unit::TestCase
   # config.hostname
   # config.mail.server
   
+  def initialize(*args)
+    config.load!(Pathname(__FILE__).dirname.parent + "env")
+    super
+  end
+  
   def test_container_is_present
     assert_kind_of(Harbor::Configuration, config)
   end
