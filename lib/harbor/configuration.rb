@@ -20,11 +20,17 @@ module Harbor
         @environment = STAGE
       when "development" 
         @environment = DEVELOPMENT
+      when "test"
+        @environment = TEST
       else
         if ENV["ENVIRONMENT"].to_s.empty?
           @environment = DEVELOPMENT
         end
       end
+    end
+
+    def test?
+      @environment = TEST
     end
     
     def development?
@@ -76,6 +82,7 @@ module Harbor
     
     private
     
+    TEST = "test".freeze
     DEVELOPMENT = "development".freeze
     STAGE = "stage".freeze
     PRODUCTION = "production".freeze
