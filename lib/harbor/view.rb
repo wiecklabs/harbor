@@ -17,7 +17,11 @@ module Harbor
     end
 
     def self.path
-      @path ||= []
+      @path ||= if ::File.directory?("lib/views")
+        [ "lib/views" ]
+      else
+        []
+      end
     end
 
     def self.layouts
