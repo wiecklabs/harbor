@@ -8,5 +8,5 @@ gem "do_sqlite3"
 gem "erubis"
 gem "logging"
 gem "mail_builder"
-gem "rack", "~>1.2.0" # Rack v1.3 breaks Harbor since rack.input is missing from the request.
+gem "rack"
 gem "rake"
