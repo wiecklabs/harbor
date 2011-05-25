@@ -1,5 +1,6 @@
 module Harbor
   class ViewContext
+    include Enumerable
     require Pathname(__FILE__).dirname + "view_context/helpers"
 
     include Helpers::Form
