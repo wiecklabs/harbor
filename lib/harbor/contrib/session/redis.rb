@@ -20,8 +20,6 @@ module Harbor
       # (unless you're running everything from a single server I guess).
       ##
       class Redis < Harbor::Session::Abstract
-        
-        SESSION_EXPIRATION=1800
 
         # This is part of the Session Store API
         def self.load_session(delegate, session_id, request = nil)
@@ -40,7 +38,7 @@ module Harbor
           session_id = data[:session_id]
           data[:updated_at] = Time::now
           redis.set(session_id, dump(data))
-          redis.expire(session_id, SESSION_EXPIRATION)
+          redis.expire(session_id, expire_after) if expire_after
           session_id
         end
         
