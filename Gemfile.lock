@@ -68,7 +68,7 @@ GEM
       mime-types
       uuidtools
     mime-types (1.16)
-    rack (1.2.3)
+    rack (1.0.1)
     rake (0.9.0)
     stringex (1.2.1)
     testdrive (0.2)
@@ -81,11 +81,12 @@ PLATFORMS
 DEPENDENCIES
   builder
   datamapper
+  dm-migrations
   dm-sqlite-adapter
   do_sqlite3
   erubis
   logging
   mail_builder
-  rack (~> 1.2.0)
+  rack (~> 1.0.1)
   rake
   testdrive

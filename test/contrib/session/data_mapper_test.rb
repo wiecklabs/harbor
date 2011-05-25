@@ -2,7 +2,9 @@ require "pathname"
 require Pathname(__FILE__).dirname + "../../helper"
 require "harbor/contrib/session/data_mapper"
 
+require "dm-migrations"
 DataMapper.setup :default, "sqlite3::memory:"
+DataMapper.finalize
 
 module Contrib
   module Session
