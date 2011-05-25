@@ -7,6 +7,7 @@ require Pathname(__FILE__).dirname + "mail_servers/abstract"
 require Pathname(__FILE__).dirname + "mail_servers/sendmail"
 require Pathname(__FILE__).dirname + "mail_servers/smtp"
 require Pathname(__FILE__).dirname + "mail_servers/test"
+require Pathname(__FILE__).dirname + "mail_filters/delivery_address_filter"
 
 module Harbor
   class Mailer < MailBuilder

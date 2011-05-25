@@ -56,5 +56,29 @@ class MailerTest < Test::Unit::TestCase
 
     assert_equal("<p><a href=\"http://m.wieck.com/m/#{CGI.escape(mailer.envelope_id)}?r=#{CGI.escape([url].pack("m"))}\">Link</a></p>", mailer.html)
   end
-  
+
+  def test_mail_filter_overrides_recipient_address_and_sets_overridden_header
+    filter = Harbor::MailFilters::DeliveryAddressFilter.new("dev@example.com", /@example.com/)
+    mailer = Harbor::Mailer.new
+    
+    mailer.text = "asdf"
+    mailer.to = "test@notexample.com"
+    mailer = filter.apply(mailer)
+    
+    assert_not_equal('test@notexample.com', mailer.to)
+    assert_equal('test@notexample.com', mailer.get_header('X-Overridden-To'))
+    assert_equal('dev@example.com', mailer.to)
+    assert_not_equal('dev@example.com', mailer.get_header('X-Overridden-To'))
+  end
+
+  def test_mail_filter_does_not_override_whitelisted_address
+    filter = Harbor::MailFilters::DeliveryAddressFilter.new("test@example.com", /@example.com/)
+    mailer = Harbor::Mailer.new
+    
+    mailer.to = "dev@example.com"
+    mailer = filter.apply(mailer)
+    
+    assert_not_equal('test@example.com', mailer.to)
+    assert_equal('dev@example.com', mailer.to)
+  end
 end
