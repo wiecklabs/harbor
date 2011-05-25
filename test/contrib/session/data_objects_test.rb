@@ -17,7 +17,11 @@ module Contrib
       def setup        
         Harbor::Session.configure do |session|
           session[:store] = Harbor::Contrib::Session::DataObjects
-          session[:connection_uri] = 'sqlite3::memory:'
+          if Object::const_defined?('JRUBY_VERSION')
+            session[:connection_uri] = 'sqlite3:/:memory:'
+          else
+            session[:connection_uri] = 'sqlite3::memory:'
+          end
         end
         
         if Harbor::Contrib::Session::DataObjects.session_table_exists?

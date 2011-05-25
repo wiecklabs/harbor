@@ -6,6 +6,7 @@ module Harbor
     def initialize
       @map = []
       @default = nil
+      @default_initialized = false
     end
 
     def map(fragment, layout)
@@ -25,6 +26,7 @@ module Harbor
     end
 
     def default(layout)
+      @default_initialized = true
       @default = layout
     end
 
@@ -40,6 +42,7 @@ module Harbor
 
     def clear
       @default = nil
+      @default_initialized = false
       @map.clear
     end
 
@@ -48,11 +51,19 @@ module Harbor
         return layout if fragment === path
       end
 
-      return @default
+      return __default
     end
 
     private
-
+    def __default
+      if @default_initialized
+        @default
+      else
+        @default_initialized = true
+        @default ||= View.exists?("layouts/application") ? "layouts/application" : nil
+      end
+    end
+    
     def fragment_specificity(fragment)
       fragment.count("/") - fragment.count("*")
     end

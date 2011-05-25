@@ -70,7 +70,7 @@ module Harbor
       include DataMapper::Resource
       
       property :id, String, :key => true, :default => lambda { `uuidgen`.chomp }
-      property :data, DataMapper::Types::Object, :default => lambda { {} }
+      property :data, DataMapper::Property::Object, :default => lambda { {} }
       property :created_at, DateTime
       property :updated_at, DateTime
     end
