@@ -54,7 +54,8 @@ class ExceptionNotifierTest < Test::Unit::TestCase
       "REQUEST_METHOD" => "GET",
       "rack.errors" => rack_errors,
       "HTTP_HOST" => "",
-      "rack.request.form_hash" => {}
+      "rack.request.form_hash" => {},
+      "rack.input" => ""
     })
 
     assert_equal(0, @services.get("mail_server").mailings.size)

@@ -93,14 +93,17 @@ module Harbor
     
     def params
       params = begin
-        self.GET && self.GET.update(self.POST || {})
+        if @env["rack.input"].nil?
+          self.GET
+        else
+          self.GET && self.GET.update(self.POST || {})
+        end
       rescue EOFError => e
         self.GET
       end
 
       params || {}
     end
-
 
     # holdover method until Harbor::Router moves to oniguruma and can use named captures
     def route_captures

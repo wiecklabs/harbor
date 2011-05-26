@@ -256,7 +256,7 @@ class ResponseTest < Test::Unit::TestCase
 
     @response.stream_file(Pathname(__FILE__))
 
-    assert_equal Pathname(__FILE__).expand_path.to_s, @response.headers["X-Accel-Redirect"]
+    assert_equal "/some/other/path/response_test.rb", @response.headers["X-Accel-Redirect"]
     assert_equal File.size(__FILE__).to_s, @response.headers["Content-Length"]
     assert_equal "text/x-script.ruby", @response.headers["Content-Type"]
   end
@@ -471,7 +471,7 @@ class ResponseTest < Test::Unit::TestCase
 
     response.message("error", "Error")
     response.redirect("/redirect?key=Stuff", {})
-    assert_equal "/redirect?messages%5Berror%5D=Error&key=Stuff", response.headers["Location"]
+    assert_equal "/redirect?key=Stuff&messages%5Berror%5D=Error", response.headers["Location"]
   end
 
   private

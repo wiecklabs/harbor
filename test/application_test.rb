@@ -3,12 +3,6 @@ require Pathname(__FILE__).dirname + "helper"
 
 class ApplicationTest < Test::Unit::TestCase
 
-  class MyApplication < Harbor::Application
-    def self.public_path
-      Pathname(__FILE__).dirname + "public"
-    end
-  end
-
   def setup
     @router = Harbor::Router.new do
       get("/") { |request, response| response.puts "Hello World" }
@@ -56,7 +50,8 @@ class ApplicationTest < Test::Unit::TestCase
       "REQUEST_METHOD" => "GET",
       "rack.errors" => rack_errors,
       "HTTP_HOST" => "",
-      "rack.request.form_hash" => {}
+      "rack.request.form_hash" => {},
+      "rack.input" => ""
     })
     assert_equal(500, status)
 

@@ -4,12 +4,11 @@ require Pathname(__FILE__).dirname + "helper"
 class RouterTest < Test::Unit::TestCase
 
   include Harbor
-  
-  def setup
-    @application = Class.new(Harbor::Application)
-    @router = Router.new
-  end
 
+  def setup
+    setup_browser!
+  end
+  
   def test_initializer
     assert_equal([], Router.new.routes)
     
@@ -30,150 +29,138 @@ class RouterTest < Test::Unit::TestCase
   end
   
   def test_request_should_match_route_defined_with_regular_expression
-    request = Harbor::Request.new(@application, "PATH_INFO" => "/users", "REQUEST_METHOD" => "GET")
-
-    @router.register(:get, /^\/users$/) { "Index" }
-    assert_equal("Index", @router.match(request).call)
+    @router.register(:get, /^\/users$/) { |request, response| response.print "Index" }
+    browser.get("/users")
+    assert_equal("Index", browser.last_response.body)
+  end
+  
+  def test_regex_routes_should_mutate_request_route_captures  
+    @router.register(:get, /^\/users\/(\d*)\/posts\/(\d*)$/) { |request, response| response.print request.route_captures.inspect  }
+    browser.get("/users/1234/posts/4321")
+    assert_equal(["1234", "4321"].inspect, browser.last_response.body)
   end
 
-  def test_regex_routes_should_mutate_request_route_captures
-    request = Harbor::Request.new(@application, "PATH_INFO" => "/users/1234/posts/4321", "REQUEST_METHOD" => "GET")
-
-    @router.register(:get, /^\/users\/(\d*)\/posts\/(\d*)$/) { "Index" }
-    @router.match(request).call
-    assert_equal(["1234", "4321"], request.route_captures)
+  def test_request_should_match_route_defined_with_a_normal_string    
+    @router.register(:get, "/users") { |request, response| response.print "Index" }
+    browser.get("/users")
+    assert_equal("Index", browser.last_response.body)
   end
-
-  def test_request_should_match_route_defined_with_a_normal_string
-    request = Harbor::Request.new(@application, "PATH_INFO" => "/users", "REQUEST_METHOD" => "GET")
-    
-    @router.register(:get, "/users") { "Index" }
-    assert_equal("Index", @router.match(request).call)
-  end
-
-  def test_request_should_match_string_route_defined_with_named_parameters
-    request = Harbor::Request.new(@application, "PATH_INFO" => "/this-is-a-slug", "REQUEST_METHOD" => "GET")
-
-    @router.register(:get, "/:slug") { "Index" }
-    assert_equal("Index", @router.match(request).call)
-    assert(request.params.has_key?("slug"))
-    assert_equal("this-is-a-slug", request.params["slug"])
+  
+  def test_request_should_match_string_route_defined_with_named_parameters  
+    @router.register(:get, "/:slug") do |request, response|
+      assert(request.params.has_key?("slug"))
+      assert_equal("this-is-a-slug", request.params["slug"])
+      response.print "Index"
+    end
+    browser.get("/this-is-a-slug")
+    assert_equal("Index", browser.last_response.body)
   end
   
   def test_route_define_with_get_only_matches_GET
-    @router.get("/") { "Index" }
-    request = Harbor::Request.new(@application, "PATH_INFO" => "/")
+    @router.get("/") { |request, response| response.print "Index" }
+
+    browser.get("/")
+    assert(browser.last_response.ok?)
     
-    request.env["REQUEST_METHOD"] = "GET"
-    assert(@router.match(request))
-
-    request.env["REQUEST_METHOD"] = "PUT"
-    assert(!@router.match(request))
-
-    request.env["REQUEST_METHOD"] = "POST"
-    assert(!@router.match(request))
-
-    request.env["REQUEST_METHOD"] = "DELETE"
-    assert(!@router.match(request))
+    browser.put("/")
+    assert(!browser.last_response.ok?)
+    
+    browser.post("/")
+    assert(!browser.last_response.ok?)
+    
+    browser.delete("/")
+    assert(!browser.last_response.ok?)
   end
-
+  
   def test_route_define_with_put_only_matches_PUT
-    @router.put("/") { "Index" }
-    request = Harbor::Request.new(@application, "PATH_INFO" => "/")
-
-    request.env["REQUEST_METHOD"] = "PUT"
-    assert(@router.match(request))
+    @router.put("/") { |request, response| response.print "Index" }
+  
+    browser.post("/", { "_method" => "put" })
+    assert(browser.last_response.ok?)
     
-    request.env["REQUEST_METHOD"] = "POST"
-    request.env["rack.request.form_hash"] = { "_method" => "put" }
-    assert(@router.match(request))
-    request.env["rack.request.form_hash"] = nil
-
-    request.env["REQUEST_METHOD"] = "GET"
-    assert(!@router.match(request))
-
-    request.env["REQUEST_METHOD"] = "POST"
-    assert(!@router.match(request))
-
-    request.env["REQUEST_METHOD"] = "DELETE"
-    assert(!@router.match(request))
+    browser.put("/")
+    assert(browser.last_response.ok?)
+    
+    browser.get("/")
+    assert(!browser.last_response.ok?)
+    
+    browser.post("/")
+    assert(!browser.last_response.ok?)
+    
+    browser.delete("/")
+    assert(!browser.last_response.ok?)
   end
-
+  
   def test_route_define_with_post_only_matches_POST
-    @router.post("/") { "Index" }
-    request = Harbor::Request.new(@application, "PATH_INFO" => "/")
-
-    request.env["REQUEST_METHOD"] = "POST"
-    assert(@router.match(request))
-
-    request.env["REQUEST_METHOD"] = "GET"
-    assert(!@router.match(request))
-
-    request.env["REQUEST_METHOD"] = "PUT"
-    assert(!@router.match(request))
-
-    request.env["REQUEST_METHOD"] = "DELETE"
-    assert(!@router.match(request))
+    @router.post("/") { |request, response| response.print "Index" }
+    
+    browser.post("/")
+    assert(browser.last_response.ok?)
+    
+    browser.get("/")
+    assert(!browser.last_response.ok?)
+    
+    browser.put("/")
+    assert(!browser.last_response.ok?)
+    
+    browser.delete("/")
+    assert(!browser.last_response.ok?)
   end
   
   def test_route_define_with_delete_only_matches_DELETE
-    @router.delete("/") { "Index" }
-    request = Harbor::Request.new(@application, "PATH_INFO" => "/")
+    @router.delete("/") { |request, response| response.print "Index" }
 
-    request.env["REQUEST_METHOD"] = "DELETE"
-    assert(@router.match(request))
+    browser.post("/", { "_method" => "delete" })
+    assert(browser.last_response.ok?)
     
-    request.env["REQUEST_METHOD"] = "POST"
-    request.env["rack.request.form_hash"] = { "_method" => "delete" }
-    assert(@router.match(request))
-    request.env["rack.request.form_hash"] = nil
-
-    request.env["REQUEST_METHOD"] = "GET"
-    assert(!@router.match(request))
-
-    request.env["REQUEST_METHOD"] = "PUT"
-    assert(!@router.match(request))
-
-    request.env["REQUEST_METHOD"] = "POST"
-    assert(!@router.match(request))
+    browser.delete("/")
+    assert(browser.last_response.ok?)
+    
+    browser.get("/")
+    assert(!browser.last_response.ok?)
+    
+    browser.post("/")
+    assert(!browser.last_response.ok?)
+    
+    browser.put("/")
+    assert(!browser.last_response.ok?)
   end
   
   class SampleController
     attr_accessor :request, :response
+    
+    def index
+      response.print "Index"
+    end
   end
   
-  def test_using_passes_controller_to_the_block
-    request = Harbor::Request.new(@application, "PATH_INFO" => "/", "REQUEST_METHOD" => "GET")
-    @container = Container.new
-
+  def test_using_passes_controller_to_the_block  
     @router.using(@container, SampleController) do
-      get("/") { |controller| controller }
+      get("/") { |controller| controller.index }
     end
-
-    assert_kind_of(SampleController, @router.match(request).call(request, nil))
+  
+    browser.get("/")
+    assert_equal("Index", browser.last_response.body)
   end
   
   def test_using_passes_request_as_an_optional_second_argument
-    request = Harbor::Request.new(@application, "PATH_INFO" => "/", "REQUEST_METHOD" => "GET")
-    @container = Container.new
-
     @router.using(@container, SampleController) do
-      get("/") { |controller, request| request }
+      get("/") { |controller, params| controller.index }
     end
     
-    assert_equal(request, @router.match(request).call(request, nil))
+    browser.get("/")
+    assert_equal("Index", browser.last_response.body)
   end
   
   def test_using_can_use_service_names_instead_of_classes
-    request = Harbor::Request.new(@application, "PATH_INFO" => "/", "REQUEST_METHOD" => "GET")
-    @container = Container.new
     @container.register("sample_controller", SampleController)
-
+  
     @router.using(@container, "sample_controller") do
-      get("/") { |controller, request| request }
+      get("/") { |controller| controller.index }
     end
     
-    assert_equal(request, @router.match(request).call(request, nil))    
+    browser.get("/")
+    assert_equal("Index", browser.last_response.body)
   end
-
+  
 end
