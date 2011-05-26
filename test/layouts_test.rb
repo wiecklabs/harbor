@@ -40,7 +40,7 @@ class LayoutsTest < Test::Unit::TestCase
     layouts.clear
 
     assert_equal 0, map.size
-    assert_equal nil, layouts.instance_variable_get(:@default)
+    assert_equal "layouts/application", layouts.instance_variable_get(:@default)
   end
 
   def test_match
@@ -57,7 +57,7 @@ class LayoutsTest < Test::Unit::TestCase
     assert_equal "admin", layouts.match("admin/photos/new")
     assert_equal "videos_show", layouts.match("admin/videos/show")
     assert_equal "show", layouts.match("admin/photos/show")
-    assert_equal nil, layouts.match("photos/index")
+    assert_equal "layouts/application", layouts.match("photos/index")
 
     layouts.default("application")
 
