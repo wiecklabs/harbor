@@ -72,7 +72,7 @@ module Harbor
         when "X-Accel-Redirect"
           if mapping = @request.env['HTTP_X_ACCEL_MAPPING']
             internal, external = mapping.split('=', 2).map { |p| p.strip }
-            @headers["X-Accel-Redirect"] = io.path.sub(/^#{internal}/i, external)
+            @headers["X-Accel-Redirect"] = io.path.sub(/^#{Regexp::escape(internal)}/i, external)
           else
             @headers["X-Accel-Redirect"] = io.path
           end
