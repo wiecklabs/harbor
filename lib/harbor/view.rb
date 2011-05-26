@@ -18,7 +18,7 @@ module Harbor
 
     def self.path
       @path ||= if ::File.directory?("lib/views")
-        [ "lib/views" ]
+        [ Pathname("lib/views") ]
       else
         []
       end
