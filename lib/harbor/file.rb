@@ -18,12 +18,12 @@ module Harbor
     def closed?
       @io.closed?
     end
-    
+
     def read(block_size)
       @io ||= ::File.open(@path, "rb")
       @io.read(block_size)
     end
-    
+
     def rewind
       @io ||= ::File.open(@path, "rb")
       @io.rewind
@@ -31,6 +31,10 @@ module Harbor
 
     def size
       ::File.size(@path)
+    end
+
+    def checksum(algorithm = :pkzip)
+      Harbor::File::Checksum.new(:pkzip, self)
     end
 
     ##

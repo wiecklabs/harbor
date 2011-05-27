@@ -123,7 +123,7 @@ module Harbor
       if @request.env["HTTP_MOD_ZIP_ENABLED"]
         files.each do |file|
           path = ::File.expand_path(file.path)
-          puts("#{Zlib.crc32(::File.read(path)).to_s(16)} #{::File.size(path)} #{path} #{file.name}")
+          puts("#{file.checksum(:pkzip)} #{::File.size(path)} #{path} #{file.name}")
         end
         headers["X-Archive-Files"] = "zip"
         self.content_type = "application/zip"
@@ -361,7 +361,7 @@ module Harbor
                  {:value => '', :path => nil, :domain => nil,
                    :expires => Time.at(0) }.merge(value))
     end
-    
+
     def status=(new_status)
       @status = new_status
       if @status == 204 || @status == 304
