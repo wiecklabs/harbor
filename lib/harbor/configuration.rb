@@ -30,19 +30,19 @@ module Harbor
     end
 
     def test?
-      @environment = TEST
+      @environment == TEST
     end
     
     def development?
-      @environment = DEVELOPMENT
+      @environment == DEVELOPMENT
     end
     
     def stage?
-      @environment = STAGE
+      @environment == STAGE
     end
     
     def production?
-      @environment = PRODUCTION
+      @environment == PRODUCTION
     end
     
     def load!(path)
