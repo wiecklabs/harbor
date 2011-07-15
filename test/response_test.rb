@@ -294,6 +294,26 @@ class ResponseTest < Test::Unit::TestCase
     assert_equal "application/zip", @response.headers["Content-Type"]
   end
 
+  def test_nginx_mod_zip_send_files_has_properly_formatted_body_for_non_standard_file_objects
+    @request.env["HTTP_MOD_ZIP_ENABLED"] = "True"
+
+    file = Class.new do
+      attr_accessor :path, :name
+      def initialize(path, name)
+        @path = path
+        @name = name
+      end
+    end.new(Pathname(__FILE__), "My Custom Filename.rb")
+
+    @response.send_files("test.zip", [file])
+
+    assert_equal "#{Zlib.crc32(File.read(file.path)).to_s(16)} #{File.size(file.path)} #{File.expand_path(file.path)} #{file.name}\n", @response.buffer
+
+    assert_equal "zip", @response.headers["X-Archive-Files"]
+    assert_equal "attachment; filename=\"test.zip\"", @response.headers["Content-Disposition"]
+    assert_equal "application/zip", @response.headers["Content-Type"]
+  end
+
   def test_nginx_mod_zip_has_appropriate_header
     @request.env["HTTP_MOD_ZIP_ENABLED"] = "True"
 
@@ -416,25 +436,25 @@ class ResponseTest < Test::Unit::TestCase
       end
     end
   end
-  
+
   def test_content_type_header_deleted_with_204
     response = Harbor::Test::Response.new
     request = Harbor::Test::Request.new
     response.request = request
-    
+
     response.status = 204
-    
+
     assert_nil response.headers["Content-Type"]
     assert_nil response.headers["Content-Length"]
   end
-  
+
   def test_content_type_header_deleted_with_304
     response = Harbor::Test::Response.new
     request = Harbor::Test::Request.new
     response.request = request
-    
+
     response.status = 304
-    
+
     assert_nil response.headers["Content-Type"]
     assert_nil response.headers["Content-Length"]
   end

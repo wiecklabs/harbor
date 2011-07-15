@@ -123,7 +123,11 @@ module Harbor
       if @request.env["HTTP_MOD_ZIP_ENABLED"]
         files.each do |file|
           path = ::File.expand_path(file.path)
-          puts("#{file.checksum(:pkzip)} #{::File.size(path)} #{path} #{file.name}")
+          if file.respond_to?(:checksum)
+            puts("#{file.checksum(:pkzip)} #{::File.size(path)} #{path} #{file.name}")
+          else
+            puts("#{Harbor::File.new(path).checksum(:pkzip)} #{::File.size(path)} #{path} #{file.name}")
+          end
         end
         headers["X-Archive-Files"] = "zip"
         self.content_type = "application/zip"
