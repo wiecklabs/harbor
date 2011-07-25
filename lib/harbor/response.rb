@@ -121,12 +121,25 @@ module Harbor
     ##
     def send_files(name, files)
       if @request.env["HTTP_MOD_ZIP_ENABLED"]
+        filenames = []
         files.each do |file|
           path = ::File.expand_path(file.path)
+          filename = file.name
+          while filenames.include? filename
+            extname = ::File.extname(filename)
+            basename = ::File.basename(filename, extname)
+            if basename =~ /-(\d+)$/
+              counter = $1.to_i + 1
+            else
+              counter = 2
+            end
+            filename = "#{basename}-#{counter}#{extname}"
+          end
+          filenames << filename
           if file.respond_to?(:checksum)
-            puts("#{file.checksum(:pkzip)} #{::File.size(path)} #{path} #{file.name}")
+            puts("#{file.checksum(:pkzip)} #{::File.size(path)} #{path} #{filename}")
           else
-            puts("#{Harbor::File.new(path).checksum(:pkzip)} #{::File.size(path)} #{path} #{file.name}")
+            puts("#{Harbor::File.new(path).checksum(:pkzip)} #{::File.size(path)} #{path} #{filename}")
           end
         end
         headers["X-Archive-Files"] = "zip"
