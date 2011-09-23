@@ -14,10 +14,9 @@ module Harbor
 
         messages.each do |message|
           filter.apply(message) if filter
-
           sendmail = ::IO.popen("#{@sendmail} -i -t", "w+")
-          sendmail.puts message.to_s
-          sendmail.close
+          sendmail.write(message.to_s)
+          sendmail.close_write
         end
       end
     end
