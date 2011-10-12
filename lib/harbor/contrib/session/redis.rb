@@ -1,7 +1,8 @@
-require "redis"
+require "redis_directory"
 require "uuid"
 
 ## TODO: Which is faster under JRuby, YAML or JSON?
+# Right now switching the dump/load methods to JSON breaks things. Which is weird.
 require "yaml"
 
 module Harbor
@@ -27,25 +28,32 @@ module Harbor
             session_id = uuid.generate.freeze
             data = { :session_id => session_id, :updated_at => Time::now }
             redis.set(session_id, dump(data))
+            redis.expire(session_id, expire_after)
+            
+            remote_ip = request ? request.remote_ip : nil
+            user_agent_raw = request ? request.env["HTTP_USER_AGENT"] : nil
+            
+            delegate.session_created(session_id, remote_ip, user_agent_raw)
+            
             data
           else
             load(data)
           end
         end
-
+        
         # This is part of the Session Store API
         def self.commit_session(data, request)
           session_id = data[:session_id]
           data[:updated_at] = Time::now
           redis.set(session_id, dump(data))
-          redis.expire(session_id, expire_after) if expire_after
+          redis.expire(session_id, expire_after)
           session_id
         end
         
         private
         
         def self.expire_after
-          @expire_after ||= Harbor::Session.options[:expire_after]
+          @expire_after ||= (Harbor::Session.options[:expire_after] || 3600)
         end
         
         def self.uuid
@@ -54,12 +62,16 @@ module Harbor
         
         def self.redis
           @redis ||= if sock = Harbor::Session.options[:sock]
-            ::Redis.new(:path => sock)
+            ::Redis::Directory.new(:path => sock).get("sessions", Harbor::Session.options[:name])
           else
             host = Harbor::Session.options[:host] || "localhost"
             port = Harbor::Session.options[:port] || 6379
-            ::Redis.new(:host => host, :port => port)
+            ::Redis::Directory.new(:host => host, :port => port).get("sessions", Harbor::Session.options[:name])
           end
+        end
+        
+        def self.redis=(connection)
+          @redis = connection
         end
         
         def self.dump(data)
