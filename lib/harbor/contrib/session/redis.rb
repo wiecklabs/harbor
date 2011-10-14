@@ -72,7 +72,7 @@ module Harbor
           def self.generate_uuid
             @uuid_generator ||= UUID.new
             @uuid_generator.generate.freeze
-          else
+          end
 
         end
 
