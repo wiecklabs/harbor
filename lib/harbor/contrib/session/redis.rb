@@ -1,6 +1,6 @@
 require "redis_directory"
 
-if RUBY_PLATFORM =~ /jruby/
+if RUBY_PLATFORM =~ /java/
   require "java"
 else
   require "uuid"
