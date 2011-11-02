@@ -21,12 +21,23 @@ class Harbor::Cache
       if string_or_io.respond_to?(:read)
         @io = string_or_io
       else
+        @content_fetched = true
         @content = string_or_io
       end
     end
 
     def content
-      @content ||= @io.read
+      read_io unless @content_fetched
+      @content
+    end
+
+    def read_io
+      @content_fetched = true
+      @content = begin
+        @io.read
+      rescue
+        nil
+      end
     end
 
     def fresh?

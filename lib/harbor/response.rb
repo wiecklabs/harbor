@@ -176,7 +176,7 @@ module Harbor
       if modified_since == last_modified && (!store || store.get(key))
         not_modified!
       elsif store && item = store.get(key)
-        return puts(item.content)
+        return puts(item.content) unless item.content.nil?
       end
 
       yield self
