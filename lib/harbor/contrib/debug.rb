@@ -112,13 +112,13 @@ module Harbor
     -moz-border-radius-topleft: 5px;
     background-color: #222;
     padding: 10px;
-    height: 200px;
+    height: 400px;
     margin: 0 20px;
   }
 
   #logger > div div {
     overflow: auto;
-    height: 200px;
+    height: 400px;
   }
 
   #logger p { margin: 0; color: #eee; padding: 10px; line-height: 14px; font-size: 12px; font-family: monaco; border-bottom: 1px solid #555; }
