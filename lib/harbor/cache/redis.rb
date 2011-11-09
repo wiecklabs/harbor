@@ -1,12 +1,23 @@
+require "redis_directory"
+
+if RUBY_PLATFORM =~ /java/
+  require "java"
+else
+  require "uuid"
+end
+
 class Harbor::Cache::Redis
 
   TRACKER_KEY_NAME="cache-keys"
   
-  def initialize(redis)
-    raise ArgumentError.new("+redis+ must not be nil") unless redis
-    @redis = redis
+  def initialize(connection, name = nil)
+    if connection.is_a?(Redis) || connection.is_a?(Redis::Distributed)
+      @redis = connection
+    else
+      @redis = Redis::Directory.new(connection).get("cache", name)
+    end
   end
-
+  
   def get(key)
     if (value = @redis.get(key))
       item = load(key, value)

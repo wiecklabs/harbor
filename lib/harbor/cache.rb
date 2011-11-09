@@ -5,6 +5,11 @@ module Harbor
 
   class Cache
 
+    def self.redis(connection, name = nil)
+      require "harbor/cache/redis"
+      self.new(Harbor::Cache::Redis.new(connection, name))
+    end
+    
     class PutArgumentError < ArgumentError; end
 
     attr_accessor :logger
