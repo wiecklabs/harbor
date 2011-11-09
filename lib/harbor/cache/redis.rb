@@ -16,7 +16,7 @@ class Harbor::Cache::Redis
         nil
       else
         @redis.expire(key, item.ttl)
-        item.content
+        item
       end
     else
       nil
