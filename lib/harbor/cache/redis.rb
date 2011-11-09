@@ -1,4 +1,4 @@
-class Harbor::Cache::Redis < Harbor::Cache
+class Harbor::Cache::Redis
 
   TRACKER_KEY_NAME="cache-keys"
   
