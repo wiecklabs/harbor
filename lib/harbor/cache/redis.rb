@@ -1,4 +1,4 @@
-class Harbor::Cache::Redis
+class Harbor::Cache::Redis < Harbor::Cache
 
   TRACKER_KEY_NAME="cache-keys"
   
@@ -8,7 +8,7 @@ class Harbor::Cache::Redis
   end
 
   def get(key)
-    if (value = redis.get(key))
+    if (value = @redis.get(key))
       item = load(key, value)
       
       if item.expired?
