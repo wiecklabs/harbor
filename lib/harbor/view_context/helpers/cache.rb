@@ -70,7 +70,7 @@ module Harbor::ViewContext::Helpers::Cache
     end
 
     with_buffer(generator) do |buffer|
-      buffer << content
+      buffer << content if content
     end
   end
 
