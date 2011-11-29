@@ -31,7 +31,7 @@ module Harbor
         def self.load_session(delegate, session_id, request = nil)
           if session_id.blank? || !(data = redis.get(session_id))
             session_id = generate_uuid
-            data = { :session_id => session_id, :updated_at => Time::now }
+            data = { :session_id => session_id, :updated_at => Time::now, :client_name => client_name }
             redis.set(session_id, dump(data))
             redis.expire(session_id, expire_after)
 
@@ -76,13 +76,17 @@ module Harbor
 
         end
 
+        def self.client_name
+          @client_name ||= (Harbor::Session.options[:name] || raise "You must provide a :name to Harbor::Session::options!")
+        end
+        
         def self.redis
           @redis ||= if sock = Harbor::Session.options[:sock]
-            ::Redis::Directory.new(:path => sock).get("sessions", Harbor::Session.options[:name])
+            ::Redis::Directory.new(:path => sock).get("sessions", client_name)
           else
             host = Harbor::Session.options[:host] || "localhost"
             port = Harbor::Session.options[:port] || 6379
-            ::Redis::Directory.new(:host => host, :port => port).get("sessions", Harbor::Session.options[:name])
+            ::Redis::Directory.new(:host => host, :port => port).get("sessions", client_name)
           end
         end
 
