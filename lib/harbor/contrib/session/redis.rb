@@ -77,7 +77,13 @@ module Harbor
         end
 
         def self.client_name
-          @client_name ||= (Harbor::Session.options[:name] || raise "You must provide a :name to Harbor::Session::options!")
+          @client_name ||= begin
+            if name = Harbor::Session.options[:name]
+              name
+            else
+              raise ArgumentError.new("You must provide a :name to Harbor::Session::options!")
+            end
+          end
         end
         
         def self.redis
