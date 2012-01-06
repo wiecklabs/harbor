@@ -1,9 +1,9 @@
 module Harbor
   module MailServers
     class Sendmail < Abstract
-      
+
       attr_accessor :filter
-      
+
       def initialize(config = {})
         @sendmail = config[:sendmail] || `which sendmail`.chomp
         @filter = config[:delivery_address_filter]
@@ -17,6 +17,7 @@ module Harbor
           sendmail = ::IO.popen("#{@sendmail} -i -t", "w+")
           sendmail.write(message.to_s)
           sendmail.close_write
+          sendmail.close_read
         end
       end
     end
