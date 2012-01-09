@@ -9,7 +9,7 @@ end
 class Harbor::Cache::Redis
 
   TRACKER_KEY_NAME="cache-keys"
-  
+
   def initialize(connection, name = nil)
     if connection.is_a?(Redis) || connection.is_a?(Redis::Distributed)
       @redis = connection
@@ -17,11 +17,11 @@ class Harbor::Cache::Redis
       @redis = Redis::Directory.new(connection).get("cache", name)
     end
   end
-  
+
   def get(key)
     if (value = @redis.get(key))
       item = load(key, value)
-      
+
       if item.expired?
         @redis.srem(TRACKER_KEY_NAME, key)
         nil
@@ -58,7 +58,7 @@ class Harbor::Cache::Redis
       @redis.del(*matches)
     end
   end
-  
+
   def keys_matching(key_regex)
     @redis.smembers(TRACKER_KEY_NAME).select { |key| key =~ key_regex }
   end
@@ -70,7 +70,7 @@ class Harbor::Cache::Redis
       put(key, item.ttl, item.maximum_age, item.content, item.cached_at)
     end
   end
-  
+
   def load(key, data)
     value = YAML::load(data)
     Harbor::Cache::Item.new(key, value["ttl"], value["maximum_age"], value["content"], value["cached_at"], value["expires_at"])
