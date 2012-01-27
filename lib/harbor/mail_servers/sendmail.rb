@@ -1,3 +1,5 @@
+require 'open3'
+
 module Harbor
   module MailServers
     class Sendmail < Abstract
@@ -12,12 +14,15 @@ module Harbor
 
       def deliver(message_or_messages)
         messages = Array === message_or_messages ? message_or_messages : [message_or_messages]
-
+        
+        
         messages.each do |message|
           filter.apply(message) if filter
-          sendmail = ::IO.popen("#{@sendmail} -i -t -f#{@sender}", "w+")
-          sendmail.write(message.to_s)
-          sendmail.close_write
+          
+          Open3.popen3("#{@sendmail} -i -t -f#{@sender}") do |stdin, stdout, stderr|
+            stdin.write(message.to_s)
+          end
+          
         end
       end
     end
