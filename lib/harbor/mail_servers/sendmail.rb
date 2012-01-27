@@ -18,7 +18,6 @@ module Harbor
           sendmail = ::IO.popen("#{@sendmail} -i -t -f#{@sender}", "w+")
           sendmail.write(message.to_s)
           sendmail.close_write
-          sendmail.close_read
         end
       end
     end
