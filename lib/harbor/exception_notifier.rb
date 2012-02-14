@@ -33,7 +33,7 @@ module Harbor
     def self.notify(exception, request, response, trace)
       return if request.environment == "development" 
 
-      mailer = request.application.services.get("mailer")
+      mailer = config.get("mailer")
       mailer.to = notification_address
 
       host = request.env["HTTP_X_FORWARDED_HOST"] || request.host

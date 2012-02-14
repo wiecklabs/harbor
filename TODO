@@ -2,25 +2,5 @@
 ===
 
 FEATURES
-* Add simplified Regexp captures for routes defined with Regexps
-* bin/harbor should be smarter (offering help instead of throwing errors)
-  and allow registering new commands.
-
-DOCS
-* As a minimum, each class should have some general usage documentation
-  such as that in harbor/auth/basic.rb and harbor/accessor_injector.rb
-
-TUTORIALS / GUIDES
-* Anatomy of a port
-  - General/Common layout
-  - Information on conventions for lib/port_name.rb and config.ru
-  - Helpers, Plugins, etc.: how they work, where best to use them
-  - How to code for reusability
-  - Life cycle of ports and integration
-
-> 1.0
-=====
-
-DOCS
-* Reference documentation (in addition to basic API documentation).
-  See: http://clojure.org/Reference as distinct from http://clojure.org/API
+* Should be able run just: "run Harbor" to start a cascade.
+* Harbor should have a Controller class

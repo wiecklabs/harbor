@@ -19,6 +19,10 @@ module Harbor
 
     include Harbor::Events
     
+    def self.inherited(klass)
+      Harbor::register_application(klass)
+    end
+    
     ##
     # Routes are defined in this method. Note that Harbor does not define any default routes,
     # so you must reimplement this method in your application.
@@ -29,7 +33,7 @@ module Harbor
 
     attr_reader :router, :environment, :services
 
-    def initialize(services, *args)
+    def initialize(services = nil, *args)
       unless services.is_a?(Harbor::Container)
         raise ArgumentError.new("Harbor::Application#services must be a Harbor::Container")
       end
@@ -67,6 +71,10 @@ module Harbor
       end
 
       response.to_a
+    end
+    
+    def match(request)
+      router.match(request)
     end
 
     ##

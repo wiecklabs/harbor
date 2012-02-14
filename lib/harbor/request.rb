@@ -40,7 +40,6 @@ module Harbor
     ].freeze
 
     attr_accessor :layout
-    attr_accessor :application
 
     def initialize(application, env)
       raise ArgumentError.new("+env+ must be a Rack Environment Hash") unless env.is_a?(Hash)
@@ -82,11 +81,7 @@ module Harbor
       @env['REQUEST_METHOD'] = self.POST['_method'].upcase if request_method_in_params?
       @env['REQUEST_METHOD']
     end
-
-    def environment
-      @env['APP_ENVIRONMENT'] || (@application ? @application.environment : "development")
-    end
-
+    
     def health_check?
       !params["health_check"].nil?
     end

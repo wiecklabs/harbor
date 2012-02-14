@@ -1,0 +1,7 @@
+1.0
+
+* Request#env["APP_ENVIRONMENT"] no longer set. Use config.(test|development|production|etc)?
+* Request#environment no longer exists. Use config.
+* Harbor no longer serves public files directly. Use Rack::File: eg. Rack::File.new("public")
+* Harbor no longer serves public files from other applications. Copy those into your app.
+* Request#application no longer exists
