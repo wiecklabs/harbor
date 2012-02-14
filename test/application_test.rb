@@ -57,14 +57,4 @@ class ApplicationTest < Test::Unit::TestCase
 
     assert_match(/Error in \/exception/, @error_log.string)
   end
-
-  def test_find_public_file
-    status, headers, body = @application.call({ "PATH_INFO" => "/public-file", "REQUEST_METHOD" => "GET"})
-    assert_equal(200, status)
-
-    assert headers.has_key?("Last-Modified")
-    assert headers.has_key?("Cache-Control")
-    assert_match(/From public/, body.to_s)
-  end
-
 end

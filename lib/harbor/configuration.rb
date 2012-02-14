@@ -29,6 +29,10 @@ module Harbor
       end
     end
 
+    def environment
+      @environment
+    end
+    
     def test?
       @environment == TEST
     end

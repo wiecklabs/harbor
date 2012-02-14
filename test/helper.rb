@@ -1,4 +1,6 @@
 require "rubygems"
+require "bundler/setup"
+
 require "pathname"
 require "test/unit"
 require "uri"

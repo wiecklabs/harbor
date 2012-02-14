@@ -31,7 +31,7 @@ module Harbor
     end
 
     def self.notify(exception, request, response, trace)
-      return if request.environment == "development" 
+      return if config.development?
 
       mailer = config.get("mailer")
       mailer.to = notification_address
@@ -46,7 +46,7 @@ module Harbor
         subject = subject.split($/, 2)[0] + "..."
       end
 
-      mailer.subject = "[ERROR] [#{request.host}] [#{request.environment}] #{subject}"
+      mailer.subject = "[ERROR] [#{request.host}] [#{config.environment}] #{subject}"
       mailer.text = trace
       mailer.set_header("X-Priority", 1)
       mailer.set_header("X-MSMail-Priority", "High")

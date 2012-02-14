@@ -21,6 +21,7 @@ require "harbor/mime"
 require "harbor/errors"
 
 require "harbor/cache"
+require "harbor/controller"
 
 module Harbor
   def self.env_path

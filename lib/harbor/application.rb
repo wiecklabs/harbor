@@ -19,10 +19,6 @@ module Harbor
 
     include Harbor::Events
     
-    def self.inherited(klass)
-      Harbor::register_application(klass)
-    end
-    
     ##
     # Routes are defined in this method. Note that Harbor does not define any default routes,
     # so you must reimplement this method in your application.
@@ -31,17 +27,12 @@ module Harbor
       raise NotImplementedError.new("Your application must redefine #{self}::routes.")
     end
 
-    attr_reader :router, :environment, :services
+    def router
+      @router ||= self.class::routes(config)
+    end
 
     def initialize(services = nil, *args)
-      unless services.is_a?(Harbor::Container)
-        raise ArgumentError.new("Harbor::Application#services must be a Harbor::Container")
-      end
-
-      @services = services
-
-      @router = (!args.empty? && !args[0].is_a?(String) && args[0].respond_to?(:match)) ? args.shift : self.class.routes(@services)
-      @environment = args.last || "development"
+      @router = args.first if args.first.is_a?(Harbor::Router)
     end
 
     ##
@@ -52,21 +43,11 @@ module Harbor
     # It returns a rack response hash.
     ##
     def call(env)
-      env["APP_ENVIRONMENT"] = environment
       request = Request.new(self, env)
       response = Response.new(request)
 
       catch(:abort_request) do
-        if file = find_public_file(request.path_info[1..-1])
-          response.cache(nil, ::File.mtime(file), 86400) do
-            response.stream_file(file)
-          end
-
-          return response.to_a
-        end
-
-        handler = @router.match(request)
-
+        handler = router.match(request)
         dispatch_request(handler, request, response)
       end
 
@@ -132,7 +113,7 @@ module Harbor
       response.flush
       response.status = 500
 
-      if environment == "development"
+      if config.development?
         response.content_type = "text/html"
         response.puts(Rack::ShowExceptions.new(nil).pretty(request.env, exception))
       else

@@ -1,5 +1,5 @@
 require "set"
-require "controller/router"
+require "harbor/controller/router"
 
 module Harbor
   class Controller

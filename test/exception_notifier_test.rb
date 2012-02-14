@@ -60,19 +60,4 @@ class ExceptionNotifierTest < Test::Unit::TestCase
 
     assert_equal(0, @services.get("mail_server").mailings.size)
   end
-
-  def test_sends_email_in_non_development_mode
-    app = @application.new(@services, "production")
-    rack_errors = StringIO.new
-    app.call({
-      "PATH_INFO" => "/",
-      "REQUEST_METHOD" => "GET",
-      "rack.errors" => rack_errors,
-      "HTTP_HOST" => "",
-      "rack.request.form_hash" => {}
-    })
-
-    mailings = @services.get("mail_server").mailings
-    assert_equal(1, mailings.size)
-  end
 end
