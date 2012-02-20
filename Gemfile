@@ -12,3 +12,6 @@ gem "mail_builder"
 gem "rack"
 gem "rack-test"
 gem "rake"
+gem "redis_directory", :git => "git@github.com:sam/redis_directory.git"
+gem "uuid"
+
