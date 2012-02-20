@@ -6,6 +6,7 @@ $:.unshift(Pathname(__FILE__).dirname.expand_path.to_s)
 require "harbor/version"
 require "harbor/support/array"
 require "harbor/support/blank"
+require "harbor/support/string"
 require "harbor/container"
 require "harbor/locale"
 require "harbor/hooks"
@@ -28,10 +29,14 @@ module Harbor
     @env_path ||= Pathname(__FILE__).dirname.parent + "env"
   end
   
-  def self.register_application(application)    
+  def self.register_application(application)
     cascade << application.new
   rescue ArgumentError => e
     raise ArgumentError.new("#{application}: #{e.message}")
+  end
+  
+  def self.router
+    @router ||= Harbor::Controller::Router.new
   end
   
   def self.call(env)

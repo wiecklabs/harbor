@@ -2,9 +2,10 @@ module Harbor
   class Controller
     class Router
       class Route
-        def initialize(path, handler)
+        def initialize(path, controller, action_name)
           @path = path
-          @handler = handler
+          @controller = controller
+          @action_name = action_name
           
           @tokens = path.split(Harbor::Controller::Router::PATH_SEPARATOR)
         end

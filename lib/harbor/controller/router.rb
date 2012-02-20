@@ -8,53 +8,25 @@ module Harbor
       PATH_SEPARATOR = /[\/:;]/
       
       def initialize
-        @graph ||= Graph.new
+        @methods = {
+          "GET"     => [],
+          "POST"    => [],
+          "PUT"     => [],
+          "DELETE"  => [],
+          "OPTIONS" => []
+        }
       end
       
-      def register(path, handler)
-        @graph << Route.new(path, handler)
+      def register(method, path, controller, action_name)
+        @methods[method] << Route.new(path, controller, action_name)
       end
       
-      def match(path)
-        @graph.match(path)
+      def match(method, path)
+        @methods[method].index(path)
       end
-      
-      private      
-      class Graph
-        def initialize
-          @tree = {}
-        end
-        
-        def <<(route)
-          leaf = @tree
-          token = nil
-          route.tokens.each do |token|
-            leaf = (leaf[token] ||= {})
-          end
-          
-          leaf[token] = route
-        end
-        
-        def match(path)
-          token = nil
-          m = nil
-          route = path.split(PATH_SEPARATOR).inject(@tree) do |m,token|
-            m[token]
-          end
-          
-          if route
-            route[token].to_proc
-          else
-            nil
-          end
-        end
-        
-        class Node
-          def initialize(token, value)
-            @token, @value = token, value
-          end
-          attr_reader :token, :value
-        end
+
+      def self.instance
+        @instance ||= self.new
       end
     end
   end
