@@ -4,14 +4,6 @@ require "harbor/controller/router"
 module Harbor
   class Controller
     
-    include Models
-    
-    Photo.get(id)
-    
-    def self.routes
-      @routes ||= {}
-    end
-    
     def initialize(request, response)
       @request = request
       @response = response
@@ -19,31 +11,41 @@ module Harbor
   
     attr_reader :request, :response
     
+    private
     def self.get(path, &handler)
-      (routes["GET"] ||= Router.new).register(path, handler)
-    end
-    
-    def self.put(path, &handler)
-      (routes["PUT"] ||= Router.new).register(path, handler)
+      route("GET", path, handler)
     end
     
     def self.post(path, &handler)
-      (routes["POST"] ||= Router.new).register(path, handler)
+      route("POST", path, handler)
     end
     
     def self.put(path, &handler)
-      (routes["PUT"] ||= Router.new).register(path, handler)
+      route("PUT", path, handler)
     end
-    
+        
     def self.delete(path, &handler)
-      (routes["DELETE"] ||= Router.new).register(path, handler)
+      route("DELETE", path, handler)
     end
     
     def self.head(path, &handler)
-      (routes["HEAD"] ||= Router.new).register(path, handler)
+      route("HEAD", path, handler)
     end
     
-    private
+    def self.options(path, &handler)
+      route("OPTIONS", path, handler)
+    end
+    
+    def self.patch(path, &handler)
+      route("PATCH", path, handler)
+    end
+    
+    def self.route(method, path, handler)
+      action_name = method_name_for_route(method, path)
+      define_method(action_name, &handler)
+      Router::instance.register(method, absolute_route_path(self, path), self, action_name)
+    end
+    
     def self.method_name_for_route(http_method, route)
       
       parts = [ http_method.upcase ]

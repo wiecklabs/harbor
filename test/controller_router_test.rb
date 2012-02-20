@@ -5,42 +5,38 @@ class ControllerRouterTest < Test::Unit::TestCase
   
   module Controllers
     class Example < Harbor::Controller
-    
-      def GET_test_one
+      
+      get "test/one" do
         :one
       end
-    
-      def GET_test_two
+      
+      get "test/two" do
         :two
       end
-    
-      def GET_test_three
+      
+      get "test/three" do
         :three
       end
-    
-      def self.get(route = "", &block)
-        action_name = method_name_for_route("GET", route)
-        define_method(action_name, &block)
-        Harbor::Controller::Router::instance.register("GET", absolute_route_path(self, route), self, action_name)
-      end
-    
-      get(":id") { }
-    
-      get("/:id") { }
+          
     end
   end
   
-  def test_path_matches
-    router = Harbor::Controller::Router.new
-    
-    router.register("GET", "/example/test/one", Controllers::Example, :GET_test_one)
-    router.register("GET", "/example/test/two", Controllers::Example, :GET_test_two)
-    router.register("GET", "/example/test/three", Controllers::Example, :GET_test_three)
-    
-    return
-    assert_equal(:one, router.match("GET", "/example/test/one").call)
-    assert_equal(:two, router.match("GET", "/example/test/two").call)
-    assert_equal(:three, router.match("GET", "/example/test/three").call)
+  def setup
+    request = Harbor::Test::Request.new
+    response = Harbor::Response.new(request)
+    @example = Controllers::Example.new(request, response)
+  end
+  
+  def test_method_generation
+    assert(Controllers::Example.instance_method(:GET_test_one))
+    assert(Controllers::Example.instance_method(:GET_test_two))
+    assert(Controllers::Example.instance_method(:GET_test_three))
+  end
+  
+  def test_method_result
+    assert_equal :one, @example.GET_test_one
+    assert_equal :two, @example.GET_test_two
+    assert_equal :three, @example.GET_test_three
   end
   
   def test_paths_are_made_absolute

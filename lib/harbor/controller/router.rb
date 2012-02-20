@@ -8,13 +8,7 @@ module Harbor
       PATH_SEPARATOR = /[\/:;]/
       
       def initialize
-        @methods = {
-          "GET"     => [],
-          "POST"    => [],
-          "PUT"     => [],
-          "DELETE"  => [],
-          "OPTIONS" => []
-        }
+        clear!
       end
       
       def register(method, path, controller, action_name)
@@ -27,6 +21,18 @@ module Harbor
 
       def self.instance
         @instance ||= self.new
+      end
+      
+      def clear!
+        @methods = {
+          "GET"     => [],
+          "POST"    => [],
+          "PUT"     => [],
+          "DELETE"  => [],
+          "HEAD"    => [],
+          "OPTIONS" => [],
+          "PATCH"   => []
+        }
       end
     end
   end
