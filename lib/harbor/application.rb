@@ -64,7 +64,7 @@ module Harbor
     ##
     def dispatch_request(handler, request, response)
       dispatch_request_event = Events::DispatchRequestEvent.new(request, response)
-      raise_event2(:request_dispatch, dispatch_request_event)
+      raise_event(:request_dispatch, dispatch_request_event)
 
       return handle_not_found(request, response) unless handler
       
@@ -72,7 +72,7 @@ module Harbor
     rescue StandardError, LoadError, SyntaxError => e
       handle_exception(e, request, response)
     ensure
-      raise_event2(:request_complete, dispatch_request_event.complete!)
+      raise_event(:request_complete, dispatch_request_event.complete!)
     end
 
     ##
@@ -96,7 +96,7 @@ module Harbor
         response.puts "The page you requested could not be found"
       end
 
-      raise_event2(:not_found, Events::NotFoundEvent.new(request, response))
+      raise_event(:not_found, Events::NotFoundEvent.new(request, response))
     end
 
     ##
@@ -126,7 +126,7 @@ module Harbor
         end
       end
 
-      raise_event2(:exception, ApplicationExceptionEvent.new(request, response, exception))
+      raise_event(:exception, ApplicationExceptionEvent.new(request, response, exception))
 
       nil
     end

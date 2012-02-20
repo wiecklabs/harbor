@@ -108,7 +108,7 @@ class EventsTest < Test::Unit::TestCase
   def test_classy_event_handlers_with_zero_arguments
     Application.register_event_handler(:foo, Handler)
 
-    Application.new.raise_event2(:foo, nil)
+    Application.new.raise_event(:foo, nil)
 
     assert_equal true, Handler.called?
   end
@@ -116,7 +116,7 @@ class EventsTest < Test::Unit::TestCase
   def test_classy_event_handlers_with_one_argument
     Application.register_event_handler(:foo, HandlerOne)
 
-    Application.new.raise_event2(:foo, nil)
+    Application.new.raise_event(:foo, nil)
 
     assert_equal true, HandlerOne.called?
   end
@@ -125,7 +125,7 @@ class EventsTest < Test::Unit::TestCase
     raised = false
     Application.register_event_handler('foo') { raised = true }
 
-    Application.new.raise_event2(:foo, nil)
+    Application.new.raise_event(:foo, nil)
 
     assert_equal true, raised
   end
@@ -134,7 +134,7 @@ class EventsTest < Test::Unit::TestCase
     raised = false
     Application.register_event_handler(:foo) { raised = true }
 
-    Application.new.raise_event2('foo', nil)
+    Application.new.raise_event('foo', nil)
 
     assert_equal true, raised
   end
@@ -156,7 +156,7 @@ class EventsTest < Test::Unit::TestCase
     Application.register_event_handler(:not_found) { |event| not_found = true }
 
     my_application = Class.new(Application).new
-    my_application.raise_event2(:not_found, nil)
+    my_application.raise_event(:not_found, nil)
 
     assert_equal true, not_found
   end
@@ -167,7 +167,7 @@ class EventsTest < Test::Unit::TestCase
     Controller.register_event_handler(:event_one) { raised_in_controller = true }
 
     application = Application.new
-    application.raise_event2(:event_one, nil)
+    application.raise_event(:event_one, nil)
 
     assert_equal true, raised_in_application
     assert_equal false, raised_in_controller
