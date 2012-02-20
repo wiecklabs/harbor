@@ -15,10 +15,10 @@ module Harbor
   class Console
 
     def self.start
-      require 'irb'
+      require "irb"
 
       begin
-        require 'irb/completion'
+        require "irb/completion"
       rescue Exception
         # No readline available, proceed anyway.
       end

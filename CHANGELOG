@@ -6,3 +6,4 @@
 * MAJOR: Harbor no longer serves public files from other applications. Copy those into your app.
 * MINOR: Request#application no longer exists
 * MAJOR: Events#raise_event2 has been renamed Events#raise_event. The previously deprecated #raise_event has been removed.
+* MAJOR: Harbor::ZippedIO has been removed.
