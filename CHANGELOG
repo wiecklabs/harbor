@@ -10,3 +10,6 @@
 * MINOR: Hoptoad Notifier has been removed.
 * MAJOR: DataMapper Sessions have been removed. Use DataObjects Session instead if you need database sessions.
 * MAJOR: Harbor::Cascade has been removed. use "run Harbor" against Harbor::Applications instead.
+* MINOR: Harbor::Mailer has been moved to Harbor::Mail::Mailer.
+* MINOR: Harbor::MailServers has been moved to Harbor::Mail::Servers.
+* MINOR: Harbor::MailFilters has been moved to Harbor::Mail::Filters.
