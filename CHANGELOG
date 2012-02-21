@@ -6,4 +6,7 @@
 * MAJOR: Harbor no longer serves public files from other applications. Copy those into your app.
 * MINOR: Request#application no longer exists
 * MAJOR: Events#raise_event2 has been renamed Events#raise_event. The previously deprecated #raise_event has been removed.
-* MAJOR: Harbor::ZippedIO has been removed.
+* MINOR: Harbor::ZippedIO has been removed.
+* MINOR: Hoptoad Notifier has been removed.
+* MAJOR: DataMapper Sessions have been removed. Use DataObjects Session instead if you need database sessions.
+* MAJOR: Harbor::Cascade has been removed. use "run Harbor" against Harbor::Applications instead.

@@ -1,7 +1,7 @@
 require "rubygems"
 require "pathname"
 require "rake"
-require "rake/rdoctask"
+require "rdoc/task"
 require "rake/testtask"
 
 def gemspec

@@ -20,11 +20,6 @@ module Harbor
       #   Harbor::Session.configure do |session|
       #     session[:store] = Harbor::Contrib::Session::Redis
       #   end
-      #
-      ## TODO: Currently there is no support for configuring non-default options for the
-      # redis connection. So this is not appropriate for production use at this point
-      # (unless you're running everything from a single server I guess).
-      ##
       class Redis < Harbor::Session::Abstract
 
         # This is part of the Session Store API

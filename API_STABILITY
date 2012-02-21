@@ -25,13 +25,6 @@ MAINTENANCE RELEASES
 Maintenance releases will be used for bug fixes and security updates. They will
 always be compatible with their minor release.
 
-If a bug or security hole is discovered, however, which requires a breaking
-change, it will be applied to all relevant existing releases with a maintenance
-release.
-
-So, for example, if a particularly nasty bug is discovered in 1.1 and it also
-effects 1.0.2, the patch will be applied and released as 1.1.1 and 1.0.3.
-
 MINOR RELEASES
 
 Minor releases will include new features, improvements for existing features,
