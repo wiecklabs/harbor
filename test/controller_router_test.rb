@@ -29,6 +29,10 @@ class ControllerRouterTest < Test::Unit::TestCase
       get "/foo/:bar/baz" do
         :baz
       end
+      
+      get do
+        :blank
+      end
           
     end
   end

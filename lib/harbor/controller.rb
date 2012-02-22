@@ -12,31 +12,31 @@ module Harbor
     attr_reader :request, :response
     
     private
-    def self.get(path, &handler)
+    def self.get(path = "", &handler)
       route("GET", path, handler)
     end
     
-    def self.post(path, &handler)
+    def self.post(path = "", &handler)
       route("POST", path, handler)
     end
     
-    def self.put(path, &handler)
+    def self.put(path = "", &handler)
       route("PUT", path, handler)
     end
         
-    def self.delete(path, &handler)
+    def self.delete(path = "", &handler)
       route("DELETE", path, handler)
     end
     
-    def self.head(path, &handler)
+    def self.head(path = "", &handler)
       route("HEAD", path, handler)
     end
     
-    def self.options(path, &handler)
+    def self.options(path = "", &handler)
       route("OPTIONS", path, handler)
     end
     
-    def self.patch(path, &handler)
+    def self.patch(path = "", &handler)
       route("PATCH", path, handler)
     end
     
