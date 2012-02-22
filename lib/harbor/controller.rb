@@ -46,12 +46,12 @@ module Harbor
       Router::instance.register(method, absolute_route_path(self, path), self, action_name)
     end
     
-    def self.method_name_for_route(http_method, route)
+    def self.method_name_for_route(http_method, path)
       
       parts = [ http_method.upcase ]
       
-      route.split(Harbor::Controller::Router::PATH_SEPARATOR).each do |part|
-        parts << (part[0] == ?: ? "__#{part}__" : part)
+      Router::Route::expand(path).each do |part|
+        parts << (part[0] == ?: ? "_#{part[1..-1]}" : part)
       end
       
       parts.join("_")

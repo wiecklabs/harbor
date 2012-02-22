@@ -35,7 +35,7 @@ module Harbor
   end
   
   def self.router
-    @router ||= Harbor::Controller::Router.new
+    @router ||= Harbor::Controller::Router::instance
   end
   
   def self.call(env)
@@ -43,8 +43,13 @@ module Harbor
     response = Response.new(request)
 
     catch(:abort_request) do
-      if handler = @cascade.detect { |application| application.match(request) }
+      if handler = cascade.detect { |application| application.match(request) }
         application.dispatch_request(handler, request, response)
+      else
+        request_path = (request.path_info[-1] == ?/) ? request.path_info[0..-2] : request.path_info
+        if action = router.match(request.request_method, request_path)
+          action.call(request, response)
+        end
       end
     end
 

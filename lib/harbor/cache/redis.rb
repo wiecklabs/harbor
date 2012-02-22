@@ -1,4 +1,8 @@
-require "redis_directory"
+begin
+  require "redis_directory"
+rescue LoadError
+  nil
+end
 
 if RUBY_PLATFORM =~ /java/
   require "java"
