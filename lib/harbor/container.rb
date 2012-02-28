@@ -119,11 +119,15 @@ module Harbor
       @services[name] = ServiceRegistration.new(name, service)
       @services[name].initializers << setup if setup
 
-      self
+      service
     end
 
     def registered?(name)
       @services.key?(name)
+    end
+    
+    def empty?
+      @services.empty?
     end
 
     private

@@ -5,30 +5,50 @@ module Harbor
   class Configuration < Harbor::Container
 
     def self.instance
-      @instance ||= instance = self::new
+      @instance ||= begin
+        instance = self::new(ENV["ENVIRONMENT"] || DEVELOPMENT)
+        instance.register("hostname", `hostname`.strip)
+        instance
+      end
     end
     
-    def initialize
-      super
+    def initialize(environment = nil)
+      super()
       @debug = false
-      register("hostname", `hostname`.strip)
-      
-      case ENV["ENVIRONMENT"]
-      when "production"
-        @environment = PRODUCTION
-      when "stage"
-        @environment = STAGE
-      when "development" 
-        @environment = DEVELOPMENT
-      when "test"
-        @environment = TEST
+      @environment = environment
+    end
+
+    def method_missing(method, *args, &block)
+      if method.to_s =~ /^(.*)\=$/
+        register($1, *args, &block)
       else
-        if ENV["ENVIRONMENT"].to_s.empty?
-          @environment = DEVELOPMENT
+        if registered?(method.to_s)
+          get(method.to_s, args[0] || {})
+        else
+          service = Harbor::Configuration.new
+          @services[$1] = ServiceRegistration.new($1, service)
+          service
         end
       end
     end
-
+    
+    def ==(other)
+      case other.class
+      when Configuration: self.id == other.id
+      when TrueClass: !@services.empty?
+      when NilClass, FalseClass: @services.empty?
+      else false
+      end
+    end
+    
+    def equal?(other)
+      self == other
+    end
+    
+    def nil?
+      @services.empty?
+    end
+    
     def environment
       @environment
     end

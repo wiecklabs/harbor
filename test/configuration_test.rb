@@ -28,11 +28,7 @@ class ConfigurationTest < Test::Unit::TestCase
   def test_default_locale_is_english
     assert_equal(config.locales.default, Harbor::Locale["en-US"])
   end
-  
-  def test_default_cache_is_present
-    assert_kind_of(Harbor::Cache, config.cache)
-  end
-  
+    
   def test_hostname_is_present
     assert_equal(`hostname`.strip, config.hostname)
   end
@@ -52,5 +48,40 @@ class ConfigurationTest < Test::Unit::TestCase
     end
     
     assert(config.reregistered)
+  end
+  
+  def test_unset_keys_return_configurations
+    assert_nothing_raised do
+      config.unset_key
+      config.unset_key.is_a? Harbor::Configuration
+    end
+  end
+  
+  def test_unset_keys_can_be_chained
+    assert_nothing_raised do
+      config.tomato.juicy = true
+    end
+  end
+  
+  def test_empty_unset_keys_equal_nil_and_false
+    assert config.nilly.nil?
+    assert config.nilly.empty?
+    assert config.nilly == nil
+    assert config.nilly == false
+    assert !config.nilly
+  end
+  
+  def test_non_empty_keys_arent_false_or_nil
+    assert config.falsify.empty?
+    
+    config.falsify.register("child", 1)
+    p config.falsify, config.falsify.empty?
+    
+    assert !config.falsify.empty?
+    assert !config.falsify.nil?
+    assert config.falsify != nil
+    assert config.falsify != false
+    assert config.falsify
+    assert config.falsify == true
   end
 end
