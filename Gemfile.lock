@@ -7,6 +7,16 @@ GIT
       minitest
       redis
 
+PATH
+  remote: .
+  specs:
+    harbor (1.0)
+      builder
+      erubis
+      logging
+      mail_builder
+      rack
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -54,12 +64,8 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  builder
   do_sqlite3
-  erubis
-  logging
-  mail_builder
-  rack
+  harbor!
   rack-test
   rake
   rdoc (>= 2.4.2)
