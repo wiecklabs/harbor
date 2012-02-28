@@ -11,9 +11,10 @@ Gem::Specification.new do |s|
   s.email = "dev@wieck.com"
   s.version = Harbor::VERSION
   s.platform = Gem::Platform::RUBY
-  s.require_path = 'lib'
-  s.files = %w(Rakefile) + Dir.glob("lib/**/*")
-  s.executables = ['harbor','apache_importer','page_view_reconciler']
+  s.files         = `git ls-files`.split("\n")
+  s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
+  s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
+  s.require_paths = ["lib"]
 
   s.add_runtime_dependency "builder"
   s.add_runtime_dependency "erubis"
