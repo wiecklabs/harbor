@@ -17,8 +17,8 @@ class ExceptionNotifierTest < Test::Unit::TestCase
 
   def setup
     @services = Harbor::Container.new
-    @services.register("mail_server", MockMailServer.new)
-    @services.register("mailer", Harbor::Mail::Mailer)
+    @services.set("mail_server", MockMailServer.new)
+    @services.set("mailer", Harbor::Mail::Mailer)
 
     Harbor::ExceptionNotifier.notification_address = "errors@site.com"
 

@@ -60,7 +60,7 @@ class HarborTestTest < Test::Unit::TestCase
 
   def test_request_env_is_not_nil
     container = Harbor::Container.new
-    container.register(:request, Harbor::Test::Request)
+    container.set(:request, Harbor::Test::Request)
 
     request = container.get(:request)
 
@@ -69,7 +69,7 @@ class HarborTestTest < Test::Unit::TestCase
 
   def test_request_env_can_be_passed_to_container
     container = Harbor::Container.new
-    container.register(:request, Harbor::Test::Request)
+    container.set(:request, Harbor::Test::Request)
 
     request = container.get(:request, :env => { "REQUEST_METHOD" => "PUT" })
 
@@ -82,8 +82,8 @@ class HarborTestTest < Test::Unit::TestCase
     Harbor::View::path.unshift Pathname(__FILE__).dirname + "views"
 
     container = Harbor::Container.new
-    container.register(:request, Harbor::Test::Request)
-    container.register(:response, Harbor::Test::Response)
+    container.set(:request, Harbor::Test::Request)
+    container.set(:response, Harbor::Test::Response)
     response = container.get(:response)
     
     response.render "index", :var => "test"
@@ -94,8 +94,8 @@ class HarborTestTest < Test::Unit::TestCase
     Harbor::View::path.unshift Pathname(__FILE__).dirname + "views"
 
     container = Harbor::Container.new
-    container.register(:request, Harbor::Test::Request)
-    container.register(:response, Harbor::Test::Response)
+    container.set(:request, Harbor::Test::Request)
+    container.set(:response, Harbor::Test::Response)
     response = container.get(:response)
     
     response.render "index", :var => "test1"
@@ -109,7 +109,7 @@ class HarborTestTest < Test::Unit::TestCase
   # SESSION
   def test_session
     container = Harbor::Container.new
-    container.register(:request, Harbor::Test::Request)
+    container.set(:request, Harbor::Test::Request)
 
     request = container.get(:request)
     assert_equal Hash.new, request.session.data
@@ -129,9 +129,9 @@ class HarborTestTest < Test::Unit::TestCase
     end
 
     container = Harbor::Container.new
-    container.register(:hello_controller, controller)
-    container.register(:request, Harbor::Test::Request)
-    container.register(:response, Harbor::Test::Response)
+    container.set(:hello_controller, controller)
+    container.set(:request, Harbor::Test::Request)
+    container.set(:response, Harbor::Test::Response)
 
     hello = container.get(:hello_controller)
     hello.hello_world("Bob")
@@ -150,9 +150,9 @@ class HarborTestTest < Test::Unit::TestCase
     end
 
     container = Harbor::Container.new
-    container.register(:hello_controller, controller)
-    container.register(:request, Harbor::Test::Request)
-    container.register(:response, Harbor::Test::Response)
+    container.set(:hello_controller, controller)
+    container.set(:request, Harbor::Test::Request)
+    container.set(:response, Harbor::Test::Response)
 
     hello = container.get(:hello_controller)
 

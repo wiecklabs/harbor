@@ -7,7 +7,7 @@ module Harbor
     def self.instance
       @instance ||= begin
         instance = self::new(ENV["ENVIRONMENT"] || DEVELOPMENT)
-        instance.register("hostname", `hostname`.strip)
+        instance.set("hostname", `hostname`.strip)
         instance
       end
     end
@@ -20,33 +20,16 @@ module Harbor
 
     def method_missing(method, *args, &block)
       if method.to_s =~ /^(.*)\=$/
-        register($1, *args, &block)
+        set($1, *args, &block)
       else
-        if registered?(method.to_s)
+        if set?(method.to_s)
           get(method.to_s, args[0] || {})
         else
           service = Harbor::Configuration.new
-          @services[$1] = ServiceRegistration.new($1, service)
+          @services[method.to_s] = ServiceRegistration.new(method.to_s, service)
           service
         end
       end
-    end
-    
-    def ==(other)
-      case other.class
-      when Configuration: self.id == other.id
-      when TrueClass: !@services.empty?
-      when NilClass, FalseClass: @services.empty?
-      else false
-      end
-    end
-    
-    def equal?(other)
-      self == other
-    end
-    
-    def nil?
-      @services.empty?
     end
     
     def environment

@@ -20,8 +20,8 @@ class EmailAppenderTestTest < Test::Unit::TestCase
     end
 
     @mail_server = mail_server.new
-    @container.register(:mail_server, @mail_server)
-    @container.register(:mailer, Harbor::Mail::Mailer)
+    @container.set(:mail_server, @mail_server)
+    @container.set(:mailer, Harbor::Mail::Mailer)
     @appender = Harbor::LogAppenders::Email.new(@container, "from@example.com", "to1@example.com", "to2@example.com")
     @appender.level = 3 # :error
   end

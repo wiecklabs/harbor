@@ -50,7 +50,7 @@ module Harbor
           @service_name = klass
         else
           @service_name = klass.to_s
-          @container.register(@service_name, klass, &initializer)
+          @container.set(@service_name, klass, &initializer)
         end
       end
 

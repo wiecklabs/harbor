@@ -153,7 +153,7 @@ class RouterTest < Test::Unit::TestCase
   end
   
   def test_using_can_use_service_names_instead_of_classes
-    @container.register("sample_controller", SampleController)
+    @container.set("sample_controller", SampleController)
   
     @router.using(@container, "sample_controller") do
       get("/") { |controller| controller.index }

@@ -14,3 +14,5 @@
 * MINOR: Harbor::MailServers has been moved to Harbor::Mail::Servers
 * MINOR: Harbor::MailFilters has been moved to Harbor::Mail::Filters
 * MINOR: Removed Harbor::Script
+* MAJOR: Harbor::Container#register and Harbor::Container#registered? have been renamed to #set and #set? respectively.
+* MINOR: Harbor::Configuration#method_missing can now be chained (and returns an empty Configuration).

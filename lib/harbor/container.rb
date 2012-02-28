@@ -9,13 +9,13 @@ module Harbor
   # Simple Example:
   # 
   #   services = Harbor::Container.new
-  #   services.register("mailer", Harbor::Mailer)
+  #   services.set("mailer", Harbor::Mailer)
   # 
   #   class Controller
   #     attr_accessor :mailer
   #   end
   # 
-  #   services.register("Controller", Controller)
+  #   services.set("Controller", Controller)
   # 
   #   services.get("Controller") # => #<Controller: @mailer=#<Mailer>>
   ##
@@ -49,7 +49,7 @@ module Harbor
     #   services.get("Controller", :request => Request.new(env), :response => Response.new(request))
     ##
     def get(name, optional_properties = {})
-      raise ArgumentError.new("#{name} is not a registered service name") unless registered?(name)
+      raise ArgumentError.new("#{name} is not a registered service name") unless set?(name)
       service_registration = @services[name]
       service = service_registration.service.is_a?(Class) ? service_registration.service.new : service_registration.service
 
@@ -81,9 +81,9 @@ module Harbor
 
     def method_missing(method, *args, &block)
       if method.to_s =~ /^(.*)\=$/
-        register($1, *args, &block)
+        set($1, *args, &block)
       else
-        if registered?(method.to_s)
+        if set?(method.to_s)
           get(method.to_s, args[0] || {})
         else
           raise NoMethodError.new("undefined method '#{method}' for #{self}", method)
@@ -94,14 +94,14 @@ module Harbor
     ##
     # Register a service by name, with an optional initializer block.
     # 
-    #   services.register("mail_server", Harbor::SendmailServer.new(:sendmail => "/sbin/sendmail"))
-    #   services.register("mailer", Harbor::Mailer)
+    #   services.set("mail_server", Harbor::SendmailServer.new(:sendmail => "/sbin/sendmail"))
+    #   services.set("mailer", Harbor::Mailer)
     #   services.get("mailer") # => #<Harbor::Mailer @from=nil @mail_server=#<SendmailServer...>>
     # 
-    #   services.register("mailer", Harbor::Mailer) { |mailer| mailer.from = "admin@example.com" }
+    #   services.set("mailer", Harbor::Mailer) { |mailer| mailer.from = "admin@example.com" }
     #   services.get("mailer") # => #<Harbor::Mailer @from="admin@example.com" @mail_server=#<SendmailServer...>>
     ##
-    def register(name, service, &setup)
+    def set(name, service, &setup)
 
       type_dependencies = dependencies(name)
       type_methods = service.is_a?(Class) ? service.instance_methods.grep(/\=$/) : []
@@ -122,8 +122,16 @@ module Harbor
       service
     end
 
-    def registered?(name)
+    def set?(name)
       @services.key?(name)
+    end
+    
+    def register(*args)
+      raise NoMethodError.new("DEPRECATED: Harbor::Container#register")
+    end
+    
+    def registered?(*args)
+      raise NoMethodError.new("DEPRECATED: Harbor::Container#registered?")
     end
     
     def empty?

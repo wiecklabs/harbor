@@ -62,26 +62,4 @@ class ConfigurationTest < Test::Unit::TestCase
       config.tomato.juicy = true
     end
   end
-  
-  def test_empty_unset_keys_equal_nil_and_false
-    assert config.nilly.nil?
-    assert config.nilly.empty?
-    assert config.nilly == nil
-    assert config.nilly == false
-    assert !config.nilly
-  end
-  
-  def test_non_empty_keys_arent_false_or_nil
-    assert config.falsify.empty?
-    
-    config.falsify.register("child", 1)
-    p config.falsify, config.falsify.empty?
-    
-    assert !config.falsify.empty?
-    assert !config.falsify.nil?
-    assert config.falsify != nil
-    assert config.falsify != false
-    assert config.falsify
-    assert config.falsify == true
-  end
 end
