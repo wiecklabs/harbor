@@ -4,13 +4,6 @@ require "rake"
 require "rdoc/task"
 require "rake/testtask"
 
-def gemspec
-  @gemspec ||= begin
-    file = File.expand_path('../harbor.gemspec', __FILE__)
-    eval(File.read(file), binding, file)
-  end
-end
-
 # Tests
 task :default => [:test]
 
@@ -49,12 +42,4 @@ task :performance do
 end
 
 # Gem
-require "rubygems/package_task"
-Gem::PackageTask.new(gemspec) do |pkg|
-  pkg.gem_spec = gemspec
-end
-
-desc "Install Harbor as a gem"
-task :install => [:repackage] do
-  sh %{gem install pkg/#{gemspec.full_name}}
-end
+require "bundler/gem_tasks"
