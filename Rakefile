@@ -1,4 +1,5 @@
 require "rubygems"
+require "bundler/setup"
 require "pathname"
 require "rake"
 require "rdoc/task"
@@ -13,26 +14,10 @@ Rake::TestTask.new do |t|
   t.verbose = true
 end
 
-# rdoc
-
-# desc "Generate RDoc documentation"
-# Rake::RDocTask.new(:rdoc) do |rdoc|
-#   rdoc.options << '--line-numbers' << '--inline-source' <<
-#     '--main' << 'README' <<
-#     '--title' << 'Harbor Documentation' <<
-#     '--charset' << 'utf-8' << "--exclude" << "lib/harbor/generator/"
-#   rdoc.rdoc_dir = "doc"
-#   rdoc.rdoc_files.include 'README'
-#   rdoc.
-#   rdoc.rdoc_files.include('lib/rack.rb')
-#   rdoc.rdoc_files.include('lib/rack/*.rb')
-#   rdoc.rdoc_files.include('lib/rack/*/*.rb')
-# end
-
 task :rdoc do
-  sh <<-EOS.strip
+  sh <<EOS.strip
 rdoc -T harbor#{" --op " + ENV["OUTPUT_DIRECTORY"] if ENV["OUTPUT_DIRECTORY"]} --line-numbers --main README --title "Harbor Documentation" --exclude "lib/harbor/generator/*" lib/harbor.rb lib/harbor README
-  EOS
+EOS
 end
 
 # Performance

@@ -125,7 +125,6 @@ Content-Disposition: form-data; name="video[transcoder][5]"\r
 on\r
 --AaB03x--\r
 \r
-
 EOF
   Rack::Request.new Rack::MockRequest.env_for("/",
                     "CONTENT_TYPE" => "multipart/form-data, boundary=AaB03x",
