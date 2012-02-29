@@ -29,6 +29,8 @@ class ApplicationTest < Test::Unit::TestCase
   end
 
   def test_call_returns_rack_response_array
+    flunk "Old, incompatible w/ propposed Harbor::Router and Harbor::Application"
+
     result = @application.call({ "PATH_INFO" => "/", "REQUEST_METHOD" => "GET" })
     assert_equal(200, result[0])
     assert result[1]['Content-Type'] = 'text/html'
@@ -37,6 +39,8 @@ class ApplicationTest < Test::Unit::TestCase
   end
 
   def test_not_found
+    flunk "Old, incompatible w/ propposed Harbor::Router and Harbor::Application"
+
     status, = @application.call({ "PATH_INFO" => "/", "REQUEST_METHOD" => "DELETE"})
     assert_equal(404, status)
 
@@ -44,6 +48,8 @@ class ApplicationTest < Test::Unit::TestCase
   end
 
   def test_exception
+    flunk "Old, incompatible w/ propposed Harbor::Router and Harbor::Application"
+
     rack_errors = StringIO.new
     status, = @application.call({
       "PATH_INFO" => "/exception",

@@ -51,13 +51,13 @@ class Time
 end
 
 class Test::Unit::TestCase
-  
+
   class MyApplication < Harbor::Application
     def self.public_path
       Pathname(__FILE__).dirname + "public"
     end
   end
-  
+
   include Rack::Test::Methods
 
   def setup_browser!
@@ -71,18 +71,18 @@ class Test::Unit::TestCase
     logger = Logging::Logger['error']
     logger.clear_appenders
     logger.add_appenders Logging::Appenders::IO.new('error', @error_log)
-    
+
     @router = Harbor::Router.new
     @container = Harbor::Container.new
     @application = MyApplication.new(@container, @router)
-    
+
     @browser = Rack::Test::Session.new(Rack::MockSession.new(@application))
   end
-  
+
   def browser
     @browser
   end
-    
+
   def capture_stderr(&block)
     $stderr = StringIO.new
 
@@ -93,6 +93,22 @@ class Test::Unit::TestCase
 
     result
   end
+
+  def assert_route_matches(http_method, path)
+    action = Harbor::Router::instance.match(http_method, path)
+    assert_not_nil(action, "Expected router match for #{http_method}:#{path}, got nil.")
+
+    yield(action) if block_given?
+  end
+
+  def assert_controller_route_matches(http_method, path, controller, method_name)
+    action = Harbor::Router::instance.match(http_method, path)
+
+    assert_kind_of(Harbor::Controller::Action, action)
+    assert_equal(controller, action.controller)
+    assert_equal(method_name, action.name)
+  end
+
 end
 
 def upload(filename)

@@ -47,6 +47,8 @@ class ExceptionNotifierTest < Test::Unit::TestCase
   end
 
   def test_uses_default_behavior_in_development
+    flunk "Old, incompatible w/ propposed Harbor::Router and Harbor::Application"
+
     app = @application.new(@services, "development")
     rack_errors = StringIO.new
     app.call({
