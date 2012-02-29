@@ -1,3 +1,5 @@
+require "java"
+
 module Harbor
   class Locale
 
@@ -5,10 +7,8 @@ module Harbor
       unless @locales
         @locales = {}
 
-        ::File.read(Pathname(__FILE__).dirname + "locales.txt").split("\n").each do |line|
-          next if line =~ /^\s*(\#.*)?$/
-          values = line.split(/\|/).map { |value| value.strip }
-          @locales[values[1]] = Locale.new(values[1], values[0], values[2])
+        java.util.Locale.available_locales.each do |locale|
+          @locales[locale.to_s] = locale
         end
       end
 
@@ -28,23 +28,13 @@ module Harbor
     end
 
     def self.default_culture_code
-      @default_culture_code ||= "en-US"
+      @default_culture_code ||= "en_US"
     end
 
     def self.default_culture_code=(value)
       @default_culture_code = value
     end
-
-    attr_reader :culture_code, :abbreviation, :description
-
-    def initialize(culture_code, abbreviation, description)
-      @culture_code = culture_code
-      @abbreviation = abbreviation
-      @description = description
-    end
-
-    def to_s
-      @description
-    end
+    
+    private_class_method :new
   end
 end
