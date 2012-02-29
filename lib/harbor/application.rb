@@ -1,4 +1,4 @@
-require "rack"
+require "jruby-rack"
 
 require "yaml"
 
