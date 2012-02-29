@@ -3,7 +3,7 @@ require Pathname(__FILE__).dirname.parent + "helper"
 
 require "harbor/file_store"
 
-class FileStoreTest < Test::Unit::TestCase
+class FileStoreTest < MiniTest::Unit::TestCase
 
   def teardown
     Harbor::FileStore.file_stores.clear
@@ -19,32 +19,32 @@ class FileStoreTest < Test::Unit::TestCase
 
   def test_put_must_be_defined
     store = Harbor::FileStore.new
-    assert_raise(NotImplementedError) { store.put("path", Class.new.new) }
+    assert_raises(NotImplementedError) { store.put("path", Class.new.new) }
   end
 
   def test_delete_must_be_defined
     store = Harbor::FileStore.new
-    assert_raise(NotImplementedError) { store.delete("path") }
+    assert_raises(NotImplementedError) { store.delete("path") }
   end
 
   def test_open_must_be_defined
     store = Harbor::FileStore.new
-    assert_raise(NotImplementedError) { store.open("path") }
+    assert_raises(NotImplementedError) { store.open("path") }
   end
 
   def test_size_must_be_defined
     store = Harbor::FileStore.new
-    assert_raise(NotImplementedError) { store.size("path") }
+    assert_raises(NotImplementedError) { store.size("path") }
   end
 
   def test_exists_must_be_defined
     store = Harbor::FileStore.new
-    assert_raise(NotImplementedError) { store.exists?("path") }
+    assert_raises(NotImplementedError) { store.exists?("path") }
   end
 
   def test_local_must_be_defined
     store = Harbor::FileStore.new
-    assert_raise(NotImplementedError) { store.local? }
+    assert_raises(NotImplementedError) { store.local? }
   end
 
 end

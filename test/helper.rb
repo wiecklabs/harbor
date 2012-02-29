@@ -2,7 +2,7 @@ require "rubygems"
 require "bundler/setup"
 
 require "pathname"
-require "test/unit"
+require "minitest/autorun"
 require "uri"
 require Pathname(__FILE__).dirname.parent + "lib/harbor"
 require "harbor/xml_view"
@@ -54,7 +54,7 @@ class Time
 
 end
 
-class Test::Unit::TestCase
+class MiniTest::Unit::TestCase
   
   class MyApplication < Harbor::Application
     def self.public_path

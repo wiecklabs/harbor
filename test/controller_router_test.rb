@@ -1,7 +1,7 @@
 require "pathname"
 require Pathname(__FILE__).dirname + "helper"
 
-class ControllerRouterTest < Test::Unit::TestCase
+class ControllerRouterTest < MiniTest::Unit::TestCase
   
   module Controllers
     class Example < Harbor::Controller

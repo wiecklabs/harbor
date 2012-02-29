@@ -1,7 +1,7 @@
 require "pathname"
 require Pathname(__FILE__).dirname + "helper"
 
-class BlockIOTest < Test::Unit::TestCase
+class BlockIOTest < MiniTest::Unit::TestCase
 
   def setup
     @original_block_size = Harbor::BlockIO::block_size
@@ -18,7 +18,7 @@ class BlockIOTest < Test::Unit::TestCase
   
   def test_reading_a_file
     io = Harbor::BlockIO.new(__FILE__)
-    assert_not_nil(io.to_s =~ /test_reading_a_file/)
+    refute_nil(io.to_s =~ /test_reading_a_file/)
   end
 
   def test_reporting_a_file_size

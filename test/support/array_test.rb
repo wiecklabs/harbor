@@ -1,7 +1,7 @@
 require File.expand_path(File.dirname(__FILE__) + "/../helper")
 
 module Support
-  class ArrayTest < Test::Unit::TestCase
+  class ArrayTest < MiniTest::Unit::TestCase
 
     def test_compress_with_empty_array
       assert_equal [[], []], [].compress

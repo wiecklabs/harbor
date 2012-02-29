@@ -1,7 +1,7 @@
 require "pathname"
 require Pathname(__FILE__).dirname + "helper"
 
-class ContainerTest < Test::Unit::TestCase
+class ContainerTest < MiniTest::Unit::TestCase
 
   def test_registered_class_instantiation
     container = Harbor::Container.new

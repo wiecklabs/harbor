@@ -2,7 +2,7 @@ require "pathname"
 require Pathname(__FILE__).dirname + "helper"
 require "ostruct"
 
-class EmailAppenderTestTest < Test::Unit::TestCase
+class EmailAppenderTestTest < MiniTest::Unit::TestCase
 
   def setup
     @container = Harbor::Container.new

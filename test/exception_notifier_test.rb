@@ -2,7 +2,7 @@ require "pathname"
 require Pathname(__FILE__).dirname + "helper"
 require "harbor/exception_notifier"
 
-class ExceptionNotifierTest < Test::Unit::TestCase
+class ExceptionNotifierTest < MiniTest::Unit::TestCase
 
   class MockMailServer < Harbor::Mail::Servers::Abstract
 

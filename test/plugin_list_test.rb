@@ -1,7 +1,7 @@
 require "pathname"
 require Pathname(__FILE__).dirname + "helper"
 
-class PluginListTest < Test::Unit::TestCase
+class PluginListTest < MiniTest::Unit::TestCase
   
   class TestPlugin < Harbor::Plugin
     attr_accessor :plugin_type

@@ -1,5 +1,5 @@
 require "pathname"
 require Pathname(__FILE__).dirname + "helper"
 
-# class ControllerTest < Test::Unit::TestCase
+# class ControllerTest < MiniTest::Unit::TestCase
 # end

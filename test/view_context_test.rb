@@ -1,12 +1,12 @@
 require "pathname"
 require Pathname(__FILE__).dirname + "helper"
 
-class ViewContextTest < Test::Unit::TestCase
+class ViewContextTest < MiniTest::Unit::TestCase
 
   def setup
     Harbor::View.path << Pathname(__FILE__).dirname + "views/view_context"
     @assertor = Class.new do
-      include Test::Unit::Assertions
+      include MiniTest::Assertions
     end.new
 
     @context = {}

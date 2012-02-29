@@ -1,7 +1,7 @@
 require "pathname"
 require Pathname(__FILE__).dirname + "helper"
 
-class TextHelperTest < Test::Unit::TestCase
+class TextHelperTest < MiniTest::Unit::TestCase
 
   class TextHelper
     include Harbor::ViewContext::Helpers::Text
@@ -57,22 +57,18 @@ class TextHelperTest < Test::Unit::TestCase
 
   def test_truncate_blank_values
     # Empty or Nil input should not error.
-    assert_nothing_raised do
-      assert_equal("", @helper.truncate(""))
-    end
+    assert_equal("", @helper.truncate(""))
 
-    assert_nothing_raised do
-      assert_equal("", @helper.truncate(nil))
-    end
+    assert_equal("", @helper.truncate(nil))
   end
 
   def test_truncate_errors
-    assert_raise(ArgumentError) do
+    assert_raises(ArgumentError) do
       # character_count should be a non-zero number.
       assert_equal("", @helper.truncate("...", 0))
     end
 
-    assert_raise(ArgumentError) do
+    assert_raises(ArgumentError) do
       # character_count should be non-nil.
       assert_equal("", @helper.truncate("", nil))
     end
@@ -120,12 +116,12 @@ class TextHelperTest < Test::Unit::TestCase
   end
 
   def test_truncate_on_words_errors
-    assert_raise(ArgumentError) do
+    assert_raises(ArgumentError) do
       # character_count should be a non-zero number.
       assert_equal("", @helper.truncate_on_words("...", 0))
     end
 
-    assert_raise(ArgumentError) do
+    assert_raises(ArgumentError) do
       # character_count should be non-nil.
       assert_equal("", @helper.truncate_on_words("", nil))
     end
@@ -133,13 +129,8 @@ class TextHelperTest < Test::Unit::TestCase
 
   def test_truncate_on_words_blank_values
     # Empty or Nil input should not error.
-    assert_nothing_raised do
-      assert_equal("", @helper.truncate_on_words(""))
-    end
-
-    assert_nothing_raised do
-      assert_equal("", @helper.truncate_on_words(nil))
-    end
+    assert_equal("", @helper.truncate_on_words(""))
+    assert_equal("", @helper.truncate_on_words(nil))
   end
 
 end

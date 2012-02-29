@@ -1,7 +1,7 @@
 require "pathname"
 require Pathname(__FILE__).dirname + "helper"
 
-class RequestTest < Test::Unit::TestCase
+class RequestTest < MiniTest::Unit::TestCase
   def test_no_method_override_for_get
     assert_equal("GET", get("/").request_method)
     assert_equal("GET", get("/?_method=DELETE").request_method)

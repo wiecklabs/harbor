@@ -1,7 +1,7 @@
 require "pathname"
 require Pathname(__FILE__).dirname + "helper"
 
-class XmlViewTestTest < Test::Unit::TestCase
+class XmlViewTestTest < MiniTest::Unit::TestCase
 
   def setup
     Harbor::View::path.unshift Pathname(__FILE__).dirname + "views"

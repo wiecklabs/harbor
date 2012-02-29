@@ -1,7 +1,7 @@
 require "pathname"
 require Pathname(__FILE__).dirname + "helper"
 
-class RouterTest < Test::Unit::TestCase
+class RouterTest < MiniTest::Unit::TestCase
 
   include Harbor
 

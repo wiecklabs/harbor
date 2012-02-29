@@ -1,7 +1,7 @@
 require "pathname"
 require Pathname(__FILE__).dirname + "helper"
 
-class LoadPathTest < Test::Unit::TestCase
+class LoadPathTest < MiniTest::Unit::TestCase
 
   # Adding non-strings (pathnames for example) breaks bundle exec.
   def test_load_path_contains_only_strings

@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/helper'
 
-class MailBuilderTest < Test::Unit::TestCase
+class MailBuilderTest < MiniTest::Unit::TestCase
 
   def test_recipient_encoding
     assert_equal('to: bernerd@wieck.com', mailer(:to => 'bernerd@wieck.com').build_headers.strip)
@@ -29,7 +29,7 @@ class MailBuilderTest < Test::Unit::TestCase
   end
 
   def test_empty_mailer_throws_no_errors
-    assert_nothing_raised { mailer.to_s }
+    assert mailer.to_s
   end
 
   def mailer(options = {})

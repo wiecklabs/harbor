@@ -2,7 +2,7 @@ require "pathname"
 require Pathname(__FILE__).dirname + "helper"
 require "harbor/mail/mailer"
 
-class MailerTest < Test::Unit::TestCase
+class MailerTest < MiniTest::Unit::TestCase
 
   def test_tokenize_urls_with_plain_text
     mailer = Harbor::Mail::Mailer.new
@@ -65,10 +65,10 @@ class MailerTest < Test::Unit::TestCase
     mailer.to = "test@notexample.com"
     mailer = filter.apply(mailer)
     
-    assert_not_equal('test@notexample.com', mailer.to)
+    refute_equal('test@notexample.com', mailer.to)
     assert_equal('test@notexample.com', mailer.get_header('X-Overridden-To'))
     assert_equal('dev@example.com', mailer.to)
-    assert_not_equal('dev@example.com', mailer.get_header('X-Overridden-To'))
+    refute_equal('dev@example.com', mailer.get_header('X-Overridden-To'))
   end
 
   def test_mail_filter_does_not_override_whitelisted_address
@@ -78,7 +78,7 @@ class MailerTest < Test::Unit::TestCase
     mailer.to = "dev@example.com"
     mailer = filter.apply(mailer)
     
-    assert_not_equal('test@example.com', mailer.to)
+    refute_equal('test@example.com', mailer.to)
     assert_equal('dev@example.com', mailer.to)
   end
 end

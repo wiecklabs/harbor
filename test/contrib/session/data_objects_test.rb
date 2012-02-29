@@ -6,7 +6,7 @@ require "harbor/contrib/session/data_objects"
 
 module Contrib
   module Session
-    class DataObjectsTest < Test::Unit::TestCase
+    class DataObjectsTest < MiniTest::Unit::TestCase
 
       CookieRequest = Class.new(Harbor::Test::Request) do
         def cookies
@@ -101,7 +101,7 @@ module Contrib
       def test_cant_assign_session_id
         session = Harbor::Session.new(Harbor::Test::Request.new)
         
-        assert_raise ArgumentError do session[:session_id] = 'whatever'; end
+        assert_raises ArgumentError do session[:session_id] = 'whatever'; end
       end
       
       def test_session_timeout

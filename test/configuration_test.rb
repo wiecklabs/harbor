@@ -1,7 +1,7 @@
 require "pathname"
 require Pathname(__FILE__).dirname + "helper"
 
-class ConfigurationTest < Test::Unit::TestCase
+class ConfigurationTest < MiniTest::Unit::TestCase
   
   # config.data.connection_string = "postgres://localhost/demo"
   # 
@@ -34,32 +34,24 @@ class ConfigurationTest < Test::Unit::TestCase
   end
   
   def test_method_missing_setter
-    assert_nothing_raised do
-      config.test_setter = true
-    end
+    config.test_setter = true
     
     assert(config.test_setter)
   end
   
   def test_can_re_register_services
-    assert_nothing_raised do
-      config.reregistered = false
-      config.reregistered = true
-    end
+    config.reregistered = false
+    config.reregistered = true
     
     assert(config.reregistered)
   end
   
   def test_unset_keys_return_configurations
-    assert_nothing_raised do
-      config.unset_key
-      config.unset_key.is_a? Harbor::Configuration
-    end
+    config.unset_key
+    assert config.unset_key.is_a? Harbor::Configuration
   end
   
   def test_unset_keys_can_be_chained
-    assert_nothing_raised do
-      config.tomato.juicy = true
-    end
+    assert config.tomato.juicy = true
   end
 end

@@ -1,7 +1,7 @@
 require "pathname"
 require Pathname(__FILE__).dirname + "helper"
 
-class ApplicationTest < Test::Unit::TestCase
+class ApplicationTest < MiniTest::Unit::TestCase
 
   def setup
     @router = Harbor::Router.new do

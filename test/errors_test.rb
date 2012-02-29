@@ -1,7 +1,7 @@
 require "pathname"
 require Pathname(__FILE__).dirname + "helper"
 
-class ErrorsTest < Test::Unit::TestCase
+class ErrorsTest < MiniTest::Unit::TestCase
 
   def test_errors
     errors = Harbor::Errors.new

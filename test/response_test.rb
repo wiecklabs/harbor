@@ -1,7 +1,7 @@
 require "pathname"
 require Pathname(__FILE__).dirname + "helper"
 
-class ResponseTest < Test::Unit::TestCase
+class ResponseTest < MiniTest::Unit::TestCase
 
   def setup
     Harbor::View::path.unshift Pathname(__FILE__).dirname + "views"
@@ -33,8 +33,8 @@ class ResponseTest < Test::Unit::TestCase
     cookie_expires_on = Time.now
     expires_gmt_string = cookie_expires_on.gmtime.strftime("%a, %d-%b-%Y %H:%M:%S GMT")
 
-    assert_raise(ArgumentError) { @response.set_cookie(nil, { :value => '1234', :domain => 'www.example.com', :path => '/test', :expires => cookie_expires_on}) }
-    assert_raise(ArgumentError) { @response.set_cookie('', { :value => '1234', :domain => 'www.example.com', :path => '/test', :expires => cookie_expires_on}) }
+    assert_raises(ArgumentError) { @response.set_cookie(nil, { :value => '1234', :domain => 'www.example.com', :path => '/test', :expires => cookie_expires_on}) }
+    assert_raises(ArgumentError) { @response.set_cookie('', { :value => '1234', :domain => 'www.example.com', :path => '/test', :expires => cookie_expires_on}) }
 
     @response.set_cookie('session_id', { :value => '', :domain => 'www.example.com', :path => '/test', :expires => cookie_expires_on})
     assert_equal("session_id=; domain=www.example.com; path=/test; expires=#{expires_gmt_string}", @response['Set-Cookie'])
@@ -430,9 +430,7 @@ class ResponseTest < Test::Unit::TestCase
       response.cache("key", time, 10) {}
 
       Time.warp(20) do
-        assert_nothing_thrown do
-          response.cache("key", time, 10) {}
-        end
+        response.cache("key", time, 10) {}
       end
     end
   end

@@ -2,7 +2,7 @@ require "pathname"
 require Pathname(__FILE__).dirname + "helper"
 require "harbor/test/test"
 
-class HarborTestTest < Test::Unit::TestCase
+class HarborTestTest < MiniTest::Unit::TestCase
 
   include Harbor::Test
 
@@ -11,9 +11,7 @@ class HarborTestTest < Test::Unit::TestCase
     response = Harbor::Test::Response.new
     response.redirect "/"
 
-    assert_nothing_raised do
-      assert_redirect(response)
-    end
+    assert_redirect(response)
   end
 
   def test_assert_redirect_failure
@@ -27,9 +25,7 @@ class HarborTestTest < Test::Unit::TestCase
   def test_assert_success_success
     response = Harbor::Test::Response.new
 
-    assert_nothing_raised do
-      assert_success(response)
-    end
+    assert_success(response)
   end
 
   def test_assert_success_failure
@@ -45,9 +41,7 @@ class HarborTestTest < Test::Unit::TestCase
     response = Harbor::Test::Response.new
     response.unauthorized
 
-    assert_nothing_raised do
-      assert_unauthorized(response)
-    end
+    assert_unauthorized(response)
   end
 
   def test_assert_unauthorized_failure

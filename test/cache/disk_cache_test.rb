@@ -2,7 +2,7 @@ require "pathname"
 require Pathname(__FILE__).dirname.parent + "helper"
 require Pathname(__FILE__).dirname + 'synchronized_cache_test_bootstrap'
 
-class DiskCacheTest < Test::Unit::TestCase
+class DiskCacheTest < MiniTest::Unit::TestCase
 
   include SynchronizedCacheTestBootstrap
 

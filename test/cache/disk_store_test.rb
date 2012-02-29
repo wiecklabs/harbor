@@ -1,7 +1,7 @@
 require "pathname"
 require Pathname(__FILE__).dirname.parent + "helper"
 
-class CacheDiskStoreTestTest < Test::Unit::TestCase
+class CacheDiskStoreTestTest < MiniTest::Unit::TestCase
 
   CACHE_CONTENT = 'Lorem ipsum dolor sit amet'
 

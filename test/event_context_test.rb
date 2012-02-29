@@ -1,7 +1,7 @@
 require "pathname"
 require Pathname(__FILE__).dirname + "helper"
 
-class EventContextTest < Test::Unit::TestCase
+class EventContextTest < MiniTest::Unit::TestCase
 
   def test_initialized_accessor_is_accessible
     context = Harbor::EventContext.new(:foo => 'bar')

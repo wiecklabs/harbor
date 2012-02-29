@@ -1,7 +1,7 @@
 require "pathname"
 require Pathname(__FILE__).dirname + "helper"
 
-class EventsTest < Test::Unit::TestCase
+class EventsTest < MiniTest::Unit::TestCase
 
   class Application
     include Harbor::Events

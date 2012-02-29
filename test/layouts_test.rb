@@ -1,7 +1,7 @@
 require "pathname"
 require Pathname(__FILE__).dirname + "helper"
 
-class LayoutsTest < Test::Unit::TestCase
+class LayoutsTest < MiniTest::Unit::TestCase
   def test_layouts_sort_properly
     layouts = Harbor::Layouts.new
 

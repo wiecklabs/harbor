@@ -1,7 +1,7 @@
 require "pathname"
 require Pathname(__FILE__).dirname.parent + "helper"
 
-class CacheItemTest < Test::Unit::TestCase
+class CacheItemTest < MiniTest::Unit::TestCase
 
   def setup
   end
@@ -21,13 +21,13 @@ class CacheItemTest < Test::Unit::TestCase
   end
 
   def test_initializer
-    assert_raise(ArgumentError) { Harbor::Cache::Item.new(nil, 1, 10, '', Time.now)}
-    assert_raise(ArgumentError) { Harbor::Cache::Item.new('key', 1, 0, '', Time.now)}
-    assert_raise(ArgumentError) { Harbor::Cache::Item.new('key', 1, 1, '', Time.now)}
-    assert_raise(ArgumentError) { Harbor::Cache::Item.new('key', 1, 10, '', nil)}
+    assert_raises(ArgumentError) { Harbor::Cache::Item.new(nil, 1, 10, '', Time.now)}
+    assert_raises(ArgumentError) { Harbor::Cache::Item.new('key', 1, 0, '', Time.now)}
+    assert_raises(ArgumentError) { Harbor::Cache::Item.new('key', 1, 1, '', Time.now)}
+    assert_raises(ArgumentError) { Harbor::Cache::Item.new('key', 1, 10, '', nil)}
 
-    assert_nothing_raised { Harbor::Cache::Item.new('key', 1, 2, '', Time.now) }
-    assert_nothing_raised { Harbor::Cache::Item.new('key', 1, 2, '', Time.now) }
+    assert Harbor::Cache::Item.new('key', 1, 2, '', Time.now)
+    assert Harbor::Cache::Item.new('key', 1, 2, '', Time.now)
   end
 
   def test_freshness

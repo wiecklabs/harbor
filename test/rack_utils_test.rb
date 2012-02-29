@@ -1,7 +1,7 @@
 require "pathname"
 require Pathname(__FILE__).dirname + "helper"
 
-class RackUtilsTest < Test::Unit::TestCase
+class RackUtilsTest < MiniTest::Unit::TestCase
 
   include Rack::Utils
 
