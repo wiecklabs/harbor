@@ -1,6 +1,3 @@
-require "fileutils"
-require "pathname"
-
 module Harbor
   class Configuration < Harbor::Container
 

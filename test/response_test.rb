@@ -18,7 +18,7 @@ class ResponseTest < Test::Unit::TestCase
   def test_content_buffer
     @response.puts "Hello World"
     @response.print("Hello World\n")
-    assert_equal((["Hello World\n"] * 2), @response.buffer.to_a)
+    assert_equal((["Hello World\n"] * 2).join, @response.buffer)
   end
 
   def test_default_status

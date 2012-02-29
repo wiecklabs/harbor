@@ -30,7 +30,7 @@ module Harbor
   			def node(tokens, index = 0, length = tokens.length - 1)
   				part = tokens[index]
           
-  				if part == @fragment || @fragment[0] == ?: then
+  				if part == @fragment || @fragment[0] == ?:.ord then
 					  return self if index == length
 				    return @match.node(tokens, index + 1, length) if @match
   				end
@@ -61,7 +61,7 @@ module Harbor
 
   				if @fragment.nil?
   				  assign! part, tokens
-  			  elsif @fragment[0] == ?:
+  			  elsif @fragment[0] == ?:.ord
   			    replace! part, tokens
     			end
 

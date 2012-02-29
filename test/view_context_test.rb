@@ -75,7 +75,7 @@ class ViewContextTest < Test::Unit::TestCase
     Harbor::View::plugins("sample/plugin") << "Plugin2"
 
     @context[:assertions] = lambda do
-      @assertor.assert_equal("Plugin1Plugin2", plugin("sample/plugin").to_s)
+      @assertor.assert_equal("Plugin1Plugin2", plugin("sample/plugin").join)
     end
 
     Harbor::View.new("assertions", @context).to_s    

@@ -107,11 +107,11 @@ module Harbor
       type_methods = service.is_a?(Class) ? service.instance_methods.grep(/\=$/) : []
 
       @services.values.each do |service_registration|
-        if service_registration.service.is_a?(Class) && service_registration.service.instance_methods.include?("#{name}=")
+        if service_registration.service.is_a?(Class) && service_registration.service.instance_methods.include?(:"#{name}=")
           dependencies(service_registration.name) << name
         end
 
-        if type_methods.include?("#{service_registration.name}=")
+        if type_methods.include?(:"#{service_registration.name}=")
           type_dependencies << service_registration.name
         end
       end

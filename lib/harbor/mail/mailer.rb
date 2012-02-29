@@ -1,7 +1,6 @@
 require "cgi"
 
-gem "mail_builder"
-require "mail_builder"
+require "harbor/mail/builder"
 
 require "harbor/mail/servers/abstract"
 require "harbor/mail/servers/sendmail"
@@ -11,7 +10,7 @@ require "harbor/mail/filters/delivery_address_filter"
 
 module Harbor
   module Mail
-    class Mailer < MailBuilder
+    class Mailer < Builder
 
       def self.layout=(layout)
         @@layout = layout

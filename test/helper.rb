@@ -14,6 +14,10 @@ require "rack/test"
 
 ENV['RACK_ENV'] = 'test'
 
+(Harbor::Mail::Builder.private_instance_methods - Object.private_instance_methods).each do |method|
+  Harbor::Mail::Builder.send(:public, method)
+end
+
 class Time
 
   class << self
@@ -121,6 +125,7 @@ Content-Disposition: form-data; name="video[transcoder][5]"\r
 on\r
 --AaB03x--\r
 \r
+
 EOF
   Rack::Request.new Rack::MockRequest.env_for("/",
                     "CONTENT_TYPE" => "multipart/form-data, boundary=AaB03x",
