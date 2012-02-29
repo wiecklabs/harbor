@@ -26,7 +26,7 @@ class ConfigurationTest < Test::Unit::TestCase
   end
   
   def test_default_locale_is_english
-    assert_equal(config.locales.default, Harbor::Locale["en-US"])
+    assert_equal(config.locales.default, Harbor::Locale["en_US"])
   end
     
   def test_hostname_is_present
