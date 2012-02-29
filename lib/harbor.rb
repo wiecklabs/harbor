@@ -27,17 +27,17 @@ module Harbor
   def self.env_path
     @env_path ||= Pathname(__FILE__).dirname.parent + "env"
   end
-  
+
   def self.register_application(application)
     cascade << application.new
   rescue ArgumentError => e
     raise ArgumentError.new("#{application}: #{e.message}")
   end
-  
+
   def self.router
-    @router ||= Harbor::Controller::Router::instance
+    @router ||= Harbor::Router::instance
   end
-  
+
   def self.call(env)
     request = Request.new(self, env)
     response = Response.new(request)
@@ -55,7 +55,7 @@ module Harbor
 
     response.to_a
   end
-  
+
   private
   def self.cascade
     @cascade ||= []
