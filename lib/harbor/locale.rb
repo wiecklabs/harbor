@@ -34,7 +34,7 @@ module Harbor
     def self.default_culture_code=(value)
       @default_culture_code = value
     end
-    
+
     private_class_method :new
   end
 end

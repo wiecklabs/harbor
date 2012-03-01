@@ -1,5 +1,5 @@
 require "rack/request"
-require Pathname(__FILE__).dirname + "session"
+require_relative "session"
 
 module Harbor
   class Request < Rack::Request
@@ -81,11 +81,11 @@ module Harbor
       @env['REQUEST_METHOD'] = self.POST['_method'].upcase if request_method_in_params?
       @env['REQUEST_METHOD']
     end
-    
+
     def health_check?
       !params["health_check"].nil?
     end
-    
+
     def params
       params = begin
         if @env["rack.input"].nil?

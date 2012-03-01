@@ -1,12 +1,12 @@
 require "cgi"
 
-require "harbor/mail/builder"
+require_relative "builder"
 
-require "harbor/mail/servers/abstract"
-require "harbor/mail/servers/sendmail"
-require "harbor/mail/servers/smtp"
-require "harbor/mail/servers/test"
-require "harbor/mail/filters/delivery_address_filter"
+require_relative "servers/abstract"
+require_relative "servers/sendmail"
+require_relative "servers/smtp"
+require_relative "servers/test"
+require_relative "filters/delivery_address_filter"
 
 module Harbor
   module Mail
@@ -42,7 +42,7 @@ module Harbor
       # a view is passed to the mailer object. This lets us use, for instance,
       # the envelope_id to track click-through's and bounces using the same
       # identifier.
-      # 
+      #
       %w(html= text=).each do |method|
         define_method(method) do |value|
           if value.is_a?(Harbor::View)
@@ -66,7 +66,7 @@ module Harbor
       # Tokenizes urls in the email body by replacing them with the mail_server_url
       # provided. The message's envelope_id and a base64 encoded version of the original
       # url are passed to the URL provided.
-      # 
+      #
       #   mailer.html = 'Please visit <a href="http://example.com">our site</a> for details.'
       #   mailer.tokenize_urls!("http://example.com/.m/%s?redirect=%s")
       #   mailer.html # => "Please visit <a href=\"http://example.com/.m/%2AF%2Ch2Gtn.ny1poJnnvvCeSMZA?redirect=aHR0cDovL2V4YW1wbGUuY29t%0A\">our site</a> for details."
