@@ -1,4 +1,4 @@
-require "erubis"
+require "tilt"
 
 require_relative "view_context"
 require_relative "layouts"
@@ -21,6 +21,10 @@ module Harbor
       end
     end
 
+    def self.engines
+      @engines ||= ['erb']
+    end
+
     def self.layouts
       @layouts ||= Harbor::Layouts.new
     end
@@ -41,16 +45,19 @@ module Harbor
     end
 
     def self.exists?(filename)
-      self.path.detect { |dir| ::File.file?(dir + filename) }
+      extension = ::File.extname(filename)
+      file_pattern = filename
+      file_pattern << ".html.{#{self.engines.join(',')}}" if extension.empty?
+      pattern = "{#{self.path.join(',')}}/**/#{file_pattern}"
+      Dir[pattern].first
     end
 
     attr_accessor :content_type, :context, :extension, :path
 
     def initialize(view, context = {})
       @content_type = "text/html"
-      @extension = ".html.erb"
       @context = context.is_a?(ViewContext) ? context : ViewContext.new(self, context)
-      @filename = ::File.extname(view) == "" ? (view + @extension) : view
+      @filename = view
     end
 
     def supports_layouts?
@@ -58,7 +65,7 @@ module Harbor
     end
 
     def content
-      @content ||= _erubis_render(@context)
+      @content ||= render(@context)
     end
 
     def to_s(layout = nil)
@@ -69,21 +76,21 @@ module Harbor
 
     private
 
-    def _erubis_render(context)
-      @path ||= self.class.exists?(@filename)
-      raise "Could not find '#{@filename}' in #{self.class.path.inspect}" unless @path
+    def render(context)
+      full_path ||= self.class.exists?(@filename)
+      raise "Could not find '#{@filename}' in #{self.class.path}" unless full_path
 
-      full_path = @path + @filename
-
-      if self.class.cache_templates?
-        (self.class.__templates[full_path] ||= Erubis::FastEruby.new(::File.read(full_path), :filename => full_path)).evaluate(context)
+      # TODO: This could probably be based on the current environment
+      template = if self.class.cache_templates?
+        self.class.tilt_cache.fetch(full_path) { Tilt.new(full_path) }
       else
-        Erubis::FastEruby.new(::File.read(full_path), :filename => full_path.to_s).evaluate(context)
+        Tilt.new(full_path.to_s)
       end
+      template.render(context)
     end
 
-    def self.__templates
-      @__templates ||= {}
+    def self.tilt_cache
+      @tilt_cache ||= Tilt::Cache.new
     end
   end
 
