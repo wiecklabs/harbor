@@ -44,7 +44,8 @@ module Harbor
       @cache_templates = true
     end
 
-    def self.exists?(filename, extension)
+    def self.exists?(filename)
+      extension = ::File.extname(filename)
       file_pattern = filename
       file_pattern << ".html.{#{self.engines.join(',')}}" if extension.empty?
       pattern = "{#{self.path.join(',')}}/**/#{file_pattern}"
@@ -57,7 +58,6 @@ module Harbor
       @content_type = "text/html"
       @context = context.is_a?(ViewContext) ? context : ViewContext.new(self, context)
       @filename = view
-      @extension = ::File.extname(view)
     end
 
     def supports_layouts?
@@ -77,7 +77,7 @@ module Harbor
     private
 
     def render(context)
-      full_path ||= self.class.exists?(@filename, @extension)
+      full_path ||= self.class.exists?(@filename)
       raise "Could not find '#{@filename}' in #{self.class.path}" unless full_path
 
       # TODO: This could probably be based on the current environment
