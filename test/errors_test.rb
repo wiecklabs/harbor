@@ -1,5 +1,4 @@
-require "pathname"
-require Pathname(__FILE__).dirname + "helper"
+require_relative "helper"
 
 class ErrorsTest < MiniTest::Unit::TestCase
 
@@ -17,10 +16,10 @@ class ErrorsTest < MiniTest::Unit::TestCase
 
     assert_equal(3, errors.size)
   end
-  
+
   def test_errors_collection_can_be_combined
     errors = Harbor::Errors.new(['Error 1']) + Harbor::Errors.new(['Error 2'])
-    
+
     assert_equal(2, errors.size)
   end
 

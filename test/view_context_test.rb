@@ -1,5 +1,4 @@
-require "pathname"
-require Pathname(__FILE__).dirname + "helper"
+require_relative 'helper'
 
 class ViewContextTest < MiniTest::Unit::TestCase
 
@@ -11,10 +10,10 @@ class ViewContextTest < MiniTest::Unit::TestCase
 
     @context = {}
     @context[:assertor] = @assertor
-    
+
     Harbor::View::plugins("sample/plugin").clear
   end
-  
+
   def teardown
     Harbor::View.path.clear
   end
@@ -33,7 +32,7 @@ class ViewContextTest < MiniTest::Unit::TestCase
     @context[:assertions] = lambda do
       if defined?(@in_render)
         @assertor.assert @in_render, "render did not pass its values to the new view"
-      else  
+      else
         render "assertions", :in_render => true
       end
     end
@@ -61,13 +60,13 @@ class ViewContextTest < MiniTest::Unit::TestCase
 
     Harbor::View.new("assertions", @context).to_s
   end
-  
+
   def test_plugin_returns_empty_array_when_no_plugins_registered
     @context[:assertions] = lambda do
       @assertor.assert_equal([], plugin("some/plugin/that/doesn/exist/#{Time.now.usec}"))
     end
 
-    Harbor::View.new("assertions", @context).to_s    
+    Harbor::View.new("assertions", @context).to_s
   end
 
   def test_plugin_returns_all_rendered_plugins
@@ -78,14 +77,14 @@ class ViewContextTest < MiniTest::Unit::TestCase
       @assertor.assert_equal("Plugin1Plugin2", plugin("sample/plugin").join)
     end
 
-    Harbor::View.new("assertions", @context).to_s    
+    Harbor::View.new("assertions", @context).to_s
   end
-  
+
   def test_plugin_returns_an_array
     Harbor::View::plugins("sample/plugin") << "Plugin1"
     Harbor::View::plugins("sample/plugin") << "Plugin2"
 
-    @context[:assertions] = lambda do      
+    @context[:assertions] = lambda do
       @assertor.assert_kind_of(Array, plugin("sample/plugin"))
     end
 

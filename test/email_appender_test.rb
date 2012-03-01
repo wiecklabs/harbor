@@ -1,5 +1,4 @@
-require "pathname"
-require Pathname(__FILE__).dirname + "helper"
+require_relative "helper"
 require "ostruct"
 
 class EmailAppenderTestTest < MiniTest::Unit::TestCase

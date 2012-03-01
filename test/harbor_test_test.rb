@@ -1,5 +1,4 @@
-require "pathname"
-require Pathname(__FILE__).dirname + "helper"
+require_relative "helper"
 require "harbor/test/test"
 
 class HarborTestTest < MiniTest::Unit::TestCase
@@ -79,7 +78,7 @@ class HarborTestTest < MiniTest::Unit::TestCase
     container.set(:request, Harbor::Test::Request)
     container.set(:response, Harbor::Test::Response)
     response = container.get(:response)
-    
+
     response.render "index", :var => "test"
     assert_equal response.render_context[:var], "test"
   end
@@ -91,10 +90,10 @@ class HarborTestTest < MiniTest::Unit::TestCase
     container.set(:request, Harbor::Test::Request)
     container.set(:response, Harbor::Test::Response)
     response = container.get(:response)
-    
+
     response.render "index", :var => "test1"
     response.render "index", :var => "test2"
-    
+
     assert_equal response.render_context[:var], "test1"
     assert_equal response.render_context(0)[:var], "test1"
     assert_equal response.render_context(1)[:var], "test2"
