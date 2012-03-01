@@ -21,6 +21,10 @@ module Harbor
       end
     end
 
+    def self.engines
+      @engines ||= ['erb']
+    end
+
     def self.layouts
       @layouts ||= Harbor::Layouts.new
     end
@@ -40,17 +44,20 @@ module Harbor
       @cache_templates = true
     end
 
-    def self.exists?(filename)
-      self.path.detect { |dir| ::File.file?(dir + filename) }
+    def self.exists?(filename, extension)
+      file_pattern = filename
+      file_pattern << ".html.{#{self.engines.join(',')}}" if extension.empty?
+      pattern = "{#{self.path.join(',')}}/**/#{file_pattern}"
+      Dir[pattern].first
     end
 
     attr_accessor :content_type, :context, :extension, :path
 
     def initialize(view, context = {})
       @content_type = "text/html"
-      @extension = ".html.erb"
       @context = context.is_a?(ViewContext) ? context : ViewContext.new(self, context)
-      @filename = ::File.extname(view) == "" ? (view + @extension) : view
+      @filename = view
+      @extension = ::File.extname(view)
     end
 
     def supports_layouts?
@@ -70,10 +77,8 @@ module Harbor
     private
 
     def render(context)
-      @path ||= self.class.exists?(@filename)
-      raise "Could not find '#{@filename}' in #{self.class.path.inspect}" unless @path
-
-      full_path = @path + @filename
+      full_path ||= self.class.exists?(@filename, @extension)
+      raise "Could not find '#{@filename}' in #{self.class.path}" unless full_path
 
       # TODO: This could probably be based on the current environment
       template = if self.class.cache_templates?

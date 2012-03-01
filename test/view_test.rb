@@ -11,6 +11,7 @@ class ViewTest < MiniTest::Unit::TestCase
 
   def teardown
     Harbor::View::path.clear
+    Harbor::View::engines.delete "str"
   end
 
   def test_render_with_variables
@@ -45,4 +46,13 @@ class ViewTest < MiniTest::Unit::TestCase
     assert_equal(Harbor::View::plugins("/some/plugin/key"), Harbor::View::plugins("some/plugin/key"))
   end
 
+  def test_supports_engine_precedence
+    Harbor::View::engines.unshift "str"
+    view = Harbor::View.new("index", :text => "test")
+    assert_equal("test from str", view.to_s.strip)
+  end
+
+  def test_supports_javascript_templates
+    flunk
+  end
 end
