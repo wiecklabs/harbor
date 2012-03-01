@@ -2,22 +2,22 @@ require "jruby-rack"
 
 require "yaml"
 
-require Pathname(__FILE__).dirname + "events"
-require Pathname(__FILE__).dirname + "request"
-require Pathname(__FILE__).dirname + "response"
-require Pathname(__FILE__).dirname + "block_io"
-require Pathname(__FILE__).dirname + "events" + "dispatch_request_event"
-require Pathname(__FILE__).dirname + "events" + "not_found_event"
-require Pathname(__FILE__).dirname + "events" + "application_exception_event"
-require Pathname(__FILE__).dirname + "events" + "session_created_event_context"
-require Pathname(__FILE__).dirname + "event_context"
-require Pathname(__FILE__).dirname + "messages"
+require_relative "events"
+require_relative "request"
+require_relative "response"
+require_relative "block_io"
+require_relative "events/dispatch_request_event"
+require_relative "events/not_found_event"
+require_relative "events/application_exception_event"
+require_relative "events/session_created_event_context"
+require_relative "event_context"
+require_relative "messages"
 
 module Harbor
   class Application
 
     include Harbor::Events
-    
+
     ##
     # Routes are defined in this method. Note that Harbor does not define any default routes,
     # so you must reimplement this method in your application.
@@ -38,7 +38,7 @@ module Harbor
     # Request entry point called by Rack. It creates a request and response
     # object based on the incoming request environment, checks for public
     # files, and dispatches the request.
-    # 
+    #
     # It returns a rack response hash.
     ##
     def call(env)
@@ -52,7 +52,7 @@ module Harbor
 
       response.to_a
     end
-    
+
     def match(request)
       router.match(request)
     end
@@ -66,7 +66,7 @@ module Harbor
       raise_event(:request_dispatch, dispatch_request_event)
 
       return handle_not_found(request, response) unless handler
-      
+
       handler.call(request, response)
     rescue StandardError, LoadError, SyntaxError => e
       handle_exception(e, request, response)
@@ -77,13 +77,13 @@ module Harbor
     ##
     # Method used to nicely handle cases where no routes or public files
     # match the incoming request.
-    # 
+    #
     # By default, it will render "The page you requested could not be found".
-    # 
+    #
     # To use a custom 404 message, create a view "exceptions/404.html.erb", and
     # optionally create a view "layouts/exception.html.erb" to style it.
     ##
-    def handle_not_found(request, response)      
+    def handle_not_found(request, response)
       response.flush
       response.status = 404
 
@@ -100,11 +100,11 @@ module Harbor
 
     ##
     # Method used to nicely handle uncaught exceptions.
-    # 
+    #
     # Logs full error messages to the configured 'error' logger.
-    # 
+    #
     # By default, it will render "We're sorry, but something went wrong."
-    # 
+    #
     # To use a custom 500 message, create a view "exceptions/500.html.erb", and
     # optionally create a view "layouts/exception.html.erb" to style it.
     ##

@@ -1,12 +1,11 @@
-require "pathname"
-require Pathname(__FILE__).dirname + "helper"
+require_relative 'helper'
 
 class XmlViewTestTest < MiniTest::Unit::TestCase
 
   def setup
     Harbor::View::path.unshift Pathname(__FILE__).dirname + "views"
   end
-  
+
   def teardown
     Harbor::View::path.clear
   end

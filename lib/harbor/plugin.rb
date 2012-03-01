@@ -1,4 +1,4 @@
-require "harbor/accessor_injector"
+require_relative "accessor_injector"
 
 module Harbor
   class Plugin
@@ -47,6 +47,6 @@ module Harbor
       end
 
     end
-    
+
   end
 end

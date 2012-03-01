@@ -1,11 +1,8 @@
-require "rubygems"
-
-gem "erubis"
 require "erubis"
 
-require Pathname(__FILE__).dirname + "view_context"
-require Pathname(__FILE__).dirname + "layouts"
-require Pathname(__FILE__).dirname + "plugin_list"
+require_relative "view_context"
+require_relative "layouts"
+require_relative "plugin_list"
 
 module Harbor
   class View
@@ -59,7 +56,7 @@ module Harbor
     def supports_layouts?
       true
     end
-    
+
     def content
       @content ||= _erubis_render(@context)
     end

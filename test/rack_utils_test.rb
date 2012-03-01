@@ -1,5 +1,4 @@
-require "pathname"
-require Pathname(__FILE__).dirname + "helper"
+require_relative 'helper'
 
 class RackUtilsTest < MiniTest::Unit::TestCase
 
@@ -8,7 +7,7 @@ class RackUtilsTest < MiniTest::Unit::TestCase
   def test_parsing_a_normal_query
     assert_equal({ "user" => "John" }, parse_nested_query("user=John"))
   end
- 
+
   def test_parsing_a_blank_query
     assert_equal({}, parse_nested_query(""))
   end

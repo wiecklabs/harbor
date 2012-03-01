@@ -1,5 +1,4 @@
-require "pathname"
-require Pathname(__FILE__).dirname + "helper"
+require_relative "helper"
 require "harbor/exception_notifier"
 
 class ExceptionNotifierTest < MiniTest::Unit::TestCase

@@ -1,4 +1,3 @@
-gem "builder"
 require "builder"
 
 module Harbor
@@ -47,7 +46,7 @@ module Harbor
     def to_s(layout = nil)
       path = View::path.detect { |dir| ::File.exists?(dir + @filename) }
       raise "Could not find '#{@filename}' in #{View::path.inspect}" if path.nil?
-      
+
       eval_code = ::File.read(path + @filename)
       XMLViewContext.new(self, @context).instance_eval(eval_code, __FILE__, __LINE__)
 

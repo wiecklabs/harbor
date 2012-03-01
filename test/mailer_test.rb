@@ -1,5 +1,4 @@
-require "pathname"
-require Pathname(__FILE__).dirname + "helper"
+require_relative 'helper'
 require "harbor/mail/mailer"
 
 class MailerTest < MiniTest::Unit::TestCase
@@ -33,7 +32,7 @@ class MailerTest < MiniTest::Unit::TestCase
 
   ##
   # Fixing an issue reported by Drew where links would be blown away.
-  # 
+  #
   def test_tokenize_urls_with_link_as_name
     mailer = Harbor::Mail::Mailer.new
     destination_url = "http://test.com"
@@ -47,7 +46,7 @@ class MailerTest < MiniTest::Unit::TestCase
 
   ##
   # Fixing an issue where the regex wasn't robust enough to handle tags after the link tag
-  # 
+  #
   def test_tokenize_urls_with_tags_after_anchor_tag
     mailer = Harbor::Mail::Mailer.new
     url = "http://test.com"
@@ -60,11 +59,11 @@ class MailerTest < MiniTest::Unit::TestCase
   def test_mail_filter_overrides_recipient_address_and_sets_overridden_header
     filter = Harbor::Mail::Filters::DeliveryAddressFilter.new("dev@example.com", /@example.com/)
     mailer = Harbor::Mail::Mailer.new
-    
+
     mailer.text = "asdf"
     mailer.to = "test@notexample.com"
     mailer = filter.apply(mailer)
-    
+
     refute_equal('test@notexample.com', mailer.to)
     assert_equal('test@notexample.com', mailer.get_header('X-Overridden-To'))
     assert_equal('dev@example.com', mailer.to)
@@ -74,10 +73,10 @@ class MailerTest < MiniTest::Unit::TestCase
   def test_mail_filter_does_not_override_whitelisted_address
     filter = Harbor::Mail::Filters::DeliveryAddressFilter.new("test@example.com", /@example.com/)
     mailer = Harbor::Mail::Mailer.new
-    
+
     mailer.to = "dev@example.com"
     mailer = filter.apply(mailer)
-    
+
     refute_equal('test@example.com', mailer.to)
     assert_equal('dev@example.com', mailer.to)
   end

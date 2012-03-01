@@ -1,5 +1,5 @@
 require "set"
-require "harbor/router/route"
+require_relative "router/route"
 
 module Harbor
   class Router

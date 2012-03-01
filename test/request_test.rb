@@ -1,5 +1,4 @@
-require "pathname"
-require Pathname(__FILE__).dirname + "helper"
+require_relative 'helper'
 
 class RequestTest < MiniTest::Unit::TestCase
   def test_no_method_override_for_get

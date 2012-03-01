@@ -1,6 +1,6 @@
-require "harbor/router"
-require "harbor/controller/action"
-require "harbor/controller/normalized_path"
+require_relative "router"
+require_relative "controller/action"
+require_relative "controller/normalized_path"
 
 module Harbor
   class Controller

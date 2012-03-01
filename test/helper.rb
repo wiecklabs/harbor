@@ -8,7 +8,7 @@ require Pathname(__FILE__).dirname.parent + "lib/harbor"
 require "harbor/xml_view"
 require "harbor/mail/mailer"
 require "harbor/logging"
-require "lib/harbor/logging/appenders/email"
+require "harbor/logging/appenders/email"
 require "harbor/test/test"
 require "rack/test"
 
