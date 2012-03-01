@@ -1,7 +1,4 @@
-require "rubygems"
-
-gem "erubis"
-require "erubis"
+require "tilt"
 
 require Pathname(__FILE__).dirname + "view_context"
 require Pathname(__FILE__).dirname + "layouts"
@@ -59,9 +56,9 @@ module Harbor
     def supports_layouts?
       true
     end
-    
+
     def content
-      @content ||= _erubis_render(@context)
+      @content ||= render(@context)
     end
 
     def to_s(layout = nil)
@@ -72,21 +69,23 @@ module Harbor
 
     private
 
-    def _erubis_render(context)
+    def render(context)
       @path ||= self.class.exists?(@filename)
       raise "Could not find '#{@filename}' in #{self.class.path.inspect}" unless @path
 
       full_path = @path + @filename
 
-      if self.class.cache_templates?
-        (self.class.__templates[full_path] ||= Erubis::FastEruby.new(::File.read(full_path), :filename => full_path)).evaluate(context)
+      # TODO: This could probably be based on the current environment
+      template = if self.class.cache_templates?
+        self.class.tilt_cache.fetch(full_path) { Tilt.new(full_path) }
       else
-        Erubis::FastEruby.new(::File.read(full_path), :filename => full_path.to_s).evaluate(context)
+        Tilt.new(full_path.to_s)
       end
+      template.render(context)
     end
 
-    def self.__templates
-      @__templates ||= {}
+    def self.tilt_cache
+      @tilt_cache ||= Tilt::Cache.new
     end
   end
 
