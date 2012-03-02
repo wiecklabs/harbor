@@ -45,6 +45,8 @@ module Harbor
     end
 
     def self.exists?(filename)
+      return false if self.path.none?
+
       extension = ::File.extname(filename)
       file_pattern = filename
       file_pattern << ".html.{#{self.engines.join(',')}}" if extension.empty?

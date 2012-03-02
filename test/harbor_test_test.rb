@@ -5,6 +5,14 @@ class HarborTestTest < MiniTest::Unit::TestCase
 
   include Harbor::Test
 
+  def setup
+    Harbor::View::path.unshift Pathname(__FILE__).dirname + "views"
+  end
+
+  def teardown
+    Harbor::View::path.clear
+  end
+
   # ASSERTIONS
   def test_assert_redirect_success
     response = Harbor::Test::Response.new
