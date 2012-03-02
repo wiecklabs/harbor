@@ -1,64 +1,56 @@
-require 'sequel'
 require 'i18n'
 
 module Harbor
   module Contrib
     module Translations
-      class Translation < Sequel::Model
-        
-        def initialize(redis)
-          @redis = redis
-          @kvstore = I18n::Backend::KeyValue.new(redis)
-          I18n.backend = I18n::Backend::Chain.new(@kvstore, I18n.backend)
+      class Translation
+
+        attr_accessor :backends
+
+        def initialize(*backends)
+          @backends = backends
         end
         
+        # Returns 'key' if the translation is not present in any of the backends.
         def get(locale, key)
           return nil if !key || !locale
 
-          if keys = @redis.smembers(scope)
-            if keys
-              if translation = keys[key]
-                return translation[2]
-              else
-                return cache(key, locale, scope)
-              end
+          # Populate backends which do not have the translation from a backend that does
+          unfilled = @backends.select do |backend|
+            !exists_in_backend?(backend, locale, key)
+          end
+          filled = @backends.detect do |backend|
+            exists_in_backend?(backend, locale, key)
+          end
+
+          if (unfilled && filled)
+            value = filled.translate(locale, key)
+            unfilled.each do |backend|
+              backend.store_translations(locale, {key => value}, :escape => false)
             end
+
+            value
           else
-            # The scope wasn't found in redis, so look at the database...
-            return cache(key, locale, scope)
+            key
           end
-
-          key
         end
 
-        # Adds translation if it does not already exist
         def put(locale, key, value)
-          if (!self.exists_in_redis?(locale, key))
-            self.put!(locale, key, value)
+          backends.each do |backend|
+            backend.store_translations(locale, {key => value}, :escape => false)
           end
         end
 
-        # Adds translation, regardless of existence
-        def put!(locale, key, value)
-          I18n.backend.store_translations(locale, {key => value}, :escape => false)
-        end
+        def exists?(locale, key)
+          backends.each do |backend|
+            return true if exists_in_backend?(backend, locale, key)
+          end
 
-        def exists_in_redis?(locale, key)
-          puts "-=-=-=> #{@kvstore.translate(locale, key)}"
-          @kvstore.translate(locale, key)
-        end
-
-        def exists_in_db?(locale, key)
           false
         end
 
-        
-        private
-        def cache(locale, key)
-          # Not found in redis...
-          translations = all(:scope => scope)
-          # Put 'em in redis...
-          # return the actual entry
+        def exists_in_backend?(backend, locale, key)
+          backend.send(:lookup, locale, key).present?
         end
         
       end
