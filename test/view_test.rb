@@ -65,4 +65,9 @@ class ViewTest < MiniTest::Unit::TestCase
   def test_supports_javascript_templates
     flunk
   end
+
+  def test_supports_erubis_templates
+    view = Harbor::View.new("erubis_test.erubis")
+    assert_equal("Erubis::FastEruby", view.to_s)
+  end
 end

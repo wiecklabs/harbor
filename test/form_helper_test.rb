@@ -1,5 +1,4 @@
 require_relative "helper"
-require "erubis"
 
 class FormHelperTest < MiniTest::Unit::TestCase
   def test_basic_form

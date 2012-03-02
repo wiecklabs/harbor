@@ -1,3 +1,4 @@
+require "erubis"
 require "tilt"
 
 require_relative "view_context"
@@ -86,7 +87,7 @@ module Harbor
       template = if self.class.cache_templates?
         self.class.tilt_cache.fetch(full_path) { Tilt.new(full_path) }
       else
-        Tilt.new(full_path.to_s)
+        Tilt.new(full_path.to_s, :engine_class => Erubis::FastEruby)
       end
       template.render(context)
     end
