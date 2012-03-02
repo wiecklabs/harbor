@@ -8,8 +8,18 @@ module Contrib
 
     class TranslationTest < SequelTestCase
 
+      LOCALE_EN = 'en_us'
+      LOCALE_ES = 'es_mx'
+      KEY = 'subscribe'
+      VAL = 'you should subscribe'
+
+      attr_accessor :backend
+
       def setup
-        @translation = Harbor::Contrib::Translations::Translation.new(Redis.new)
+        redis = Redis.new
+        redis.flushdb
+        backend = I18n::Backend::KeyValue.new(redis)
+        @translation = Harbor::Contrib::Translations::Translation.new(backend)
       end
 
       def test_get_all_nils
@@ -17,20 +27,76 @@ module Contrib
         assert(!result)
       end
 
-      def test_non_existant_key
-        locale = 'en_us'
-        key = 'subscribe'
-        assert(!@translation.exists_in_redis?(locale, key))
-        assert(!@translation.exists_in_db?(locale, key))
-
-        result = @translation.get(locale, key)
-        assert_equal('subscribe', result)
+      def test_exists?
+        assert(!@translation.exists?(LOCALE_EN, KEY))
       end
 
-      def test_put
-        assert(!@translation.exists_in_redis?('en_us', 'subscribe'))
-        @translation.put!('en_us', 'subscribe')
-        assert(@translation.exists_in_redis?('en_us', 'subscribe'))
+      def test_non_existant_key
+        assert(!@translation.exists?(LOCALE_EN, KEY))
+        result = @translation.get(LOCALE_EN, KEY)
+        assert_equal(KEY, result)
+      end
+
+      def test_put_and_get
+        assert(!@translation.exists?(LOCALE_EN, KEY))
+        @translation.put(LOCALE_EN, KEY, VAL)
+        assert(@translation.exists?(LOCALE_EN, KEY))
+        assert_equal(VAL, @translation.get(LOCALE_EN, KEY))
+      end
+
+      def test_18n
+        val_en = 'read a book'
+        val_es = 'leer un libro'
+        @translation.put(LOCALE_EN, KEY, val_en)
+        @translation.put(LOCALE_ES, KEY, val_es)
+        assert_equal(val_en, @translation.get(LOCALE_EN, KEY))
+        assert_equal(val_es, @translation.get(LOCALE_ES, KEY))
+      end
+
+      def test_simple_backend
+        @backend = I18n::Backend::Simple.new
+        @translation = Harbor::Contrib::Translations::Translation.new(backend)
+
+        assert(!@translation.exists?(LOCALE_EN, KEY))
+        @translation.put(LOCALE_EN, KEY, VAL)
+        assert(@translation.exists?(LOCALE_EN, KEY))
+        assert_equal(VAL, @translation.get(LOCALE_EN, KEY))
+      end
+
+      def test_redis_and_simple_backends
+        redis = Redis.new
+        redis.flushdb
+        be1 = I18n::Backend::KeyValue.new(redis)
+        be2 = I18n::Backend::Simple.new
+        @translation = Harbor::Contrib::Translations::Translation.new(be1, be2)
+
+        assert(!@translation.exists?(LOCALE_EN, KEY))
+        assert(!@translation.exists_in_backend?(be1, LOCALE_EN, KEY))
+        assert(!@translation.exists_in_backend?(be2, LOCALE_EN, KEY))
+
+        @translation.put(LOCALE_EN, KEY, VAL)
+
+        assert(@translation.exists?(LOCALE_EN, KEY))
+        assert(@translation.exists_in_backend?(be1, LOCALE_EN, KEY))
+        assert(@translation.exists_in_backend?(be2, LOCALE_EN, KEY))
+        assert_equal(VAL, @translation.get(LOCALE_EN, KEY))
+      end
+
+      def test_passthrough_gets
+        redis = Redis.new
+        redis.flushdb
+        be1 = I18n::Backend::KeyValue.new(redis)
+        be2 = I18n::Backend::Simple.new
+        be2.store_translations(LOCALE_EN, {KEY, VAL}, :ecape => false)
+        @translation = Harbor::Contrib::Translations::Translation.new(be1, be2)
+
+        assert(!@translation.exists_in_backend?(be1, LOCALE_EN, KEY))
+        assert(@translation.exists_in_backend?(be2, LOCALE_EN, KEY))
+
+        @translation.get(LOCALE_EN, KEY)
+
+        assert(@translation.exists_in_backend?(be1, LOCALE_EN, KEY))
+        assert(@translation.exists_in_backend?(be2, LOCALE_EN, KEY))
       end
 
     end
