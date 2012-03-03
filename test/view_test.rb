@@ -11,6 +11,19 @@ class ViewTest < MiniTest::Unit::TestCase
     Harbor::View::engines.delete "str"
   end
 
+  def test_view_exists
+    assert Harbor::View.exists?("index.html.erb")
+  end
+
+  def test_view_doesnt_exist
+    refute Harbor::View.exists?("somefilethatdoesnotexist")
+  end
+
+  def test_empty_view_path
+    Harbor::View::path.clear
+    refute Harbor::View.exists?("index.html.erb")
+  end
+
   def test_render_with_variables
     view = Harbor::View.new("index", :text => "test")
     assert_equal("test", view.to_s)
@@ -51,5 +64,10 @@ class ViewTest < MiniTest::Unit::TestCase
 
   def test_supports_javascript_templates
     flunk
+  end
+
+  def test_supports_erubis_templates
+    view = Harbor::View.new("erubis_test.erubis")
+    assert_equal("Erubis::FastEruby", view.to_s)
   end
 end

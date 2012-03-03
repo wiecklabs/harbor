@@ -1,3 +1,4 @@
+require "erubis"
 require "tilt"
 
 require_relative "view_context"
@@ -45,6 +46,8 @@ module Harbor
     end
 
     def self.exists?(filename)
+      return false if self.path.none?
+
       extension = ::File.extname(filename)
       file_pattern = filename
       file_pattern << ".html.{#{self.engines.join(',')}}" if extension.empty?
@@ -84,7 +87,7 @@ module Harbor
       template = if self.class.cache_templates?
         self.class.tilt_cache.fetch(full_path) { Tilt.new(full_path) }
       else
-        Tilt.new(full_path.to_s)
+        Tilt.new(full_path.to_s, :engine_class => Erubis::FastEruby)
       end
       template.render(context)
     end
