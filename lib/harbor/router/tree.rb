@@ -5,15 +5,16 @@ module Harbor
 
       def insert(tokens, action)
         if tokens.empty?
-          @home = RouteNode.new(action)
+          @home = Route.new(action)
         else
-          (@root ||= RouteNode.new).insert(action, tokens)
+          (@root ||= Route.new).insert(action, tokens)
         end
         self
       end
 
       def search(tokens)
-        tokens.empty?? home : root.search(tokens)
+        result = tokens.empty?? home : root.search(tokens)
+				result.action if result
       end
     end
   end

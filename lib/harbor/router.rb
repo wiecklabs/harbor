@@ -1,8 +1,7 @@
 require "set"
-require_relative "router/route"
 require_relative "router/tree"
-require_relative "router/route_node"
-require_relative "router/wildcard_route_node"
+require_relative "router/route"
+require_relative "router/wildcard_route"
 
 module Harbor
   class Router
@@ -27,13 +26,13 @@ module Harbor
 
     def clear!
       @methods = {
-        "GET"     => Route.new,
-        "POST"    => Route.new,
-        "PUT"     => Route.new,
-        "DELETE"  => Route.new,
-        "HEAD"    => Route.new,
-        "OPTIONS" => Route.new,
-        "PATCH"   => Route.new
+        "GET"     => Tree.new,
+        "POST"    => Tree.new,
+        "PUT"     => Tree.new,
+        "DELETE"  => Tree.new,
+        "HEAD"    => Tree.new,
+        "OPTIONS" => Tree.new,
+        "PATCH"   => Tree.new
       }
     end
   end

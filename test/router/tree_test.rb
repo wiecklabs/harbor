@@ -1,6 +1,4 @@
-require "minitest/autorun"
-require_relative '../../lib/harbor/router/tree'
-require_relative '../../lib/harbor/router/route_node'
+require_relative "../helper"
 
 module Router
   class TreeTest < MiniTest::Unit::TestCase
@@ -30,17 +28,15 @@ module Router
 
     def test_delegates_search_to_root_node
       mock = MiniTest::Mock.new
-      mock.expect :search, nil, [['posts']]
+      mock.expect :search, Harbor::Router::Route.new(:search_result), [['posts']]
       @tree.instance_variable_set(:@root, mock)
 
-      @tree.search(['posts'])
-
-      assert mock.verify
+      assert_equal :search_result, @tree.search(['posts'])
     end
 
     def test_matches_home_route_if_registered
       @tree.insert([], :home)
-      assert_equal :home, @tree.search([]).action
+      assert_equal :home, @tree.search([])
     end
   end
 end
