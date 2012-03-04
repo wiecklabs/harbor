@@ -16,6 +16,7 @@ module Harbor
         @action = action
       end
 
+      # Basic ternary search tree algorithm
       def search(tokens, current_token = nil)
         current_token = tokens.shift unless current_token
 
@@ -91,7 +92,27 @@ module Harbor
       end
 
       def replace!(tokens, index)
-        self.extend WildcardRouteNode
+        extend WildcardRouteNode
+        find_or_create_node!(tokens, index)
+      end
+
+      def assign_from(other_node)
+        @left     = other_node.left
+        @right    = other_node.right
+        @action   = other_node.action
+        @tokens   = other_node.tokens
+        @fragment = other_node.fragment
+        @match    = other_node.match
+        self
+      end
+
+      def reset!
+        @left     = nil
+        @right    = nil
+        @match    = nil
+        @action   = nil
+        @tokens   = nil
+        @fragment = nil
       end
     end
   end
