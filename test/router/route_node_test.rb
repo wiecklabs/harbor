@@ -1,6 +1,4 @@
-require "minitest/autorun"
-require_relative '../../lib/harbor/router/route_node'
-require_relative '../../lib/harbor/router/wildcard_route_node'
+require_relative "../helper"
 
 module Router
   class RouteNodeTest < MiniTest::Unit::TestCase
