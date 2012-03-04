@@ -1,5 +1,6 @@
 require "minitest/autorun"
 require_relative '../../lib/harbor/router/route_node'
+require_relative '../../lib/harbor/router/wildcard_route_node'
 
 module Router
   class RouteNodeTest < MiniTest::Unit::TestCase
@@ -69,20 +70,58 @@ module Router
       assert_equal ['posts', ':id'], @node.match.tokens
     end
 
-    def test_non_wildcard_routes_take_precedence_over_wildcard_ones
-      @node.insert(:id, ['posts', ':id'])
-      @node.insert(:recent, ['posts', 'recent'])
-
-      assert_equal :recent, @node.match.action
-      assert_equal :id, @node.match.left.action
-    end
-
     def test_handles_nested_wildcard_tokens
       id_node = @node.insert(:id, ['posts', ':id'])
       comment_node = @node.insert(:comment, ['posts', ':post_id', ':comment_id'])
 
       assert_equal id_node, @node.match
       assert_equal comment_node, @node.match.match
+    end
+
+    def test_handles_non_wildcard_routes_precedence_by_extending_existing_wildcard_route
+      @node.insert(:id, ['posts', ':id'])
+      @node.insert(:recent, ['posts', 'recent'])
+
+      assert_kind_of Harbor::Router::WildcardRouteNode, @node.match
+      refute_nil @node.match.trees
+    end
+
+    def test_handles_non_wildcard_routes_precedence_by_extending_existing_simple_route
+      @node.insert(:recent, ['posts', 'recent'])
+      @node.insert(:id, ['posts', ':id'])
+
+      assert_kind_of Harbor::Router::WildcardRouteNode, @node.match
+      refute_nil @node.match.trees
+    end
+
+    def test_finds_node_on_the_right
+      @node.insert(:recent, ['tags'])
+      @node.insert(:videos, ['videos'])
+
+      assert_equal :videos, @node.search(['videos']).action
+    end
+
+    def test_finds_node_on_the_left
+      @node.insert(:categories, ['categories'])
+      @node.insert(:authors, ['authors'])
+
+      assert_equal :authors, @node.search(['authors']).action
+    end
+
+    def test_finds_matching_nodes
+      @node.insert(:categories, ['posts', 'categories'])
+
+      assert_equal :categories, @node.search(['posts', 'categories']).action
+    end
+
+    def test_finds_wildcard_matching_nodes
+      @node.insert(:show, ['posts', ':id'])
+
+      assert_equal :show, @node.search(['posts', '1234']).action
+    end
+
+    def test_return_nil_if_cant_be_found
+      assert_nil @node.search(['whaaat?'])
     end
   end
 end

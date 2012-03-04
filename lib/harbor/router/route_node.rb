@@ -1,5 +1,7 @@
 module Harbor
   class Router
+    # A Ternary Search tree implementation that can be extended to a n-way search
+    # tree at insertion time. It also uses the AVL algorithm for self balancing (TODO)
     class RouteNode
       MATCH             = 0
       RIGHT             = 1
@@ -9,6 +11,22 @@ module Harbor
 
       attr_reader :fragment, :tokens
       attr_accessor :action, :left, :right, :match
+
+      def initialize(action = nil)
+        @action = action
+      end
+
+      def search(tokens, current_token = nil)
+        current_token = tokens.shift unless current_token
+
+        if current_token == @fragment || wildcard?
+          return self if tokens.empty?
+          return @match.search(tokens) if @match
+        end
+
+        return @left.search(tokens, current_token) if @left && current_token < @fragment
+        return @right.search(tokens, current_token) if @right
+      end
 
       # Inserts or updates tree nodes
       #
@@ -24,12 +42,10 @@ module Harbor
       # @return [ RouteNode ] The node for a set of tokens
       def find_or_create_node!(tokens, index = 0)
         part = tokens[index]
-        last_token = index == tokens.size - 1
 
-        # Non wildcard routes should take precedence
-        if wildcard? && part[0] != WILDCARD_CHAR
-          replace!(tokens, index)
-        end
+        # This will extend the current node with "complex wildcard behavior" /
+        # n-way search tree
+        return replace!(tokens, index) if should_replace?(part)
 
         if @fragment.nil?
           @fragment = fragment_from_token(part)
@@ -37,14 +53,17 @@ module Harbor
           @tokens = tokens[0..index]
         end
 
+        is_last_token = index == tokens.size - 1
+
         # Ensures "virtual" wildcard nodes have the right tokens set so
         # that we can map parameters back to route handlers
-        @tokens = tokens[0..index] if wildcard? && last_token
+        @tokens = tokens[0..index] if wildcard? && is_last_token
 
+        # Wildcard routes should always be considered matches
         direction = wildcard?? MATCH : part <=> @fragment
 
         # If it is a match and there are no more fragments to consume
-        return self if last_token && direction == MATCH
+        return self if is_last_token && direction == MATCH
 
         case direction
         when MATCH
@@ -64,12 +83,15 @@ module Harbor
         (token[0] == WILDCARD_CHAR) ? WILDCARD_FRAGMENT : token
       end
 
+      def should_replace?(part)
+        # On a wildcard node with an incoming "non-wildcard" node
+        (wildcard? && part[0] != WILDCARD_CHAR) ||
+        # ... or on a "non-wildcard" node with an incoming wildcard node
+        !@fragment.nil? && !wildcard? && part[0] == WILDCARD_CHAR
+      end
+
       def replace!(tokens, index)
-        @left = RouteNode.new.insert(@action, @tokens)
-        @right = nil
-        @action = nil
-        @tokens = nil
-        @fragment = nil
+        self.extend WildcardRouteNode
       end
     end
   end
