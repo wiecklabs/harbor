@@ -18,12 +18,6 @@ module Router
       assert_equal :new_home, @tree.home.action
     end
 
-    def test_creates_root_node_for_single_token
-      @tree.insert(['posts'], :action)
-      assert_equal :action, @tree.root.action
-      assert_equal 'posts', @tree.root.fragment
-    end
-
     def test_delegates_insertion_to_root_node
       mock = MiniTest::Mock.new
       mock.expect :insert, nil, [:action, ['posts']]
