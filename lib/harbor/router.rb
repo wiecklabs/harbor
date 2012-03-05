@@ -1,4 +1,3 @@
-require "set"
 require_relative "router/tree"
 require_relative "router/route"
 require_relative "router/wildcard_route"
