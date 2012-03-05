@@ -1,6 +1,4 @@
 begin
-  # TODO: Should we warn the user when trying to render a erb template
-  #       without erubis installed?
   require "erubis"
 rescue LoadError; end
 
