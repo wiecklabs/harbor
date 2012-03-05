@@ -28,7 +28,6 @@ module Harbor
           end
         end
       end
-
     end
   end
 end

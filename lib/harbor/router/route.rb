@@ -1,104 +1,124 @@
 module Harbor
   class Router
+    # A Ternary Search tree implementation that can be extended to a n-way search
+    # tree at insertion time. It also uses the AVL algorithm for self balancing (TODO)
     class Route
-
-      PATH_SEPARATOR = /[\/;]/
+      MATCH             = 0
+      RIGHT             = 1
+      LEFT              = -1
+      WILDCARD_FRAGMENT = '*'
+      WILDCARD_CHAR     = ?:
+      PATH_SEPARATOR    = /[\/;]/
 
       def self.expand(path)
         path.split(PATH_SEPARATOR).reject { |part| part.empty? }
       end
 
-      attr_reader :fragment, :action, :tokens, :match, :left , :right
+      attr_reader :fragment, :tokens
+      attr_accessor :action, :left, :right, :match
 
-      def initialize(fragment = nil, action = nil)
-        @fragment 	= fragment
-        @action     = action
-        @tokens     = nil
-
-        @match      = nil
-        @left       = nil
-        @right      = nil
+      def initialize(action = nil)
+        @action = action
       end
 
-      def node(tokens, index = 0, length = tokens.length - 1)
-        part = tokens[index]
+      # Basic ternary search tree algorithm
+      def search(tokens, current_token = nil)
+        current_token = tokens.shift unless current_token
 
-        if part == @fragment || @fragment[0] == ?: then
-          return self if index == length
-          return @match.node(tokens, index + 1, length) if @match
+        if current_token == @fragment || wildcard?
+          return self if tokens.empty?
+          return @match.search(tokens) if @match
         end
 
-        return @left.node(tokens, index, length) if @left && part < @fragment
-        return @right.node(tokens, index, length) if @right
+        return @left.search(tokens, current_token) if @left && current_token < @fragment
+        return @right.search(tokens, current_token) if @right
       end
 
+      # Inserts or updates tree nodes
       #
-      # Searches for path and returns action if matched.
-      # Returns nil if not found.
-      #
-      def search(path)
-        if result = node(path)
-          result.action
-        else
-          nil
-        end
+      # @return [ Route ] The inserted node
+      def insert(action, tokens)
+        (leaf = find_or_create_node!(tokens)).action = action
+        leaf
       end
 
+      # Finds or create nodes for provided tokens, if a node is not found for a
+      # token, a "blank" node will be created and the search will continue.
       #
-      # Inserts str and value into tree.
-      #
-      # str must implement []
-      #
-      def insert(tokens, action = nil, index = 0, length = tokens.size)
+      # @return [ Route ] The node for a set of tokens
+      def find_or_create_node!(tokens, index = 0)
         part = tokens[index]
+
+        # This will extend the current node with "complex wildcard behavior" /
+        # n-way search tree
+        return replace!(tokens, index) if should_replace?(part)
 
         if @fragment.nil?
-          assign! part, tokens
-        elsif @fragment[0] == ?:
-          replace! part, tokens, index
+          @fragment = fragment_from_token(part)
+          # Removes "extra" tokens
+          @tokens = tokens[0..index]
         end
 
-        if part == @fragment then
-          # We have a match!
+        is_last_token = index == tokens.size - 1
 
-          if (index + 1) < length then
-            # There are more fragments to consume.
-            (@match ||= Route.new).insert(tokens, action, index + 1, length)
-          else
-            # There are no more fragments to consume.
-            @action = action
-          end
-        elsif part < @fragment then
-          (@left ||= Route.new).insert(tokens, action, index, length)
-        else
-          (@right ||= Route.new).insert(tokens, action, index, length)
+        # Ensures "virtual" wildcard nodes have the right tokens set so
+        # that we can map parameters back to route handlers
+        @tokens = tokens[0..index] if wildcard? && is_last_token
+
+        # Wildcard routes should always be considered matches
+        direction = wildcard?? MATCH : part <=> @fragment
+
+        # If it is a match and there are no more fragments to consume
+        return self if is_last_token && direction == MATCH
+
+        case direction
+        when MATCH
+          (@match ||= Route.new).find_or_create_node!(tokens, index + 1)
+        when LEFT
+          (@left ||= Route.new).find_or_create_node!(tokens, index)
+        when RIGHT
+          (@right ||= Route.new).find_or_create_node!(tokens, index)
         end
       end
 
-      def assign!(fragment, tokens)
-        @fragment = fragment
-        @tokens = tokens
+      def wildcard?
+        @fragment == WILDCARD_FRAGMENT
       end
 
-      def replace!(fragment, tokens, index, length = tokens.size)
-        @fragment = fragment
-
-        # Valid routes are always to the left of Wildcards.
-        @left = Route.new
-        @left.insert(@tokens, @action, index, @tokens.size)
-
-        @tokens = tokens
-
-        # If the Wildcard had additional fragments below it...
-        if @match
-          @left.match.insert(@left.tokens, @match.action, index + 1, @left.tokens.size)
-        end
-
-        # Continue insertion of the new path.
-        @match = Route.new
-        @match.insert(tokens, action, index + 1, length)
+      def fragment_from_token(token)
+        (token[0] == WILDCARD_CHAR) ? WILDCARD_FRAGMENT : token
       end
 
-    end # Route
-  end # Router
-end # Harbor
+      def should_replace?(part)
+        # On a wildcard node with an incoming "non-wildcard" node
+        (wildcard? && part[0] != WILDCARD_CHAR) ||
+        # ... or on a "non-wildcard" node with an incoming wildcard node
+        !@fragment.nil? && !wildcard? && part[0] == WILDCARD_CHAR
+      end
+
+      def replace!(tokens, index)
+        extend WildcardRoute
+        find_or_create_node!(tokens, index)
+      end
+
+      def assign_from(other_node)
+        @left     = other_node.left
+        @right    = other_node.right
+        @action   = other_node.action
+        @tokens   = other_node.tokens
+        @fragment = other_node.fragment
+        @match    = other_node.match
+        self
+      end
+
+      def reset!
+        @left     = nil
+        @right    = nil
+        @match    = nil
+        @action   = nil
+        @tokens   = nil
+        @fragment = nil
+      end
+    end
+  end
+end
