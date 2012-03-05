@@ -11,6 +11,7 @@ class RouterTest < MiniTest::Unit::TestCase
     @router.register("GET", "/parts/:id", lambda { :get_part_by_id })
     @router.register("GET", "/parts/:id/orders", lambda { :get_orders_for_part })
     @router.register("GET", "/parts/:part_id/orders/:order_id", lambda { :get_order_for_part })
+    @router.register("GET", "/parts/discontinued", lambda { :get_discontinued_parts })
   end
 
   def test_index_route
@@ -41,4 +42,9 @@ class RouterTest < MiniTest::Unit::TestCase
     end
   end
 
+  def test_non_wildcard_route_takes_precedence_over_wildcard_ones
+    assert_route_matches("GET", "parts/discontinued") do |action|
+      assert_equal(:get_discontinued_parts, action.call)
+    end
+  end
 end
