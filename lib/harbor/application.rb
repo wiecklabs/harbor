@@ -30,22 +30,6 @@ module Harbor
     include Harbor::Events
 
     ##
-    # Routes are defined in this method. Note that Harbor does not define any default routes,
-    # so you must reimplement this method in your application.
-    ##
-    def self.routes(services)
-      raise NotImplementedError.new("Your application must redefine #{self}::routes.")
-    end
-
-    def router
-      @router ||= self.class::routes(config)
-    end
-
-    def initialize(services = nil, *args)
-      @router = args.first if args.first.is_a?(Harbor::Router)
-    end
-
-    ##
     # Request entry point called by Rack. It creates a request and response
     # object based on the incoming request environment, checks for public
     # files, and dispatches the request.
@@ -53,6 +37,8 @@ module Harbor
     # It returns a rack response hash.
     ##
     def call(env)
+      warn "DEPRECATED: Application#call"
+      
       request = Request.new(self, env)
       response = Response.new(request)
 
@@ -64,15 +50,13 @@ module Harbor
       response.to_a
     end
 
-    def match(request)
-      router.match(request)
-    end
-
     ##
     # Request dispatch function, which handles 404's, exceptions,
     # and logs requests.
     ##
     def dispatch_request(handler, request, response)
+      warn "DEPRECATED: Application#call"
+      
       dispatch_request_event = Events::DispatchRequestEvent.new(request, response)
       raise_event(:request_dispatch, dispatch_request_event)
 
@@ -95,6 +79,8 @@ module Harbor
     # optionally create a view "layouts/exception.html.erb" to style it.
     ##
     def handle_not_found(request, response)
+      warn "DEPRECATED: Application#call"
+      
       response.flush
       response.status = 404
 
@@ -120,6 +106,8 @@ module Harbor
     # optionally create a view "layouts/exception.html.erb" to style it.
     ##
     def handle_exception(exception, request, response)
+      warn "DEPRECATED: Application#call"
+      
       response.flush
       response.status = 500
 
@@ -140,17 +128,5 @@ module Harbor
 
       nil
     end
-
-    def find_public_file(file) #:nodoc:
-      public_path = Pathname(self.class.respond_to?(:public_path) ? self.class.public_path : "public")
-      path = public_path + file
-
-      path.file? ? path : nil
-    end
-
-    def default_layout
-      warn "Harbor::Application#default_layout has been deprecated. See Harbor::Layouts."
-    end
-
   end
 end
