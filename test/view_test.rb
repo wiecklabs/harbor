@@ -66,7 +66,7 @@ class ViewTest < MiniTest::Unit::TestCase
     flunk
   end
 
-  def test_supports_erubis_templates
+  def test_loads_erubis_if_available
     view = Harbor::View.new("erubis_test.erubis")
     assert_equal("Erubis::FastEruby", view.to_s)
   end
