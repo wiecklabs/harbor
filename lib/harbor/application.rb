@@ -1,4 +1,8 @@
-require "jruby-rack"
+if RUBY_PLATFORM =~ /java/
+  require "jruby-rack"
+else
+  require 'rack'
+end
 
 require "yaml"
 

@@ -9,3 +9,4 @@ vendor
 *.swp
 *.swo
 .rvmrc
+Gemfile.lock

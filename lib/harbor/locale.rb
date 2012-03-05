@@ -1,20 +1,11 @@
-require "java"
+if RUBY_PLATFORM =~ /java/
+  require_relative "locale/java"
+else
+  require_relative "locale/mri"
+end
 
 module Harbor
   class Locale
-
-    def self.[](culture_code)
-      unless @locales
-        @locales = {}
-
-        java.util.Locale.available_locales.each do |locale|
-          @locales[locale.to_s] = locale
-        end
-      end
-
-      @locales[culture_code]
-    end
-
     def self.active_locales
       @active_locales ||= []
     end
@@ -34,7 +25,5 @@ module Harbor
     def self.default_culture_code=(value)
       @default_culture_code = value
     end
-
-    private_class_method :new
   end
 end
