@@ -22,6 +22,11 @@ module Contrib
         @translation = Harbor::Contrib::Translations::Translation.new(backend)
       end
 
+      def teardown
+        redis = Redis.new
+        redis.flushdb
+      end
+
       def test_get_all_nils
         result = @translation.get(nil, nil)
         assert(!result)
@@ -97,6 +102,16 @@ module Contrib
 
         assert(@translation.exists_in_backend?(be1, LOCALE_EN, KEY))
         assert(@translation.exists_in_backend?(be2, LOCALE_EN, KEY))
+      end
+
+      def test_add_backend
+        size = @translation.backends.size
+        Harbor::Contrib::Translations::Translation.add_backend(nil)
+        assert_equal(size, @translation.backends.size)
+
+        be = I18n::Backend::Simple.new
+        Harbor::Contrib::Translations::Translation.add_backend(be)
+        assert_equal(size + 1, @translation.backends.size)
       end
 
     end

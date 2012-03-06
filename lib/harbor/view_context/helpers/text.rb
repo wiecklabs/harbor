@@ -16,10 +16,6 @@ module Harbor::ViewContext::Helpers::Text
     Rack::Utils::escape_html(value.to_s.empty? ? default : value)
   end
 
-  def t(key, locale)
-    key
-  end
-
   ##
   # Truncates an object to the specified character count, appending the specified
   # trailing text. The character count includes the length of the trailer. HTML entities
