@@ -5,21 +5,29 @@ module Harbor
     module Translations
       class Translation
 
-        attr_accessor :backends
+        @@backends = []
 
         def initialize(*backends)
-          @backends = backends
+          @@backends = backends
         end
-        
+
+        def self.add_backend(backend)
+          @@backends.push backend if backend
+        end
+
+        def backends
+          @@backends ||= {}
+        end
+
         # Returns 'key' if the translation is not present in any of the backends.
         def get(locale, key)
-          return nil if !key || !locale
+          return nil if !locale || !key
 
           # Populate backends which do not have the translation from a backend that does
-          unfilled = @backends.select do |backend|
+          unfilled = backends.select do |backend|
             !exists_in_backend?(backend, locale, key)
           end
-          filled = @backends.detect do |backend|
+          filled = backends.detect do |backend|
             exists_in_backend?(backend, locale, key)
           end
 

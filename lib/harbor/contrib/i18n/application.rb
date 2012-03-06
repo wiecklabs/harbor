@@ -7,7 +7,6 @@ module Harbor
       class Application < Harbor::Application
         include Newsroom::Authorization
 
-
         def self.cascade
           [self]
         end
@@ -19,6 +18,10 @@ module Harbor
         def self.initialize!
           Newsroom.initialize!
           Harbor::View::path.unshift(Pathname(__FILE__).dirname + 'views')
+
+          redis = Redis.new
+          backend = I18n::Backend::KeyValue.new(redis)
+          Harbor::Contrib::Translations::Translation.add_backend(backend)
         end
 
         def self.routes(services)

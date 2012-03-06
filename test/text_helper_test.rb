@@ -142,14 +142,4 @@ class TextHelperTest < Test::Unit::TestCase
     end
   end
 
-  # i18n
-
-  def test_non_existant_translation
-    assert_equal("subscribe", @helper.t("subscribe", "en_us"))
-  end
-
-  def test_simple_translation
-    assert_equal("subscribir", @helper.t("subscribe", "es_mx"))
-  end
-
 end
