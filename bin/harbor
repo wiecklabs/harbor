@@ -1,7 +1,4 @@
-#!/usr/bin/env ruby
-require "rubygems"
-require File.expand_path(File.dirname(__FILE__) + '/../lib/harbor/generator')
+#!/usr/bin/env jruby
 
-command = ARGV.shift
-
-Harbor::Generator.run('harbor', command, ARGV)
+command = ARGV[1] || "server"
+load File.join(File.dirname(__FILE__), "commands/harbor-#{ARGV[0]}")
