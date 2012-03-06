@@ -1,0 +1,8 @@
+<h1>Welcome to Harbor <span>You're all set to go!</span></h1>
+
+<p class="feature">Congratulations on creating your first Harbor application! Now you should be ready to dive in, and here are some resources to get you started:</p>
+
+<h2>What Am I?</h2>
+<p>I'm just a default view to help you get started. I live in <kbd>views/home/index.html.erb</kbd>, and am being rendered by <kbd>controllers/home.rb</kbd>. And, of course, you're being routed here by <kbd>lib/<$= app_name =$>.rb</kbd>.</p>
+
+<p>That's pretty much the default setup for Harbor applications, but if you poke around you'll see you can set me up however you like.</p>
