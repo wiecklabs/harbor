@@ -1,6 +1,0 @@
-1.0
-===
-
-FEATURES
-* Should be able run just: "run Harbor" to start a cascade.
-* Harbor should have a Controller class
