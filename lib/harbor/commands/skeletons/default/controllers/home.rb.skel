@@ -1,4 +1,4 @@
-class ##>=app_class<##
+class <$= app_class $>
   class Home < Harbor::Controller
 
     index do

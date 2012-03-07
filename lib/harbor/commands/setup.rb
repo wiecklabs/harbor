@@ -50,7 +50,7 @@ module Harbor
             log("create", relative_path)
 
             ::File.open(relative_path, 'w') do |file|
-              file.puts Erubis::FastEruby.new(::File.read(item), :pattern => '<$= =$>').evaluate(self)
+              file.puts Erubis::FastEruby.new(::File.read(item), :pattern => '<$= $>').evaluate(self)
             end
           else
             log("create", relative_path)
@@ -61,6 +61,10 @@ module Harbor
         end
       end
 
+      def app_name
+        @app_name
+      end
+      
       # CamelCaseVersion of the supplied @app_name
       #
       #   'sample' => 'Sample'
