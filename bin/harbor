@@ -1,4 +1,12 @@
 #!/usr/bin/env jruby
 
-command = ARGV[1] || "server"
-load File.join(File.dirname(__FILE__), "commands/harbor-#{ARGV[0]}")
+command = ARGV.shift
+load "harbor/commands/#{command}"
+
+case command
+when "setup":   Harbor::Commands::Setup.new(ARGV[1], ARGV[2] || ARGV[1]).run
+when "console": IRB.start
+else
+  puts "harbor #{command} not found!"
+  exit 1
+end

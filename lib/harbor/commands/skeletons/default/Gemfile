@@ -1,6 +1,6 @@
 source "http://rubygems.org"
 
-gem "harbor"
+gem "harbor", ">= 1.0"
 
 platforms :ruby do
   gem "rack"

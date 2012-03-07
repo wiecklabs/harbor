@@ -1,19 +1,19 @@
 lib = File.expand_path('../lib/', __FILE__)
 $:.unshift lib unless $:.include?(lib)
 
-require 'harbor/version'
+require "harbor/version"
 
 Gem::Specification.new do |s|
-  s.name = 'harbor'
-  s.summary = s.description = 'Harbor Framework'
-  s.author = "Wieck Media"
-  s.homepage = "http://wiecklabs.com"
-  s.email = "dev@wieck.com"
+  s.name = "harbor"
+  s.summary = s.description = "Harbor Framework"
+  s.author = "Sam Smoot"
+  s.homepage = "https://github.com/sam/harbor"
+  s.email = "ssmoot@gmail.com"
   s.version = Harbor::VERSION
   s.platform = Gem::Platform::RUBY
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
-  s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
+  s.executables   = "harbor"
   s.require_paths = ["lib"]
 
   s.add_development_dependency "rack-test"
