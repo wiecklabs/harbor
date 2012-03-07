@@ -1,10 +1,11 @@
 require_relative "router"
 require_relative "controller/action"
 require_relative "controller/normalized_path"
+require_relative "router/helpers"
 
 module Harbor
   class Controller
-
+    
     def initialize(request, response)
       @request = request
       @response = response
@@ -12,34 +13,8 @@ module Harbor
 
     attr_reader :request, :response
 
-    private
-    def self.get(path = "", &handler)
-      route("GET", path, handler)
-    end
-
-    def self.post(path = "", &handler)
-      route("POST", path, handler)
-    end
-
-    def self.put(path = "", &handler)
-      route("PUT", path, handler)
-    end
-
-    def self.delete(path = "", &handler)
-      route("DELETE", path, handler)
-    end
-
-    def self.head(path = "", &handler)
-      route("HEAD", path, handler)
-    end
-
-    def self.options(path = "", &handler)
-      route("OPTIONS", path, handler)
-    end
-
-    def self.patch(path = "", &handler)
-      route("PATCH", path, handler)
-    end
+    private    
+    extend Router::Helpers
 
     def self.route(method, path, handler)
       action_name = method_name_for_route(method, path)
