@@ -6,12 +6,12 @@ class RouterTest < MiniTest::Unit::TestCase
     @router = Harbor::Router::instance
     @router.clear!
 
-    @router.register("GET", "/", lambda { :index })
-    @router.register("GET", "/parts", lambda { :parts_index })
-    @router.register("GET", "/parts/:id", lambda { :get_part_by_id })
-    @router.register("GET", "/parts/:id/orders", lambda { :get_orders_for_part })
-    @router.register("GET", "/parts/:part_id/orders/:order_id", lambda { :get_order_for_part })
-    @router.register("GET", "/parts/discontinued", lambda { :get_discontinued_parts })
+    @router.register("GET", "/", -> { :index })
+    @router.register("GET", "/parts", -> { :parts_index })
+    @router.register("GET", "/parts/:id", -> { :get_part_by_id })
+    @router.register("GET", "/parts/:id/orders", -> { :get_orders_for_part })
+    @router.register("GET", "/parts/:part_id/orders/:order_id", -> { :get_order_for_part })
+    @router.register("GET", "/parts/discontinued", -> { :get_discontinued_parts })
   end
 
   def test_index_route
