@@ -25,7 +25,7 @@ module Harbor
       def run
         unless ::File.directory?(@root)
           log("create", @root)
-          `mkdir #{@root}`
+          FileUtils.mkdir_p(@root)
         end
 
         skeleton_path = Pathname(__FILE__).dirname + 'skeletons/default'
@@ -37,20 +37,20 @@ module Harbor
           relative_path = ::File.join(@root, item.relative_path_from(skeleton_path))
           relative_path.sub!("appname", @app_name)
 
-          if ::File.exists?(relative_path.sub(/\.skel$/, ""))
-            log("exists", relative_path.sub(/\.skel$/, ""))
+          if ::File.exists?(relative_path)
+            log("exists", relative_path)
             next
           end
 
           if item.directory?
             log("create", relative_path)
 
-            `mkdir #{relative_path}`
-          elsif relative_path.sub!(/\.skel$/, "")
-            log("create", relative_path)
+            FileUtils.mkdir_p(relative_path)
+          elsif ::File.read(item)['<@']
+            log("build", relative_path)
 
             ::File.open(relative_path, 'w') do |file|
-              file.puts Erubis::FastEruby.new(::File.read(item), :pattern => '<$= $>').evaluate(self)
+              file.puts Erubis::Eruby.new(::File.read(item), :pattern => '<@ @>').evaluate(self)
             end
           else
             log("create", relative_path)
@@ -64,7 +64,7 @@ module Harbor
       def app_name
         @app_name
       end
-      
+
       # CamelCaseVersion of the supplied @app_name
       #
       #   'sample' => 'Sample'

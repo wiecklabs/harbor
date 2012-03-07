@@ -1,1 +1,1 @@
-require "lib/##>=app_name<##"
+require "lib/<@= app_name @>"
