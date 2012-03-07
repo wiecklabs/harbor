@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
 
-require "lib/##>=app_name<##"
+require "lib/boot.rb"
 
 run Harbor.new
