@@ -1,10 +1,7 @@
 source "http://rubygems.org"
 
 gem "harbor", ">= 1.0"
-
-platforms :ruby do
-  gem "rack"
-end
+gem "rack"
 
 platforms :jruby do
   gem "jruby-rack"

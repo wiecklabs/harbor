@@ -1,11 +1,11 @@
 #!/usr/bin/env jruby
 
-command = ARGV.shift
-load "harbor/commands/#{command}"
+command = ARGV[0]
+require_relative "../lib/harbor/commands/#{command}.rb"
 
 case command
-when "setup":   Harbor::Commands::Setup.new(ARGV[1], ARGV[2] || ARGV[1]).run
-when "console": IRB.start
+when "setup"   then Harbor::Commands::Setup.new(ARGV[1], ARGV[2] || ARGV[1]).run
+when "console" then IRB.start
 else
   puts "harbor #{command} not found!"
   exit 1
