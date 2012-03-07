@@ -63,7 +63,7 @@ class ViewTest < MiniTest::Unit::TestCase
   end
 
   def test_supports_javascript_templates
-    flunk
+    skip
   end
 
   def test_loads_erubis_if_available
