@@ -18,33 +18,38 @@ class HarborSetupCommandTest < MiniTest::Unit::TestCase
     Harbor::Commands::Setup.new('petshop', app_root, nil).run
 
     expected_generated_file_and_directory_list = %w{
-      test/tmp/petshop/controllers
-      test/tmp/petshop/controllers/home.rb
-      test/tmp/petshop/env
-      test/tmp/petshop/env/default.rb
-      test/tmp/petshop/env/stage.rb
-      test/tmp/petshop/env/production.rb
-      test/tmp/petshop/forms
-      test/tmp/petshop/forms/example.rb
-      test/tmp/petshop/helpers
-      test/tmp/petshop/helpers/general.rb
-      test/tmp/petshop/lib
-      test/tmp/petshop/lib/boot.rb
-      test/tmp/petshop/lib/petshop.rb
-      test/tmp/petshop/log
-      test/tmp/petshop/models
-      test/tmp/petshop/public
-      test/tmp/petshop/public/images
-      test/tmp/petshop/public/javascripts
-      test/tmp/petshop/public/stylesheets
-      test/tmp/petshop/views
-      test/tmp/petshop/views/layouts
-      test/tmp/petshop/views/layouts/application.html.erb
-      test/tmp/petshop/views/home
-      test/tmp/petshop/views/home/index.html.erb
+      petshop/Gemfile
+      petshop/config.ru
+      petshop/controllers
+      petshop/controllers/home.rb
+      petshop/env
+      petshop/env/default.rb
+      petshop/env/development.rb
+      petshop/env/stage.rb
+      petshop/env/testing.rb
+      petshop/env/production.rb
+      petshop/forms
+      petshop/forms/example.rb
+      petshop/helpers
+      petshop/helpers/general.rb
+      petshop/lib
+      petshop/lib/boot.rb
+      petshop/lib/petshop.rb
+      petshop/log
+      petshop/models
+      petshop/public
+      petshop/public/images
+      petshop/public/javascripts
+      petshop/public/stylesheets
+      petshop/views
+      petshop/views/layouts
+      petshop/views/layouts/application.html.erb
+      petshop/views/home
+      petshop/views/home/index.html.erb
     }
-
-    assert_equal expected_generated_file_and_directory_list.sort, Dir["#{app_root}/**/*"].sort
+    
+    skeleton = Dir["#{app_root}/**/*"].map { |path| path.sub "#{@temp_path}/", "" } 
+    assert_equal expected_generated_file_and_directory_list.sort, skeleton.sort
   end
 
 end
