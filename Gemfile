@@ -17,5 +17,7 @@ gem "redis_directory", :git => "git@github.com:sam/redis_directory.git"
 gem "sequel"
 gem "uuid"
 gem "ZenTest"
+gem "autotest-fsevent"
 
 gem "active_support"
+

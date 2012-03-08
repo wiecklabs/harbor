@@ -15,5 +15,9 @@ class TranslationHelperTest < Test::Unit::TestCase
     assert_equal(nil, @helper.t(nil, nil))
   end
 
+  def test_something_new
+    assert(true)
+  end
+
 end
 
