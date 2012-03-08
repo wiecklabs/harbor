@@ -68,7 +68,7 @@ class HarborSetupCommandTest < MiniTest::Unit::TestCase
       class Petshop
         class Home < Harbor::Controller
 
-          index do
+          get "/" do
             response.render "home/index"
           end
 
