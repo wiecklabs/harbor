@@ -28,7 +28,7 @@ module Harbor
     @router ||= Harbor::Router::instance
   end
 
-  def call(env)
+  def self.call(env)
     request = Request.new(self, env)
     response = Response.new(request)
 
