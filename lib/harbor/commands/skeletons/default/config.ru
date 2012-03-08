@@ -2,4 +2,4 @@
 
 require "lib/boot.rb"
 
-run Harbor.new
+run Harbor

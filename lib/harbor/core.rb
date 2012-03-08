@@ -24,23 +24,6 @@ require "harbor/cache"
 require "harbor/controller"
 
 module Harbor
-  
-  def initialize
-    @applications = self.class.applications.map do |application|
-      begin
-        application.new
-      rescue ArgumentError => e
-        raise ArgumentError.new("#{application}: #{e.message}")
-      end
-    end
-  end
-  
-  attr_reader :applications
-  
-  def self.register_application(application)
-    applications << application
-  end
-
   def self.router
     @router ||= Harbor::Router::instance
   end
