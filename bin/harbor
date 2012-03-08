@@ -1,12 +1,16 @@
 #!/usr/bin/env jruby
 
-command = ARGV[0]
-require_relative "../lib/harbor/commands/#{command}.rb"
+require "rubygems"
 
-case command
-when "setup"   then Harbor::Commands::Setup.new(ARGV[1], ARGV[2] || ARGV[1]).run
-when "console" then IRB.start
+case ARGV[0]
+when "setup"   then
+  require "harbor/commands/setup"
+  Harbor::Commands::Setup.new(ARGV[1], ARGV[2] || ARGV[1]).run
+when "console" then
+  ENV["ENVIRONMENT"] = ARGV[1] if ARGV[1]
+  require "harbor/commands/console"
+  IRB.start
 else
-  puts "harbor #{command} not found!"
+  puts "harbor #{ARGV[0]} not found!"
   exit 1
 end
