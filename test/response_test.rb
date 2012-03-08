@@ -17,7 +17,7 @@ class ResponseTest < MiniTest::Unit::TestCase
   def test_content_buffer
     @response.puts "Hello World"
     @response.print("Hello World\n")
-    assert_equal((["Hello World\n"] * 2).join, @response.buffer)
+    assert_equal((["Hello World\n"] * 2).join, @response.buffer_string)
   end
 
   def test_default_status
@@ -78,12 +78,12 @@ class ResponseTest < MiniTest::Unit::TestCase
 
   def test_render_html_view_with_layout
     @response.render "index", :text => "test"
-    assert_equal("LAYOUT\ntest\n", @response.buffer)
+    assert_equal("LAYOUT\ntest\n", @response.buffer_string)
   end
 
   def test_render_xml
     @response.render Harbor::XMLView.new("list")
-    assert_equal("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<site>\n  <name>Bob</name>\n</site>\n", @response.buffer)
+    assert_equal("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<site>\n  <name>Bob</name>\n</site>\n", @response.buffer_string)
     assert_equal("text/xml", @response.content_type)
   end
 
@@ -92,7 +92,7 @@ class ResponseTest < MiniTest::Unit::TestCase
       @response.render "index", :text => "test", :layout => ["layouts/application", "layouts/other"]
     end
 
-    assert_equal("LAYOUT\ntest\n", @response.buffer)
+    assert_equal("LAYOUT\ntest\n", @response.buffer_string)
     assert_match /deprecated/, result
   end
 
@@ -286,7 +286,7 @@ class ResponseTest < MiniTest::Unit::TestCase
 
     @response.send_files("test.zip", [file])
 
-    assert_equal "#{Zlib.crc32(File.read(file.path)).to_s(16)} #{File.size(file.path)} #{File.expand_path(file.path)} #{file.name}\n", @response.buffer
+    assert_equal "#{Zlib.crc32(File.read(file.path)).to_s(16)} #{File.size(file.path)} #{File.expand_path(file.path)} #{file.name}\n", @response.buffer_string
 
     assert_equal "zip", @response.headers["X-Archive-Files"]
     assert_equal "attachment; filename=\"test.zip\"", @response.headers["Content-Disposition"]
@@ -306,7 +306,7 @@ class ResponseTest < MiniTest::Unit::TestCase
 
     @response.send_files("test.zip", [file])
 
-    assert_equal "#{Zlib.crc32(File.read(file.path)).to_s(16)} #{File.size(file.path)} #{File.expand_path(file.path)} #{file.name}\n", @response.buffer
+    assert_equal "#{Zlib.crc32(File.read(file.path)).to_s(16)} #{File.size(file.path)} #{File.expand_path(file.path)} #{file.name}\n", @response.buffer_string
 
     assert_equal "zip", @response.headers["X-Archive-Files"]
     assert_equal "attachment; filename=\"test.zip\"", @response.headers["Content-Disposition"]

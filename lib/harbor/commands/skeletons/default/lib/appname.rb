@@ -12,4 +12,4 @@ class <@= app_class @> < Harbor::Application
 
 end
 
-require Pathname(__FILE__).dirname.parent + "controllers/home"
+require_relative "../controllers/home"
