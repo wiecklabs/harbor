@@ -5,7 +5,6 @@ require "rdoc/task"
 require "rake/testtask"
 
 unless ENV["TRAVIS"]
-  require "bundler/setup"
   require "bundler/gem_tasks"
 end
 

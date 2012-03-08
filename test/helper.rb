@@ -1,5 +1,5 @@
 require "rubygems"
-require "bundler/setup"
+require "bundler/setup" unless Object::const_defined?("Bundler")
 
 if ENV['COVERAGE']
   require 'simplecov'
