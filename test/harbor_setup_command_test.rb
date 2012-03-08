@@ -93,7 +93,7 @@ class HarborSetupCommandTest < MiniTest::Unit::TestCase
 
       end
 
-      require Pathname(__FILE__).dirname.parent + "controllers/home"
+      require_relative "../controllers/home"
     RUBY
   end
 
