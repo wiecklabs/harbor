@@ -58,7 +58,7 @@ module Harbor
       if @io.is_a?(StringIO)
         @io
       else
-        @io || ""
+        @io || StringIO.new
       end
     end
 
@@ -66,7 +66,7 @@ module Harbor
       if @io.is_a?(StringIO)
         @io.string
       else
-        @io || StringIO.new
+        @io || ""
       end
     end
 
