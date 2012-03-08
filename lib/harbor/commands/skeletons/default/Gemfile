@@ -7,3 +7,6 @@ platforms :jruby do
   gem "jruby-rack"
   gem "jruby-openssl"
 end
+
+# Remove this if you plan to use another templating engine
+gem "erubis"
