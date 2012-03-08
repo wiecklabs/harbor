@@ -1,9 +1,13 @@
 require "rubygems"
-require "bundler/setup"
 require "pathname"
 require "rake"
 require "rdoc/task"
 require "rake/testtask"
+
+unless ENV["TRAVIS"]
+  require "bundler/setup"
+  require "bundler/gem_tasks"
+end
 
 # Tests
 task :default => [:test]
@@ -30,6 +34,3 @@ task :rdoc do
 rdoc -T harbor#{" --op " + ENV["OUTPUT_DIRECTORY"] if ENV["OUTPUT_DIRECTORY"]} --line-numbers --main README --title "Harbor Documentation" --exclude "lib/harbor/commands/*" lib/harbor.rb lib/harbor README
 EOS
 end
-
-# Gem
-require "bundler/gem_tasks"
