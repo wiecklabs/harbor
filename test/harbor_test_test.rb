@@ -137,7 +137,7 @@ class HarborTestTest < MiniTest::Unit::TestCase
     hello = container.get(:hello_controller)
     hello.hello_world("Bob")
 
-    assert_equal "Hello World. My Name is Bob.\n", hello.response.buffer
+    assert_equal "Hello World. My Name is Bob.\n", hello.response.buffer_string
   end
 
   def test_controller_with_throw_abort_request
@@ -162,7 +162,7 @@ class HarborTestTest < MiniTest::Unit::TestCase
     end
 
     assert_unauthorized hello.response
-    assert_equal "Unauthorized.\n", hello.response.buffer
+    assert_equal "Unauthorized.\n", hello.response.buffer_string
   end
 
 end

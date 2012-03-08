@@ -56,9 +56,17 @@ module Harbor
 
     def buffer
       if @io.is_a?(StringIO)
-        @io.string
+        @io
       else
         @io || ""
+      end
+    end
+
+    def buffer_string
+      if @io.is_a?(StringIO)
+        @io.string
+      else
+        @io || StringIO.new
       end
     end
 
@@ -180,7 +188,7 @@ module Harbor
       end
 
       yield self
-      store.put(key, buffer, ttl, max_age) if store
+      store.put(key, buffer_string, ttl, max_age) if store
     end
 
     def render(view, context = {})
@@ -305,6 +313,8 @@ module Harbor
       self.headers.each_pair do |key, value|
         self.headers[key] = value.join("\n") if value.is_a?(Array)
       end
+
+      self.buffer.rewind
 
       [self.status, self.headers, self.buffer]
     end
