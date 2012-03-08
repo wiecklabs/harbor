@@ -83,7 +83,7 @@ class HarborSetupCommandTest < MiniTest::Unit::TestCase
       require "bundler/setup"
       require "harbor"
 
-      config.load!(File.dirname(__FILE__).parent + "env")
+      config.load!(Pathname(__FILE__).dirname.parent + "env")
 
       class Petshop < Harbor::Application
 
@@ -93,7 +93,7 @@ class HarborSetupCommandTest < MiniTest::Unit::TestCase
 
       end
 
-      require Pathname(__FILE__).dirname + "petshop/controllers/home"
+      require Pathname(__FILE__).dirname.parent + "controllers/home"
     RUBY
   end
 
