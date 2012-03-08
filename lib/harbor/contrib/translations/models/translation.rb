@@ -11,7 +11,7 @@ module Harbor
           @@backends = backends
         end
 
-        def self.add_backend(backend)
+        def add_backend(backend)
           @@backends.push backend if backend
         end
 
@@ -44,9 +44,7 @@ module Harbor
         end
 
         def put(locale, key, value)
-          backends.each do |backend|
-            backend.store_translations(locale, {key => value}, :escape => false)
-          end
+          backends.first.store_translations(locale, {key => value}, :escape => false)
         end
 
         def exists?(locale, key)
@@ -55,6 +53,10 @@ module Harbor
           end
 
           false
+        end
+
+        def keys
+          backends.first.store.keys
         end
 
         def exists_in_backend?(backend, locale, key)

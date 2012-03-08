@@ -1,0 +1,29 @@
+require 'autotest/bundler'
+
+#class Autotest::Rspec < Autotest
+#  remove_method :consolidate_failures
+#
+#  def consolidate_failures(failed)
+#    filters = new_hash_of_arrays
+#    failed.each do |spec, trace|
+#      if trace =~ /\n(\.\/)?(.*_test\.rb):[\d]+:/
+#        filters[$2] << spec
+#      end
+#    end
+#    return filters
+#  end
+#
+#end
+
+Autotest.add_hook(:initialize) {|at|
+  %w{.git .svn .hg .swp .DS_Store ._* tmp}.each do |exception|
+    at.add_exception(exception)
+  end
+
+  at.clear_mappings         # take out the default (test/test*rb)
+
+  at.add_mapping(%r%test/.*_test.rb$%) { |filename, _|
+    filename
+  }
+}
+
