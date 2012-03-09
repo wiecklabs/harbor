@@ -10,7 +10,6 @@ when "setup"   then
 when "console" then
   ENV["ENVIRONMENT"] = ARGV[1] if ARGV[1]
   require "harbor/commands/console"
-  IRB.start
 else
   puts "harbor #{ARGV[0]} not found!"
   exit 1

@@ -20,10 +20,7 @@ module Harbor
           # No readline available, proceed anyway.
         end
         
-        catch(:IRB_EXIT) do
-          ::IRB.start
-        end
-        exit
+        ::IRB.start
       end
       
     end

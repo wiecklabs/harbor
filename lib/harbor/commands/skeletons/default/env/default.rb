@@ -4,10 +4,8 @@ Harbor::View::path.unshift(config.root + "views")
 Harbor::View::layouts.default("layouts/application")
 
 ### Console setup:
-config.console = Harbor::Consoles::IRB
 # If you would like to use Pry (http://pry.github.com/) instead
-# of IRB for your console, comment out the above line and
-# uncomment the configuration line below.
+# of IRB for your console, uncomment the configuration line below.
 #
 #  config.console = Harbor::Consoles::Pry
 #
