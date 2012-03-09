@@ -5,6 +5,13 @@ module Harbor
     module IRB
       
       def self.start
+
+        if ::File.exists? ".irbrc"
+          ENV['IRBRC'] = ".irbrc"
+        end
+        
+        ARGV.clear
+        
         require "irb"
         
         begin
@@ -12,12 +19,11 @@ module Harbor
         rescue Exception
           # No readline available, proceed anyway.
         end
-
-        if ::File.exists? ".irbrc"
-          ENV['IRBRC'] = ".irbrc"
-        end
         
-        ::IRB.start
+        catch(:IRB_EXIT) do
+          ::IRB.start
+        end
+        exit
       end
       
     end
