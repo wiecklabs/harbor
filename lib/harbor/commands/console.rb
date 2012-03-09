@@ -5,14 +5,4 @@ else
   exit 1
 end
 
-require "irb"
-
-begin
-  require "irb/completion"
-rescue Exception
-  # No readline available, proceed anyway.
-end
-
-if ::File.exists? ".irbrc"
-  ENV['IRBRC'] = ".irbrc"
-end
+config.console.start

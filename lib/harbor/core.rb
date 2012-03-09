@@ -23,6 +23,8 @@ require "harbor/errors"
 require "harbor/cache"
 require "harbor/controller"
 
+require "harbor/consoles"
+
 module Harbor
   def self.router
     @router ||= Harbor::Router::instance

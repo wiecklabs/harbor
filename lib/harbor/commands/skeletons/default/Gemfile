@@ -10,3 +10,10 @@ end
 
 # Remove this if you plan to use another templating engine
 gem "erubis"
+
+# Uncomment the following line to use Pry (http://pry.github.com/)
+# instead of IRB for your harbor console:
+#
+#  gem "pry"
+#
+# Don't forget to also update the `config.console` line ./env/default.rb.
