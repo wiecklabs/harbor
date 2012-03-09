@@ -44,12 +44,6 @@ module Harbor
         class_variable_defined?(:@@events) ? class_variable_get(:@@events) : class_variable_set(:@@events, {})
       end
 
-      def register_event(name, &block)
-        warn  "Harbor::Events::register_event has been deprecated. Use Harbor::Events::register_event_handler instead."
-        #warn  "Harbor::Events::register_event has been deprecated. Use Harbor::Events::register_event_handler instead. (event_name: #{name.inspect})\n\t#{caller.join("\n\t")}"
-        register_event_handler(name, nil, &block)
-      end
-
       def register_event_handler(name, klass = nil, &block)
         if klass && block_given?
           raise "#{self.class}.register_event_handler expects a class OR a block, not both"

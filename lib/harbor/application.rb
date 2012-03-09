@@ -21,7 +21,6 @@ require_relative "events/dispatch_request_event"
 require_relative "events/not_found_event"
 require_relative "events/application_exception_event"
 require_relative "events/session_created_event_context"
-require_relative "event_context"
 require_relative "messages"
 
 module Harbor
