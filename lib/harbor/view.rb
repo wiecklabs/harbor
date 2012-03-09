@@ -43,8 +43,10 @@ module Harbor
       @cache_templates = true
     end
 
-    def self.exists?(filename)
-      self.path.detect { |dir| ::File.file?(dir + filename) }
+    def self.exists?(filename, theme = nil)
+      if theme
+        self.path.map { |dir| dir + "themes" + theme }.detect { |path| ::File.file?(path + filename) }
+      end || self.path.detect { |dir| ::File.file?(dir + filename) }
     end
 
     attr_accessor :content_type, :context, :extension, :path
@@ -59,7 +61,7 @@ module Harbor
     def supports_layouts?
       true
     end
-    
+
     def content
       @content ||= _erubis_render(@context)
     end
@@ -73,7 +75,7 @@ module Harbor
     private
 
     def _erubis_render(context)
-      @path ||= self.class.exists?(@filename)
+      @path ||= self.class.exists?(@filename, context[:request] && context[:request].theme)
       raise "Could not find '#{@filename}' in #{self.class.path.inspect}" unless @path
 
       full_path = @path + @filename

@@ -41,6 +41,7 @@ module Harbor
 
     attr_accessor :layout
     attr_accessor :application
+    attr_accessor :theme
 
     def initialize(application, env)
       raise ArgumentError.new("+env+ must be a Rack Environment Hash") unless env.is_a?(Hash)
@@ -90,7 +91,7 @@ module Harbor
     def health_check?
       !params["health_check"].nil?
     end
-    
+
     def params
       params = begin
         if @env["rack.input"].nil?
