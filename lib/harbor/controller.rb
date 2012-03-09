@@ -2,6 +2,7 @@ require_relative "router"
 require_relative "controller/action"
 require_relative "controller/normalized_path"
 require_relative "router/helpers"
+require_relative "auth/basic"
 
 module Harbor
   class Controller
@@ -31,6 +32,10 @@ module Harbor
       end
 
       parts.join("_")
+    end
+    
+    def basic(&check)
+      Harbor::Auth::Basic.authenticate(@request, @response) &check
     end
 
   end
