@@ -4,7 +4,7 @@ begin
   if RUBY_PLATFORM =~ /java/
     require "java"
   else
-    require "uuid"
+    require "uuidtools"
   end
 rescue LoadError
   nil

@@ -1,5 +1,5 @@
-require 'mime/types'
-require 'uuidtools'
+require "mime/types"
+require "uuidtools"
 require_relative "builder/attachment"
 
 module Harbor

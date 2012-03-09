@@ -20,7 +20,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency "do_sqlite3"
   s.add_development_dependency "testdrive"
   s.add_development_dependency "rake"
-  s.add_development_dependency "uuid"
   s.add_development_dependency "simplecov"
   s.add_development_dependency "rdoc", ">= 2.4.2"
   s.add_development_dependency "erubis"

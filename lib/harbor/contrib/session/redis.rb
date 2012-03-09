@@ -65,8 +65,8 @@ module Harbor
         else
 
           def self.generate_uuid
-            @uuid_generator ||= UUID.new
-            @uuid_generator.generate.freeze
+            @uuid_generator ||= UUIDTools::UUID
+            @uuid_generator.random_create.to_s.freeze
           end
 
         end
