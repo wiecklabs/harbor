@@ -38,7 +38,6 @@ module Router
       @node.insert(:action, ['categories', 'id'])
       assert_equal 'categories', @node.left.fragment
       assert_equal nil, @node.left.action
-      assert_equal ['categories'], @node.left.tokens
     end
 
     def test_updates_virtual_nodes_with_new_action

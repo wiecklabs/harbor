@@ -1,7 +1,7 @@
 module Harbor
   class Router
     # A Ternary Search tree implementation that can be extended to a n-way search
-    # tree at insertion time. It also uses the AVL algorithm for self balancing (TODO)
+    # tree at insertion time.
     class Route
       MATCH             = 0
       RIGHT             = 1
@@ -14,8 +14,8 @@ module Harbor
         path.split(PATH_SEPARATOR).reject { |part| part.empty? }
       end
 
-      attr_reader :fragment, :tokens
-      attr_accessor :action, :left, :right, :match
+      attr_reader :fragment
+      attr_accessor :action, :left, :right, :match, :tokens
 
       def initialize(action = nil)
         @action = action
@@ -38,7 +38,9 @@ module Harbor
       #
       # @return [ Route ] The inserted node
       def insert(action, tokens)
-        (leaf = find_or_create_node!(tokens)).action = action
+        leaf = find_or_create_node!(tokens)
+        leaf.action = action
+        leaf.tokens = tokens
         leaf
       end
 
@@ -55,19 +57,12 @@ module Harbor
 
         if @fragment.nil?
           @fragment = fragment_from_token(part)
-          # Removes "extra" tokens
-          @tokens = tokens[0..index]
         end
-
-        is_last_token = index == tokens.size - 1
-
-        # Ensures "virtual" wildcard nodes have the right tokens set so
-        # that we can map parameters back to route handlers
-        @tokens = tokens[0..index] if wildcard? && is_last_token
 
         # Wildcard routes should always be considered matches
         direction = wildcard?? MATCH : part <=> @fragment
 
+        is_last_token = index == tokens.size - 1
         # If it is a match and there are no more fragments to consume
         return self if is_last_token && direction == MATCH
 
