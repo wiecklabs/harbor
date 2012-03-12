@@ -1,7 +1,6 @@
 module Harbor
   class Router
-    # TODO: Move static routes logic somewhere else, this is not a tree anymore...
-    class Tree
+    class HttpVerbRouter
       attr_reader :root, :home
 
       def register(tokens, action)
@@ -31,7 +30,7 @@ module Harbor
         elsif root
           root.search(tokens)
         end
-				result.action if result
+        result.action if result
       end
 
       def build!

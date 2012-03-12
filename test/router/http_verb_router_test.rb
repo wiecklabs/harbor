@@ -1,9 +1,9 @@
 require_relative "../helper"
 
 module Router
-  class TreeTest < MiniTest::Unit::TestCase
+  class HttpVerbRouterTest < MiniTest::Unit::TestCase
     def setup
-      @tree = Harbor::Router::Tree.new
+      @tree = Harbor::Router::HttpVerbRouter.new
     end
 
     def test_creates_home_node_if_tokens_are_empty

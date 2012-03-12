@@ -1,4 +1,4 @@
-require_relative "router/tree"
+require_relative "router/http_verb_router"
 require_relative "router/route"
 require_relative "router/deferred_route"
 require_relative "router/deferred_route_collection"
@@ -27,13 +27,13 @@ module Harbor
 
     def clear!
       @verbs = {
-        "GET"     => Tree.new,
-        "POST"    => Tree.new,
-        "PUT"     => Tree.new,
-        "DELETE"  => Tree.new,
-        "HEAD"    => Tree.new,
-        "OPTIONS" => Tree.new,
-        "PATCH"   => Tree.new
+        "GET"     => HttpVerbRouter.new,
+        "POST"    => HttpVerbRouter.new,
+        "PUT"     => HttpVerbRouter.new,
+        "DELETE"  => HttpVerbRouter.new,
+        "HEAD"    => HttpVerbRouter.new,
+        "OPTIONS" => HttpVerbRouter.new,
+        "PATCH"   => HttpVerbRouter.new
       }
     end
   end
