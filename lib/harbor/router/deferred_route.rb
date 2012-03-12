@@ -17,6 +17,10 @@ module Harbor
         end
       end
 
+      def wildcard?
+        @wildcard ||= normalized_tokens.detect{|token| token == Route::WILDCARD_FRAGMENT }
+      end
+
       def <=>(other)
         self.normalized_tokens <=> other.normalized_tokens
       end

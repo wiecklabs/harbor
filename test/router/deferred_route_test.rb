@@ -20,6 +20,11 @@ module Router
       assert_equal :my_action, build_route([], :my_action).action
     end
 
+    def test_identifies_wildcardness # :P
+      assert_predicate build_route(['posts', ':id']), :wildcard?
+      refute_predicate build_route(['posts', 'archive']), :wildcard?
+    end
+
     def build_route(tokens, action = :action)
       Harbor::Router::DeferredRoute.new(tokens, action)
     end
