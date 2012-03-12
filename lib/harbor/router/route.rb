@@ -1,7 +1,6 @@
 module Harbor
   class Router
     class Route
-      WILDCARD_FRAGMENT = '*'
       WILDCARD_CHAR     = ?:
       PATH_SEPARATOR    = /[\/;]/
 
@@ -14,6 +13,10 @@ module Harbor
       def initialize(action = nil, tokens = nil)
         @action = action
         @tokens = tokens
+      end
+
+      def self.wildcard_token?(token)
+        token[0] == Route::WILDCARD_CHAR
       end
     end
   end

@@ -6,9 +6,22 @@ module Harbor
       MATCH             = 0
       RIGHT             = 1
       LEFT              = -1
+      WILDCARD_FRAGMENT = '*'
 
       attr_reader :fragment
       attr_accessor :left, :right, :match
+
+      def self.wildcard_fragment?(fragment)
+        fragment == WILDCARD_FRAGMENT
+      end
+
+      def self.fragment_from_token(token)
+        Route.wildcard_token?(token) ? WILDCARD_FRAGMENT : token
+      end
+
+      def wildcard?
+        self.class.wildcard_fragment?(@fragment)
+      end
 
       # Basic ternary search tree algorithm
       def search(tokens, current_token = nil)
@@ -45,7 +58,7 @@ module Harbor
         return replace!(tokens, index) if should_replace?(part)
 
         if @fragment.nil?
-          @fragment = fragment_from_token(part)
+          @fragment = self.class.fragment_from_token(part)
         end
 
         # Wildcard routes should always be considered matches
@@ -65,19 +78,12 @@ module Harbor
         end
       end
 
-      def wildcard?
-        @fragment == WILDCARD_FRAGMENT
-      end
-
-      def fragment_from_token(token)
-        (token[0] == WILDCARD_CHAR) ? WILDCARD_FRAGMENT : token
-      end
-
       def should_replace?(part)
+        incoming_wildcard = Route.wildcard_token?(part)
         # On a wildcard node with an incoming "non-wildcard" node
-        (wildcard? && part[0] != WILDCARD_CHAR) ||
-        # ... or on a "non-wildcard" node with an incoming wildcard node
-        !@fragment.nil? && !wildcard? && part[0] == WILDCARD_CHAR
+        (wildcard? && !incoming_wildcard) ||
+          # ... or on a "non-wildcard" node with an incoming wildcard node
+          !@fragment.nil? && !wildcard? && incoming_wildcard
       end
 
       def replace!(tokens, index)

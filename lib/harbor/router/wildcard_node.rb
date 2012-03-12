@@ -31,7 +31,7 @@ module Harbor
 
       def find_or_create_node!(tokens, index = 0)
         part = tokens[index]
-        if part[0] == self.class::WILDCARD_CHAR
+        if Route.wildcard_token?(part)
           (@wildcard_tree ||= RouteNode.new).find_or_create_node!(tokens, index)
         else
           (trees[part] ||= RouteNode.new).find_or_create_node!(tokens, index)

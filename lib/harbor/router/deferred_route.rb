@@ -3,26 +3,29 @@ module Harbor
     class DeferredRoute
       include Comparable
 
-      attr_reader :tokens, :action
+      attr_reader :tokens, :action, :normalized_tokens
 
       def initialize(tokens, action)
         @tokens, @action = tokens, action
-      end
-
-      def normalized_tokens
-        @normalized_tokens ||= @tokens.map do |token|
-          token[0] == Route::WILDCARD_CHAR ?
-            Route::WILDCARD_FRAGMENT :
-            token
-        end
+        normalize_tokens!
       end
 
       def wildcard?
-        @wildcard ||= normalized_tokens.detect{|token| token == Route::WILDCARD_FRAGMENT }
+        @wildcard
       end
 
       def <=>(other)
         self.normalized_tokens <=> other.normalized_tokens
+      end
+
+      private
+
+      def normalize_tokens!
+        @normalized_tokens ||= @tokens.map do |token|
+          fragment = RouteNode.fragment_from_token(token)
+          @wildcard = @wildcard || fragment != token
+          fragment
+        end
       end
     end
   end

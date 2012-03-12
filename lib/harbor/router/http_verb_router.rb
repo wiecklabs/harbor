@@ -64,7 +64,7 @@ module Harbor
       private
 
       def wildcard?(tokens)
-        tokens.detect{|token| token[0] == Route::WILDCARD_CHAR }
+        tokens.detect{|token| Route.wildcard_token?(token) }
       end
 
       def balanced_insert(array)

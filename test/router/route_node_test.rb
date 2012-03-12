@@ -2,8 +2,10 @@ require_relative "../helper"
 
 module Router
   class RouteNodeTest < MiniTest::Unit::TestCase
+    RouteNode = Harbor::Router::RouteNode
+
     def setup
-      @node = Harbor::Router::RouteNode.new
+      @node = RouteNode.new
       @node.insert(:index, ['posts'])
     end
 
@@ -46,9 +48,10 @@ module Router
       assert_equal :categories_action, @node.left.action
     end
 
-    def test_identifies_wildcard_tokens
-      wild_node = @node.insert(:wild_action, ['posts', ':id'])
-      assert wild_node.wildcard?
+
+    def test_identifies_wildcard_fragment
+      assert RouteNode.wildcard_fragment?('*')
+      refute RouteNode.wildcard_fragment?('posts')
     end
 
     def test_handles_multiple_wildcard_tokens_under_match_node
