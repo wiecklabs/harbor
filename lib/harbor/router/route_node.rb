@@ -81,7 +81,7 @@ module Harbor
       end
 
       def replace!(tokens, index)
-        extend WildcardRoute
+        extend WildcardNode
         find_or_create_node!(tokens, index)
       end
 

@@ -2,7 +2,7 @@ module Harbor
   class Router
     # Used to extend a "simple" node with n-way search tree behavior
     # TODO: Add inspect information to distinguish from "normal" routes
-    module WildcardRoute
+    module WildcardNode
       def self.extended(base)
         new_node = RouteNode.new.assign_from(base)
         if base.wildcard?

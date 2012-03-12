@@ -79,7 +79,7 @@ module Router
       @node.insert(:id, ['posts', ':id'])
       @node.insert(:recent, ['posts', 'recent'])
 
-      assert_kind_of Harbor::Router::WildcardRoute, @node.match
+      assert_kind_of Harbor::Router::WildcardNode, @node.match
       refute_nil @node.match.trees
     end
 
@@ -87,7 +87,7 @@ module Router
       @node.insert(:recent, ['posts', 'recent'])
       @node.insert(:id, ['posts', ':id'])
 
-      assert_kind_of Harbor::Router::WildcardRoute, @node.match
+      assert_kind_of Harbor::Router::WildcardNode, @node.match
       refute_nil @node.match.trees
     end
 

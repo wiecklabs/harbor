@@ -1,8 +1,8 @@
 require_relative "route"
 require_relative "route_node"
+require_relative "wildcard_node"
 require_relative "deferred_route"
 require_relative "deferred_route_collection"
-require_relative "wildcard_route"
 
 module Harbor
   class Router
