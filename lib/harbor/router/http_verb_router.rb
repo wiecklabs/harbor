@@ -10,18 +10,10 @@ module Harbor
       attr_reader :root, :home
 
       def register(tokens, action)
-        deferred_routes << DeferredRoute.new(tokens, action)
-        self
-      end
-
-      def insert!(tokens, action)
-        if tokens.empty?
-          @home = Route.new(action)
-        elsif wildcard?(tokens)
-          (@root ||= RouteNode.new).insert(action, tokens)
+        if wildcard?(tokens)
+          deferred_routes << DeferredRoute.new(tokens, action)
         else
-          static_routes.delete(tokens.join('/'))
-          static_routes[tokens.join('/')] = Route.new(action)
+          static_routes[tokens.join('/')] = Route.new(action, tokens)
         end
         self
       end
@@ -29,9 +21,7 @@ module Harbor
       def search(tokens)
         build! unless @built
 
-        result = if tokens.empty?
-          home
-        elsif route = static_routes[tokens.join('/')]
+        result = if route = static_routes[tokens.join('/')]
           route
         elsif root
           root.search(tokens)
@@ -40,14 +30,10 @@ module Harbor
       end
 
       def build!
-        return @built = true if @built || (deferred_routes.wildcard_routes.empty? && deferred_routes.static_routes.empty?)
+        return @built = true if @built || deferred_routes.empty?
 
-        deferred_routes.wildcard_routes.sort!
-        balanced_insert(deferred_routes.wildcard_routes)
-
-        deferred_routes.static_routes.each do |route|
-          insert!(route.tokens, route.action)
-        end
+        deferred_routes.sort!
+        balanced_insert(deferred_routes)
 
         deferred_routes.clear
         @built = true
@@ -63,6 +49,11 @@ module Harbor
 
       private
 
+      def insert_wildcard(tokens, action)
+        (@root ||= RouteNode.new).insert(action, tokens)
+        self
+      end
+
       def wildcard?(tokens)
         tokens.detect{|token| Route.wildcard_token?(token) }
       end
@@ -75,7 +66,7 @@ module Harbor
         left = array.slice!(0, middle)
         right = array
 
-        insert!(middle_element.tokens, middle_element.action)
+        insert_wildcard(middle_element.tokens, middle_element.action)
 
         balanced_insert(left) unless left.empty?
         balanced_insert(right) unless right.empty?

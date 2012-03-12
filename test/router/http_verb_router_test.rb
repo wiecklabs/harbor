@@ -6,14 +6,14 @@ module Router
       @tree = Harbor::Router::HttpVerbRouter.new
     end
 
-    def test_creates_home_node_if_tokens_are_empty
-      @tree.insert!([], :home)
-      assert_equal :home, @tree.home.action
+    def test_creates_static_route
+      @tree.register(['static', 'route'], :static)
+      assert_equal :static, @tree.static_routes['static/route'].action
     end
 
-    def test_replaces_home_node_with_new_node
-      @tree.insert!([], :home).insert!([], :new_home)
-      assert_equal :new_home, @tree.home.action
+    def test_replaces_static_route_with_new_route
+      @tree.register(['static'], :static).register(['static'], :new_static)
+      assert_equal :new_static, @tree.static_routes['static'].action
     end
 
     def test_delegates_wildcard_insertion_to_root_node
@@ -21,19 +21,10 @@ module Router
       mock.expect :insert, nil, [:action, [':id']]
       @tree.instance_variable_set(:@root, mock)
 
-      @tree.insert!([':id'], :action)
+      @tree.register([':id'], :action).
+        build!
 
       assert mock.verify
-    end
-
-    def test_creates_static_route
-      @tree.insert!(['static'], :static)
-      assert_equal :static, @tree.static_routes.values.first.action
-    end
-
-    def test_replaces_static_route_with_new_route
-      @tree.insert!(['static'], :static).insert!(['static'], :new_static)
-      assert_equal :new_static, @tree.static_routes.values.first.action
     end
 
     def test_delegates_search_to_root_node
@@ -44,24 +35,19 @@ module Router
       assert_equal :search_result, @tree.search(['1234'])
     end
 
-    def test_finds_home_route
-      @tree.insert!([], :home)
-      assert_equal :home, @tree.search([])
-    end
-
     def test_finds_static_routes
-      @tree.insert!(['posts'], :posts)
+      @tree.register(['posts'], :posts)
       assert_equal :posts, @tree.search(['posts'])
     end
 
     def test_finds_wildcard_routes
-      @tree.insert!([':id'], :show)
+      @tree.register([':id'], :show)
       assert_equal :show, @tree.search(['1234'])
     end
 
     def test_static_routes_preceds_wildcard
-      @tree.insert!(['posts'], :posts).
-        insert!([':id'], :wildcard)
+      @tree.register(['posts'], :posts).
+        register([':id'], :wildcard)
 
       assert_equal :posts, @tree.search(['posts'])
     end
@@ -71,7 +57,7 @@ module Router
     end
 
     def test_registers_deferred_routes
-      @tree.register(['posts'], :my_action)
+      @tree.register([':id'], :show)
       refute_predicate @tree.deferred_routes, :blank?
     end
 
@@ -91,14 +77,14 @@ module Router
         register([':id'], :show).
         build!
 
-      assert_operator @tree.deferred_routes.wildcard_routes.size, :==, 0
+      assert_operator @tree.deferred_routes.size, :==, 0
     end
 
     def test_build_deferred_routes_before_searching
-      @tree.register(['authors'], :authors)
+      @tree.register([':id'], :show)
 
-      @tree.search(['authors'])
-      refute_nil @tree.static_routes['authors']
+      @tree.search(['1234'])
+      refute_nil @tree.root
     end
   end
 end
