@@ -3,7 +3,7 @@ require_relative "../helper"
 module Router
   class WildcardRouteTest < MiniTest::Unit::TestCase
     def setup
-      @node = Harbor::Router::Route.new
+      @node = Harbor::Router::RouteNode.new
     end
 
     def test_creates_tree_entry_for_exact_matches_when_extended

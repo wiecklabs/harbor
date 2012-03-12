@@ -1,9 +1,9 @@
 require_relative "../helper"
 
 module Router
-  class RouteTest < MiniTest::Unit::TestCase
+  class RouteNodeTest < MiniTest::Unit::TestCase
     def setup
-      @node = Harbor::Router::Route.new
+      @node = Harbor::Router::RouteNode.new
       @node.insert(:index, ['posts'])
     end
 

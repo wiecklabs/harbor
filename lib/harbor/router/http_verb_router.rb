@@ -1,3 +1,9 @@
+require_relative "route"
+require_relative "route_node"
+require_relative "deferred_route"
+require_relative "deferred_route_collection"
+require_relative "wildcard_route"
+
 module Harbor
   class Router
     class HttpVerbRouter
@@ -12,7 +18,7 @@ module Harbor
         if tokens.empty?
           @home = Route.new(action)
         elsif wildcard?(tokens)
-          (@root ||= Route.new).insert(action, tokens)
+          (@root ||= RouteNode.new).insert(action, tokens)
         else
           static_routes.delete(tokens.join('/'))
           static_routes[tokens.join('/')] = Route.new(action)

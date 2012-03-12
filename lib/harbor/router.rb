@@ -1,8 +1,4 @@
 require_relative "router/http_verb_router"
-require_relative "router/route"
-require_relative "router/deferred_route"
-require_relative "router/deferred_route_collection"
-require_relative "router/wildcard_route"
 
 module Harbor
   class Router

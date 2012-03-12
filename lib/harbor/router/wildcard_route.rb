@@ -4,7 +4,7 @@ module Harbor
     # TODO: Add inspect information to distinguish from "normal" routes
     module WildcardRoute
       def self.extended(base)
-        new_node = Route.new.assign_from(base)
+        new_node = RouteNode.new.assign_from(base)
         if base.wildcard?
           base.wildcard_tree = new_node
         else
@@ -32,9 +32,9 @@ module Harbor
       def find_or_create_node!(tokens, index = 0)
         part = tokens[index]
         if part[0] == self.class::WILDCARD_CHAR
-          (@wildcard_tree ||= Route.new).find_or_create_node!(tokens, index)
+          (@wildcard_tree ||= RouteNode.new).find_or_create_node!(tokens, index)
         else
-          (trees[part] ||= Route.new).find_or_create_node!(tokens, index)
+          (trees[part] ||= RouteNode.new).find_or_create_node!(tokens, index)
         end
       end
 
