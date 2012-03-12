@@ -14,7 +14,7 @@ module Harbor
     attr_reader :methods
 
     def register(method, path, action)
-      @methods[method].insert(Route::expand(path), action)
+      @methods[method].register(Route::expand(path), action)
     end
 
     def match(method, path)
