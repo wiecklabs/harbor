@@ -11,14 +11,14 @@ module Harbor
       clear!
     end
 
-    attr_reader :methods
+    attr_reader :verbs
 
     def register(method, path, action)
-      @methods[method].register(Route::expand(path), action)
+      @verbs[method].register(Route::expand(path), action)
     end
 
     def match(method, path)
-      @methods[method].search(Route::expand path)
+      @verbs[method].search(Route::expand path)
     end
 
     def self.instance
@@ -26,7 +26,7 @@ module Harbor
     end
 
     def clear!
-      @methods = {
+      @verbs = {
         "GET"     => Tree.new,
         "POST"    => Tree.new,
         "PUT"     => Tree.new,
