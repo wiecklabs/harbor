@@ -10,10 +10,6 @@ module Harbor
         normalize_tokens!
       end
 
-      def wildcard?
-        @wildcard
-      end
-
       def <=>(other)
         self.normalized_tokens <=> other.normalized_tokens
       end
@@ -22,9 +18,7 @@ module Harbor
 
       def normalize_tokens!
         @normalized_tokens ||= @tokens.map do |token|
-          fragment = RouteNode.fragment_from_token(token)
-          @wildcard = @wildcard || fragment != token
-          fragment
+          RouteNode.fragment_from_token(token)
         end
       end
     end
