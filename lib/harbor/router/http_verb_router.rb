@@ -19,7 +19,7 @@ module Harbor
       end
 
       def search(tokens)
-        build! unless @built
+        build!
 
         result = if route = static_routes[tokens.join('/')]
           route
@@ -30,7 +30,7 @@ module Harbor
       end
 
       def build!
-        return @built = true if @built || deferred_routes.empty?
+        return if deferred_routes.empty?
 
         deferred_routes.sort!
         balanced_insert(deferred_routes)
