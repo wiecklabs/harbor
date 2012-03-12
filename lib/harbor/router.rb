@@ -1,6 +1,7 @@
 require_relative "router/tree"
 require_relative "router/route"
 require_relative "router/deferred_route"
+require_relative "router/deferred_route_collection"
 require_relative "router/wildcard_route"
 
 module Harbor
