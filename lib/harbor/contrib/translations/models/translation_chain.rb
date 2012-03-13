@@ -3,7 +3,7 @@ require 'i18n'
 module Harbor
   module Contrib
     module Translations
-      class Translation
+      class TranslationChain
 
         @@backends = []
 
@@ -27,7 +27,7 @@ module Harbor
           unfilled = backends.select do |backend|
             !exists_in_backend?(backend, locale, key)
           end
-          filled = backends.detect do |backend|
+          filled = backends.reverse.detect do |backend|
             exists_in_backend?(backend, locale, key)
           end
 
@@ -47,16 +47,16 @@ module Harbor
           backends.first.store_translations(locale, {key => value}, :escape => false)
         end
 
+        def keys
+          backends.first.store.keys
+        end
+
         def exists?(locale, key)
           backends.each do |backend|
             return true if exists_in_backend?(backend, locale, key)
           end
 
           false
-        end
-
-        def keys
-          backends.first.store.keys
         end
 
         def exists_in_backend?(backend, locale, key)

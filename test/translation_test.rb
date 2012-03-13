@@ -1,7 +1,7 @@
 require "pathname"
 require Pathname(__FILE__).dirname + "helper"
 require "sequel_test_case"
-require "harbor/contrib/translations/models/translation"
+require "harbor/contrib/translations/models/translation_chain"
 
 module Contrib
   module Translations
@@ -18,7 +18,7 @@ module Contrib
       def setup
         redis = Redis.new
         backend = I18n::Backend::KeyValue.new(redis)
-        @translation = Harbor::Contrib::Translations::Translation.new(backend)
+        @translation = Harbor::Contrib::Translations::TranslationChain.new(backend)
       end
 
       def teardown
@@ -59,7 +59,7 @@ module Contrib
 
       def test_simple_backend
         @backend = I18n::Backend::Simple.new
-        @translation = Harbor::Contrib::Translations::Translation.new(backend)
+        @translation = Harbor::Contrib::Translations::TranslationChain.new(backend)
 
         assert(!@translation.exists?(LOCALE_EN, KEY))
         @translation.put(LOCALE_EN, KEY, VAL)
@@ -72,7 +72,7 @@ module Contrib
         redis.flushdb
         be1 = I18n::Backend::KeyValue.new(redis)
         be2 = I18n::Backend::Simple.new
-        @translation = Harbor::Contrib::Translations::Translation.new(be1, be2)
+        @translation = Harbor::Contrib::Translations::TranslationChain.new(be1, be2)
 
         assert(!@translation.exists?(LOCALE_EN, KEY))
         assert(!@translation.exists_in_backend?(be1, LOCALE_EN, KEY))
@@ -93,7 +93,7 @@ module Contrib
         be1 = I18n::Backend::KeyValue.new(redis)
         be2 = I18n::Backend::Simple.new
         be2.store_translations(LOCALE_EN, {KEY, VAL}, :ecape => false)
-        @translation = Harbor::Contrib::Translations::Translation.new(be1, be2)
+        @translation = Harbor::Contrib::Translations::TranslationChain.new(be1, be2)
 
         assert(!@translation.exists_in_backend?(be1, LOCALE_EN, KEY))
         assert(@translation.exists_in_backend?(be2, LOCALE_EN, KEY))
