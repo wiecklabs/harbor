@@ -7,7 +7,7 @@ require_relative "deferred_route_collection"
 module Harbor
   class Router
     class HttpVerbRouter
-      attr_reader :root, :home
+      attr_reader :root
 
       def register(tokens, action)
         if wildcard?(tokens)
@@ -31,10 +31,12 @@ module Harbor
       def build!
         return if deferred_routes.empty?
 
-        deferred_routes.sort!
-        balanced_insert(deferred_routes)
-
+        routes = deferred_routes.to_a
         deferred_routes.clear
+
+        routes.sort!
+        balanced_insert(routes)
+
         @built = true
       end
 

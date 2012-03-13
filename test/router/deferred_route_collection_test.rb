@@ -11,7 +11,7 @@ module Router
       @collection << Harbor::Router::DeferredRoute.new([':id'], :duplicate)
 
       assert_operator @collection.size, :==, 1
-      assert_equal :duplicate, @collection.first.action
+      assert_equal :duplicate, @collection.to_a.first.action
     end
 
     def test_clears_routes
@@ -19,7 +19,7 @@ module Router
 
       @collection.clear
 
-      assert_predicate @collection.routes, :empty?
+      assert_predicate @collection, :empty?
     end
   end
 end
