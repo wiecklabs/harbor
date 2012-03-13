@@ -33,7 +33,7 @@ module Harbor
         end
 
         return @left.search(tokens, current_token) if @left && current_token < @fragment
-        return @right.search(tokens, current_token) if @right
+        return @right.search(tokens, current_token) if @right && current_token > @fragment
       end
 
       # Inserts or updates tree nodes
