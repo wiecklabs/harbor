@@ -14,9 +14,10 @@ module Harbor
 
     def dispatch!(request, response)
       catch(:abort_request) do
-        request_path = (request.path_info[-1] == ?/) ? request.path_info[0..-2] : request.path_info
-        if route = router.match(request.request_method, request_path)
-          request.params.merge!(extract_params_from_tokens(route.tokens, request_path))
+        fragments = Router::Route.expand(request.path_info)
+
+        if route = router.match(request.request_method, fragments)
+          request.params.merge!(extract_params_from_tokens(route.tokens, fragments))
           route.action.call(request, response)
         end
       end
@@ -24,8 +25,8 @@ module Harbor
 
     private
 
-    def extract_params_from_tokens(tokens, request_path)
-      pairs = Router::Route.expand(request_path).zip(tokens)
+    def extract_params_from_tokens(tokens, fragments)
+      pairs = fragments.zip(tokens)
       pairs.each_with_object({}) do |pair, params|
         value, token = pair
         params[token[1..-1]] = value if token && Router::Route.wildcard_token?(token)

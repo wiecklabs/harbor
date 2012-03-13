@@ -14,7 +14,8 @@ module Harbor
     end
 
     def match(method, path)
-      @verbs[method].search(Route::expand path)
+      fragments = path.kind_of?(Enumerable) ? path : Route::expand(path)
+      @verbs[method].search(fragments)
     end
 
     def self.instance

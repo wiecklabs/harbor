@@ -25,11 +25,6 @@ class DispatcherTest < MiniTest::Unit::TestCase
     @route.tokens << 'parts' << ':id' << ':order_id'
   end
 
-  def test_strips_trailing_slash_from_path_info_when_dispatching
-    @dispatcher.dispatch!(@request, @response)
-    assert_equal 'parts/1234/4321', @router.match_argument
-  end
-
   def test_extracts_wildcard_params_from_request_path
     @dispatcher.dispatch!(@request, @response)
     assert_equal '1234', @request.params['id']
