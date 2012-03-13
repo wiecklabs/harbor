@@ -36,8 +36,6 @@ module Harbor
 
         routes.sort!
         balanced_insert(routes)
-
-        @built = true
       end
 
       def deferred_routes
