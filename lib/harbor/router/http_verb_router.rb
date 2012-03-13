@@ -21,12 +21,11 @@ module Harbor
       def search(tokens)
         build!
 
-        result = if route = static_routes[tokens.join('/')]
+        if route = static_routes[tokens.join('/')]
           route
         elsif root
           root.search(tokens)
         end
-        result.action if result
       end
 
       def build!

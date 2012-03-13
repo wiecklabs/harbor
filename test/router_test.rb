@@ -15,7 +15,7 @@ class RouterTest < MiniTest::Unit::TestCase
   end
 
   def test_index_route
-    assert_equal(:index, @router.match("GET", "/").call)
+    assert_equal(:index, @router.match("GET", "/").action.call)
   end
 
   def test_non_wildcard_route_matches

@@ -32,24 +32,24 @@ module Router
       mock.expect :search, Harbor::Router::Route.new(:search_result), [['1234']]
       @tree.instance_variable_set(:@root, mock)
 
-      assert_equal :search_result, @tree.search(['1234'])
+      assert_equal :search_result, @tree.search(['1234']).action
     end
 
     def test_finds_static_routes
       @tree.register(['posts'], :posts)
-      assert_equal :posts, @tree.search(['posts'])
+      assert_equal :posts, @tree.search(['posts']).action
     end
 
     def test_finds_wildcard_routes
       @tree.register([':id'], :show)
-      assert_equal :show, @tree.search(['1234'])
+      assert_equal :show, @tree.search(['1234']).action
     end
 
     def test_static_routes_preceds_wildcard
       @tree.register(['posts'], :posts).
         register([':id'], :wildcard)
 
-      assert_equal :posts, @tree.search(['posts'])
+      assert_equal :posts, @tree.search(['posts']).action
     end
 
     def test_builds_a_deferred_route_collection
