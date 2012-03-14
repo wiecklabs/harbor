@@ -22,11 +22,13 @@ require "harbor/errors"
 require "harbor/cache"
 require "harbor/controller"
 
+require "harbor/dispatcher"
+
 require "harbor/consoles"
 
 module Harbor
-  def self.router
-    @router ||= Harbor::Router::instance
+  def self.dispatcher
+    @dispatcher ||= Harbor::Dispatcher::instance
   end
 
   def self.call(env)
@@ -34,10 +36,7 @@ module Harbor
     response = Response.new(request)
 
     catch(:abort_request) do
-      request_path = (request.path_info[-1] == ?/) ? request.path_info[0..-2] : request.path_info
-      if action = router.match(request.request_method, request_path)
-        action.call(request, response)
-      end
+      dispatcher.dispatch!(request, response)
     end
 
     response.to_a

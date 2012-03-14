@@ -14,8 +14,19 @@ class RouterTest < MiniTest::Unit::TestCase
     @router.register("GET", "/parts/discontinued", -> { :get_discontinued_parts })
   end
 
+  def test_matches_an_array_of_tokens
+    assert_equal(:index, @router.match("GET", ['']).action.call)
+  end
+
+  def test_duplicates_incoming_array_of_tokens_before_searching
+    tokens = ['parts', '1234']
+    @router.match("GET", tokens)
+
+    assert_operator tokens.size, :==, 2
+  end
+
   def test_index_route
-    assert_equal(:index, @router.match("GET", "/").call)
+    assert_equal(:index, @router.match("GET", "/").action.call)
   end
 
   def test_non_wildcard_route_matches

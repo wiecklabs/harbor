@@ -1,6 +1,4 @@
-require_relative "router/tree"
-require_relative "router/route"
-require_relative "router/wildcard_route"
+require_relative "router/http_verb_router"
 
 module Harbor
   class Router
@@ -9,14 +7,15 @@ module Harbor
       clear!
     end
 
-    attr_reader :methods
+    attr_reader :verbs
 
     def register(method, path, action)
-      @methods[method].insert(Route::expand(path), action)
+      @verbs[method].register(Route::expand(path), action)
     end
 
     def match(method, path)
-      @methods[method].search(Route::expand path)
+      fragments = path.kind_of?(Enumerable) ? path.dup : Route::expand(path)
+      @verbs[method].search(fragments)
     end
 
     def self.instance
@@ -24,14 +23,14 @@ module Harbor
     end
 
     def clear!
-      @methods = {
-        "GET"     => Tree.new,
-        "POST"    => Tree.new,
-        "PUT"     => Tree.new,
-        "DELETE"  => Tree.new,
-        "HEAD"    => Tree.new,
-        "OPTIONS" => Tree.new,
-        "PATCH"   => Tree.new
+      @verbs = {
+        "GET"     => HttpVerbRouter.new,
+        "POST"    => HttpVerbRouter.new,
+        "PUT"     => HttpVerbRouter.new,
+        "DELETE"  => HttpVerbRouter.new,
+        "HEAD"    => HttpVerbRouter.new,
+        "OPTIONS" => HttpVerbRouter.new,
+        "PATCH"   => HttpVerbRouter.new
       }
     end
   end

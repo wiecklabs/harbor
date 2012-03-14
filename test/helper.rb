@@ -127,14 +127,14 @@ class MiniTest::Unit::TestCase
   end
 
   def assert_route_matches(http_method, path)
-    action = Harbor::Router::instance.match(http_method, path)
+    action = Harbor::Router::instance.match(http_method, path).action
     refute_nil(action, "Expected router match for #{http_method}:#{path}, got nil.")
 
     yield(action) if block_given?
   end
 
   def assert_controller_route_matches(http_method, path, controller, method_name)
-    action = Harbor::Router::instance.match(http_method, path)
+    action = Harbor::Router::instance.match(http_method, path).action
 
     assert_kind_of(Harbor::Controller::Action, action)
     assert_equal(controller, action.controller)

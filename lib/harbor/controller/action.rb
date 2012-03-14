@@ -3,7 +3,8 @@ module Harbor
     class Action
       def initialize(controller, name)
         @controller = controller
-        @name = name.to_sym
+        @name       = name.to_sym
+        @parameters = controller.instance_method(@name).parameters
         
         @controller_name = controller.name
         config.set(@controller_name, controller)
@@ -12,7 +13,8 @@ module Harbor
       attr_reader :controller, :name
 
       def call(request, response)
-        config.get(@controller_name, "request" => request, "response" => response).send(@name)
+        args = build_args!(request, response)
+        config.get(@controller_name, "request" => request, "response" => response).send(@name, *args)
       end
 
       def inspect
@@ -21,6 +23,21 @@ module Harbor
 
       def to_s
         "Action<#{@controller}, #{@name}>"
+      end
+
+      private
+
+      def build_args!(request, response)
+        @parameters.each_with_object([]) do |param, args|
+          type, name = param
+          value = request.params[name.to_s]
+          if value
+            args << value
+          elsif type == :req
+            response.status = 400
+            throw :abort_request
+          end
+        end
       end
     end
   end
