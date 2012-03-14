@@ -114,25 +114,6 @@ module Harbor
           :match
         end
       end
-
-      def assign_from(other_node)
-        @left     = other_node.left
-        @right    = other_node.right
-        @action   = other_node.action
-        @tokens   = other_node.tokens
-        @fragment = other_node.fragment
-        @match    = other_node.match
-        self
-      end
-
-      def reset!
-        @left     = nil
-        @right    = nil
-        @match    = nil
-        @action   = nil
-        @tokens   = nil
-        @fragment = nil
-      end
     end
   end
 end
