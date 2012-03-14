@@ -61,7 +61,9 @@ module Harbor
         @dependencies = []
         
         if service.is_a?(Class)
-          service.instance_method(:initialize).parameters.each do |parameter|
+          # Handles methods like "def initialize(*)" which JRuby 1.6 defines on BasicObject
+          parameters = service.instance_method(:initialize).parameters - [[:rest]]
+          parameters.each do |parameter|
             @dependencies << Parameter.new(parameter[0], parameter[1])
           end
         end
