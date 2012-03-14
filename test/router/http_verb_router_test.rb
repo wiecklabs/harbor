@@ -18,7 +18,7 @@ module Router
 
     def test_delegates_wildcard_insertion_to_root_node
       mock = MiniTest::Mock.new
-      mock.expect :insert, nil, [:action, [':id']]
+      mock.expect :insert, nil, [:action, [':id'], @tree.send('root_parent')]
       @tree.instance_variable_set(:@root, mock)
 
       @tree.register([':id'], :action).
@@ -85,6 +85,14 @@ module Router
 
       @tree.search(['1234'])
       refute_nil @tree.root
+    end
+
+    def test_handles_collision_on_root_node
+      @tree.register([':id'], :show)
+      @tree.register(['posts', ':id'], :posts)
+      @tree.build!
+
+      assert_kind_of Harbor::Router::WildcardNode, @tree.root
     end
   end
 end
