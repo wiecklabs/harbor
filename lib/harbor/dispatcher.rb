@@ -13,17 +13,25 @@ module Harbor
     end
 
     def dispatch!(request, response)
-      catch(:abort_request) do
-        fragments = Router::Route.expand(request.path_info)
+      fragments = Router::Route.expand(request.path_info)
 
-        if route = router.match(request.request_method, fragments)
-          request.params.merge!(extract_params_from_tokens(route.tokens, fragments))
-          route.action.call(request, response)
-        end
+      if route = router.match(request.request_method, fragments)
+        abort_unless_action!(response, route)
+
+        request.params.merge!(extract_params_from_tokens(route.tokens, fragments))
+
+        route.action.call(request, response)
       end
     end
 
     private
+
+    def abort_unless_action!(response, route)
+      return if route.action
+
+      response.status = 404
+      throw(:abort_request)
+    end
 
     def extract_params_from_tokens(tokens, fragments)
       pairs = fragments.zip(tokens)

@@ -35,7 +35,9 @@ module Harbor
     request = Request.new(self, env)
     response = Response.new(request)
 
-    dispatcher.dispatch!(request, response)
+    catch(:abort_request) do
+      dispatcher.dispatch!(request, response)
+    end
 
     response.to_a
   end
