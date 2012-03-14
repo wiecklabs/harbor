@@ -1,6 +1,7 @@
 h1. Welcome to Harbor!
 
-!https://secure.travis-ci.org/sam/harbor.png!
+!https://secure.travis-ci.org/sam/harbor.png!:http://travis-ci.org/sam/harbor
+
 
 For information on getting started, check out: http://wiecklabs.com/get-started
 
