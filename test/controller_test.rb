@@ -40,6 +40,9 @@ class ControllerTest < MiniTest::Unit::TestCase
         :GET_about_the_foos
       end
 
+      redirect "/login", "new"
+      
+      redirect "foo", "/bar"
     end
   end
 
@@ -51,6 +54,32 @@ class ControllerTest < MiniTest::Unit::TestCase
     @router = Harbor::Router::instance
   end
 
+  def test_redirect_to_relative_destination
+    request = Harbor::Test::Request.new
+    response = Harbor::Response.new(request)
+    controller = Controllers::Foos.new(request, response)
+    
+    catch(:abort_request) do
+      controller.send(:GET_login)
+    end
+    
+    assert_equal 301, response.status
+    assert_equal "/controller_test/foos/new", response.headers["Location"]
+  end
+  
+  def test_redirect_from_relative_source
+    request = Harbor::Test::Request.new
+    response = Harbor::Response.new(request)
+    controller = Controllers::Foos.new(request, response)
+    
+    catch(:abort_request) do
+      controller.send(:GET_foo)
+    end
+    
+    assert_equal 301, response.status
+    assert_equal "/bar", response.headers["Location"]
+  end
+  
   def test_controller_is_available_through_config_container
     request = Harbor::Test::Request.new
     response = Harbor::Response.new(request)

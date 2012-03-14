@@ -65,6 +65,22 @@ module Harbor
         route("GET", "edit/:id", handler)
       end
       
+      ## Misc
+      
+      def redirect(source, destination)
+        location = Harbor::Controller::NormalizedPath.new(self, destination)
+        location = "/#{location}" unless location == "/"
+        
+        handler = lambda do
+          response.status = 301
+          response.headers["Location"] = location
+          response.headers["Content-Type"] = "text/html"
+          response.flush
+          throw :abort_request
+        end
+        
+        route("GET", source, handler)
+      end
     end
   end
 end
