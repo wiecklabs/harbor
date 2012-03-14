@@ -23,11 +23,72 @@ module Harbor
     
     class ServiceRegistration
 
+      class Parameter
+        attr_reader :name
+        
+        def initialize(type, name)
+          @name_to_sym = name.to_sym
+          @name = name.to_s.freeze
+          @type = type
+        end
+        
+        def required?
+          @type == :req
+        end
+        
+        def optional?
+          @type == :opt
+        end
+        
+        def varargs?
+          @type == :args
+        end
+        
+        def to_s
+          @name
+        end
+        
+        def to_sym
+          @name_to_sym
+        end
+      end
+      
       attr_reader :name, :service, :initializers
 
       def initialize(name, service)
         @name, @service = name, service
         @initializers = Set.new
+        @dependencies = []
+        
+        if service.is_a?(Class)
+          service.instance_method(:initialize).parameters.each do |parameter|
+            @dependencies << Parameter.new(parameter[0], parameter[1])
+          end
+        end
+      end
+      
+      def construct(container, optional_properties)
+        if @service.is_a?(Class)
+          if @dependencies.empty?
+            @service.new
+          else
+            args = []
+            
+            @dependencies.each do |parameter|
+              if value = (optional_properties[parameter.to_s] || optional_properties[parameter.to_sym])
+                args << value
+              elsif container.set?(parameter.name)
+                args << container.get(parameter.name, optional_properties)
+              elsif parameter.required?
+                args << nil    
+              end
+            end
+            
+            @service.new *args
+          end
+        else
+          @service
+        end
       end
 
     end
@@ -51,7 +112,7 @@ module Harbor
     def get(name, optional_properties = {})
       raise ArgumentError.new("#{name} is not a registered service name") unless set?(name)
       service_registration = @services[name]
-      service = service_registration.service.is_a?(Class) ? service_registration.service.new : service_registration.service
+      service = service_registration.construct(self, optional_properties)
 
       dependencies(name).each do |dependency|
         service.send("#{dependency}=", get(dependency, optional_properties))

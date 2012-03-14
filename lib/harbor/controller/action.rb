@@ -4,12 +4,15 @@ module Harbor
       def initialize(controller, name)
         @controller = controller
         @name = name.to_sym
+        
+        @controller_name = controller.name
+        config.set(@controller_name, controller)
       end
 
       attr_reader :controller, :name
 
       def call(request, response)
-        controller.new(request, response).send(@name)
+        config.get(@controller_name, "request" => request, "response" => response).send(@name)
       end
 
       def inspect

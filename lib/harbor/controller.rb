@@ -7,6 +7,10 @@ require_relative "auth/basic"
 module Harbor
   class Controller
     
+    def self.inherited(target)
+      config.set(target.name, target)
+    end
+    
     def initialize(request, response)
       @request = request
       @response = response

@@ -51,6 +51,15 @@ class ControllerTest < MiniTest::Unit::TestCase
     @router = Harbor::Router::instance
   end
 
+  def test_controller_is_available_through_config_container
+    request = Harbor::Test::Request.new
+    response = Harbor::Response.new(request)
+    controller = config.get("ControllerTest::Controllers::Foos", request: request, response: response)
+    assert_instance_of Controllers::Foos, controller
+    assert_same request, controller.request
+    assert_same response, controller.response
+  end
+  
   def test_generated_action_methods_return_expected_results
     assert_equal :GET__root__, @example.GET__root__
     assert_equal :GET, @example.GET
