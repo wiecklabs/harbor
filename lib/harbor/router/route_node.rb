@@ -11,6 +11,11 @@ module Harbor
       attr_reader :fragment
       attr_accessor :left, :right, :match
 
+      def initialize(action = nil, tokens = nil, fragment = nil)
+        super(action, tokens)
+        @fragment = fragment
+      end
+
       def self.wildcard_fragment?(fragment)
         fragment == WILDCARD_FRAGMENT
       end
@@ -39,8 +44,10 @@ module Harbor
       # Inserts or updates tree nodes
       #
       # @return [ Route ] The inserted node
-      def insert(action, tokens)
-        leaf = find_or_create_node!(tokens)
+      def insert(action, tokens, parent = nil)
+        # parent = nil is just to simplify testing, we should always
+        # call the method with parent node
+        leaf = find_or_create_node!(tokens, 0, parent)
         leaf.action = action
         leaf.tokens = tokens
         leaf
@@ -50,12 +57,12 @@ module Harbor
       # token, a "blank" node will be created and the search will continue.
       #
       # @return [ Route ] The node for a set of tokens
-      def find_or_create_node!(tokens, index = 0)
+      def find_or_create_node!(tokens, index = 0, parent = nil)
         part = tokens[index]
 
         # This will extend the current node with "complex wildcard behavior" /
         # n-way search tree
-        return replace!(tokens, index) if should_replace?(part)
+        return replace!(tokens, index, parent) if should_replace?(part)
 
         if @fragment.nil?
           @fragment = self.class.fragment_from_token(part)
@@ -70,11 +77,11 @@ module Harbor
 
         case direction
         when MATCH
-          (@match ||= RouteNode.new).find_or_create_node!(tokens, index + 1)
+          (@match ||= RouteNode.new).find_or_create_node!(tokens, index + 1, self)
         when LEFT
-          (@left ||= RouteNode.new).find_or_create_node!(tokens, index)
+          (@left ||= RouteNode.new).find_or_create_node!(tokens, index, self)
         when RIGHT
-          (@right ||= RouteNode.new).find_or_create_node!(tokens, index)
+          (@right ||= RouteNode.new).find_or_create_node!(tokens, index, self)
         end
       end
 
@@ -86,9 +93,9 @@ module Harbor
           !@fragment.nil? && !wildcard? && incoming_wildcard
       end
 
-      def replace!(tokens, index)
+      def replace!(tokens, index, parent)
         extend WildcardNode
-        find_or_create_node!(tokens, index)
+        find_or_create_node!(tokens, index, parent)
       end
 
       def assign_from(other_node)

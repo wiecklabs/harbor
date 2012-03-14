@@ -29,12 +29,12 @@ module Harbor
         @wildcard_tree.search(tokens) if @wildcard_tree
       end
 
-      def find_or_create_node!(tokens, index = 0)
+      def find_or_create_node!(tokens, index = 0, parent = nil)
         part = tokens[index]
         if Route.wildcard_token?(part)
-          (@wildcard_tree ||= RouteNode.new).find_or_create_node!(tokens, index)
+          (@wildcard_tree ||= RouteNode.new).find_or_create_node!(tokens, index, parent)
         else
-          (trees[part] ||= RouteNode.new).find_or_create_node!(tokens, index)
+          (trees[part] ||= RouteNode.new).find_or_create_node!(tokens, index, parent)
         end
       end
 
