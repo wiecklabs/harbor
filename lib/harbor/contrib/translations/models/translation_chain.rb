@@ -1,9 +1,14 @@
 require 'i18n'
+require 'harbor/contrib/translations/models/key_value_mixin'
 
 module Harbor
   module Contrib
     module Translations
       class TranslationChain
+
+        class I18n::Backend::KeyValue
+          include KeyValueMixin
+        end
 
         @@backends = []
 
@@ -42,11 +47,11 @@ module Harbor
         end
 
         def put(locale, key, value)
-          backends.first.store_translations(locale, {key => value}, :escape => false)
+          backends.last.store_translations(locale, {key => value}, :escape => false)
         end
 
-        def keys
-          backends.first.store.keys
+        def keys(locale = nil)
+          backends.last.keys(locale)
         end
 
         def exists?(locale, key)
