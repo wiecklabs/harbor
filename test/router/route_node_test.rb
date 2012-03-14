@@ -48,7 +48,6 @@ module Router
       assert_equal :categories_action, @node.left.action
     end
 
-
     def test_identifies_wildcard_fragment
       assert RouteNode.wildcard_fragment?('*')
       refute RouteNode.wildcard_fragment?('posts')
@@ -78,20 +77,22 @@ module Router
       assert_equal comment_node, @node.match.match
     end
 
-    def test_handles_non_wildcard_routes_precedence_by_extending_existing_wildcard_route
-      @node.insert(:id, ['posts', ':id'])
-      @node.insert(:recent, ['posts', 'recent'])
+    def test_handles_non_wildcard_routes_precedence_by_replacing_node
+      show = @node.insert(:id, ['posts', ':id'])
+      recent = @node.insert(:recent, ['posts', 'recent'])
 
       assert_kind_of Harbor::Router::WildcardNode, @node.match
-      refute_nil @node.match.trees
+      assert_same show, @node.match.wildcard_tree
+      assert_same recent, @node.match.trees['recent']
     end
 
-    def test_handles_non_wildcard_routes_precedence_by_extending_existing_simple_route
-      @node.insert(:recent, ['posts', 'recent'])
-      @node.insert(:id, ['posts', ':id'])
+    def test_handles_non_wildcard_routes_precedence_by_replacing_nodes
+      recent = @node.insert(:recent, ['posts', 'recent'])
+      show = @node.insert(:id, ['posts', ':id'])
 
       assert_kind_of Harbor::Router::WildcardNode, @node.match
-      refute_nil @node.match.trees
+      assert_same show, @node.match.wildcard_tree
+      assert_same recent, @node.match.trees['recent']
     end
 
     def test_finds_node_on_the_right

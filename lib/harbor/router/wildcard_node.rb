@@ -1,19 +1,19 @@
 module Harbor
   class Router
-    # Used to extend a "simple" node with n-way search tree behavior
-    # TODO: Add inspect information to distinguish from "normal" routes
-    module WildcardNode
-      def self.extended(base)
-        new_node = RouteNode.new.assign_from(base)
-        if base.wildcard?
-          base.wildcard_tree = new_node
-        else
-          base.trees[base.fragment] = new_node
-        end
-        base.reset!
-      end
-
+    # Used to replace a "simple" node with n-way search tree
+    class WildcardNode
       attr_accessor :wildcard_tree
+
+      def initialize(node = nil)
+        @trees = {}
+        return unless node
+
+        if node.wildcard?
+          @wildcard_tree = node
+        elsif node.fragment
+          @trees[node.fragment] = node
+        end
+      end
 
       def search(tokens)
         part = tokens.first

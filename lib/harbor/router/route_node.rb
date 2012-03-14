@@ -11,9 +11,10 @@ module Harbor
       attr_reader :fragment
       attr_accessor :left, :right, :match
 
+      # TODO: Just accept a hash and don't worry about optional arguments...
       def initialize(action = nil, tokens = nil, fragment = nil)
         super(action, tokens)
-        @fragment = fragment
+        @fragment = self.class.fragment_from_token(fragment) if fragment
       end
 
       def self.wildcard_fragment?(fragment)
@@ -94,8 +95,24 @@ module Harbor
       end
 
       def replace!(tokens, index, parent)
-        extend WildcardNode
-        find_or_create_node!(tokens, index, parent)
+        wildcard_node = WildcardNode.new(self)
+
+        direction = origin_direction(parent)
+        parent.send("#{direction}=", wildcard_node)
+
+        wildcard_node.find_or_create_node!(tokens, index, parent)
+      end
+
+      # TODO: Better name for this method
+      def origin_direction(parent)
+        case self
+        when parent.left
+          :left
+        when parent.right
+          :right
+        when parent.match
+          :match
+        end
       end
 
       def assign_from(other_node)
