@@ -27,11 +27,9 @@ module Harbor
           unfilled = backends.select do |backend|
             !exists_in_backend?(backend, locale, key)
           end
-          filled = backends.reverse.detect do |backend|
-            exists_in_backend?(backend, locale, key)
-          end
+          filled = (backends - unfilled).first
 
-          if (unfilled && filled)
+          if unfilled && filled
             value = filled.translate(locale, key)
             unfilled.each do |backend|
               backend.store_translations(locale, {key => value}, :escape => false)
