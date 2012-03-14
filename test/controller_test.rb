@@ -40,8 +40,13 @@ class ControllerTest < MiniTest::Unit::TestCase
         :GET_about_the_foos
       end
 
+      get "render" do
+        @instance_var = 'value'
+        render('some/template')
+      end
+
       redirect "/login", "new"
-      
+
       redirect "foo", "/bar"
     end
   end
@@ -58,28 +63,28 @@ class ControllerTest < MiniTest::Unit::TestCase
     request = Harbor::Test::Request.new
     response = Harbor::Response.new(request)
     controller = Controllers::Foos.new(request, response)
-    
+
     catch(:abort_request) do
       controller.send(:GET_login)
     end
-    
+
     assert_equal 301, response.status
     assert_equal "/controller_test/foos/new", response.headers["Location"]
   end
-  
+
   def test_redirect_from_relative_source
     request = Harbor::Test::Request.new
     response = Harbor::Response.new(request)
     controller = Controllers::Foos.new(request, response)
-    
+
     catch(:abort_request) do
       controller.send(:GET_foo)
     end
-    
+
     assert_equal 301, response.status
     assert_equal "/bar", response.headers["Location"]
   end
-  
+
   def test_controller_is_available_through_config_container
     request = Harbor::Test::Request.new
     response = Harbor::Response.new(request)
@@ -88,7 +93,7 @@ class ControllerTest < MiniTest::Unit::TestCase
     assert_same request, controller.request
     assert_same response, controller.response
   end
-  
+
   def test_generated_action_methods_return_expected_results
     assert_equal :GET__root__, @example.GET__root__
     assert_equal :GET, @example.GET
@@ -109,4 +114,12 @@ class ControllerTest < MiniTest::Unit::TestCase
     assert_controller_route_matches("GET", "/about_the_foos", Controllers::Foos, :GET_about_the_foos)
   end
 
+  def test_controller_becomes_view_context_when_shortcutted
+    response = mock()
+    controller = Controllers::Foos.new(nil, response)
+
+    response.expects(:render).with('some/template', has_entry('instance_var' => 'value'))
+
+    controller.GET_render
+  end
 end

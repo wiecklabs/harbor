@@ -1,16 +1,17 @@
 require_relative "router"
 require_relative "controller/action"
 require_relative "controller/normalized_path"
+require_relative "controller/view_context"
 require_relative "router/helpers"
 require_relative "auth/basic"
 
 module Harbor
   class Controller
-    
+
     def self.inherited(target)
       config.set(target.name, target)
     end
-    
+
     def initialize(request, response)
       @request = request
       @response = response
@@ -18,8 +19,9 @@ module Harbor
 
     attr_reader :request, :response
 
-    private    
+    private
     extend Router::Helpers
+    include Controller::ViewContext
 
     def self.route(method, path, handler)
       action_name = method_name_for_route(method, path)
@@ -37,7 +39,7 @@ module Harbor
 
       parts.join("_")
     end
-    
+
     def basic(&check)
       Harbor::Auth::Basic.authenticate(@request, @response) &check
     end

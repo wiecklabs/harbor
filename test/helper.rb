@@ -10,6 +10,7 @@ end
 
 require "pathname"
 require "minitest/autorun"
+require 'mocha'
 require "uri"
 require Pathname(__FILE__).dirname.parent + "lib/harbor"
 require "harbor/mail/mailer"
