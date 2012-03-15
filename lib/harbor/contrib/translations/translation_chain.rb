@@ -1,5 +1,5 @@
 require 'i18n'
-require 'harbor/contrib/translations/models/key_value_mixin'
+require 'harbor/contrib/translations/key_value_mixin'
 
 module Harbor
   module Contrib

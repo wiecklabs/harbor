@@ -1,1 +1,1 @@
-require "harbor/contrib/translations/helpers.rb"
+require "harbor/contrib/translations/translation_chain.rb"
