@@ -32,7 +32,7 @@ module Harbor
           unfilled = backends.select do |backend|
             !exists_in_backend?(backend, locale, key)
           end
-          filled = (backends - unfilled).first
+          filled = (backends - unfilled).last
 
           if unfilled && filled
             value = filled.translate(locale, key)
