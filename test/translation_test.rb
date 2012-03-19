@@ -1,7 +1,7 @@
 require "pathname"
 require Pathname(__FILE__).dirname + "helper"
 require "sequel_test_case"
-require "harbor/contrib/translations/models/translation_chain"
+require "harbor/contrib/translations/translation_chain"
 
 module Contrib
   module Translations
