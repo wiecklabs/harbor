@@ -54,6 +54,10 @@ module Harbor
           backends.last.keys(locale)
         end
 
+        def lookup(locale, key)
+          backends.last.lookup(locale, key)
+        end
+
         def exists?(locale, key)
           backends.each do |backend|
             return true if exists_in_backend?(backend, locale, key)
