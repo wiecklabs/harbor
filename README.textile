@@ -2,14 +2,4 @@ h1. Welcome to Harbor!
 
 !https://secure.travis-ci.org/sam/harbor.png!:http://travis-ci.org/sam/harbor
 
-
-For information on getting started, check out: http://wiecklabs.com/get-started
-
-Some of the most important classes you'll probably want to check out are:
-
-* @Harbor::Application@
-* @Harbor::Cascade@
-* @Harbor::Container@
-* @Harbor::Response@
-* @Harbor::Router@
-* @Harbor::View@
+Current Status: Development on pause until 2012-03-26.
