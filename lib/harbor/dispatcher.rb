@@ -20,7 +20,7 @@ module Harbor
       
       fragments = Router::Route.expand(request.path_info)
 
-      if route = router.match(request.request_method, fragments)
+      if route = router.match(request.request_method, fragments)        
         if route.action          
           request.params.merge!(extract_params_from_tokens(route.tokens, fragments))
           catch(:halt) do
@@ -83,9 +83,7 @@ module Harbor
     # To use a custom 500 message, create a view "exceptions/500.html.erb", and
     # optionally create a view "layouts/exception.html.erb" to style it.
     ##
-    def handle_exception(exception, request, response)
-      warn "DEPRECATED: Application#call"
-      
+    def handle_exception(exception, request, response)      
       response.flush
       response.status = 500
 
