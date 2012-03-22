@@ -240,7 +240,7 @@ module Harbor
     end
 
     def redirect!(url, params = nil)
-      redirect(url, params) and throw(:abort_request)
+      redirect(url, params) and throw(:halt)
     end
 
     def abort!(code)
@@ -249,7 +249,7 @@ module Harbor
       end
 
       self.status = code
-      throw(:abort_request)
+      throw(:halt)
     end
 
     def unauthorized
@@ -276,7 +276,7 @@ module Harbor
     def not_modified!
       NOT_MODIFIED_OMIT_HEADERS.each { |name| headers.delete(name) }
       self.status = 304
-      throw(:abort_request)
+      throw(:halt)
     end
 
     def inspect

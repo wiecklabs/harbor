@@ -1,6 +1,6 @@
 module Harbor
   module Events
-    class ApplicationExceptionEvent
+    class ServerErrorEvent
       
       attr_reader :request, :response, :exception
       

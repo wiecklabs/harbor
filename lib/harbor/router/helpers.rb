@@ -76,7 +76,7 @@ module Harbor
           response.headers["Location"] = location
           response.headers["Content-Type"] = "text/html"
           response.flush
-          throw :abort_request
+          throw :halt
         end
         
         route("GET", source, handler)

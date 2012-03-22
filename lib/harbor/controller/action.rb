@@ -35,7 +35,7 @@ module Harbor
             args << value
           elsif type == :req
             response.status = 400
-            throw :abort_request
+            throw :halt
           end
         end
       end

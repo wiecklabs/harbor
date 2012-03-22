@@ -35,14 +35,20 @@ class DispatcherTest < MiniTest::Unit::TestCase
     assert_equal '4321', @request.params['order_id']
   end
 
-  def test_aborts_request_if_non_callable_node_is_matched
+  def test_halt_if_non_callable_node_is_matched
+    not_found = false
+    Harbor::Dispatcher.register_event_handler :not_found do
+      not_found = true
+    end
+    
     @request.path_info = 'inner/node'
-    assert_throws(:abort_request) { @dispatcher.dispatch!(@request, @response) }
+    @dispatcher.dispatch!(@request, @response)
+    assert not_found
   end
 
   def test_sets_response_to_404_if_non_callable_node_is_matched
     @request.path_info = 'inner/node'
-    catch(:abort_request) { @dispatcher.dispatch!(@request, @response) }
+    catch(:halt) { @dispatcher.dispatch!(@request, @response) }
     assert_equal 404, @response.status
   end
 

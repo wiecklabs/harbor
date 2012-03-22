@@ -348,7 +348,7 @@ class ResponseTest < MiniTest::Unit::TestCase
     response = Harbor::Response.new(request)
 
     called = false
-    assert_throws(:abort_request) do
+    assert_throws(:halt) do
       response.cache(nil, time) { called = true }
     end
     assert_equal 304, response.status
@@ -415,7 +415,7 @@ class ResponseTest < MiniTest::Unit::TestCase
       response = Harbor::Response.new(request)
       response.cache("key", time, 10) {}
 
-      assert_throws(:abort_request) do
+      assert_throws(:halt) do
         response.cache("key", time, 10) {}
       end
       assert_equal 304, response.status

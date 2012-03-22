@@ -47,12 +47,12 @@ module Controller
       assert_equal [1, 'default'], @action_with_default.call(@request, @response)
     end
 
-    def test_raises_abort_request_if_a_required_argument_is_not_provided
-      assert_throws(:abort_request) { @action_with_args.call(@request, @response) }
+    def test_raises_halt_if_a_required_argument_is_not_provided
+      assert_throws(:halt) { @action_with_args.call(@request, @response) }
     end
 
-    def test_set_response_status_to_400_when_aborting_request
-      catch(:abort_request) { @action_with_args.call(@request, @response) }
+    def test_set_response_status_to_400_when_halting
+      catch(:halt) { @action_with_args.call(@request, @response) }
       assert_equal 400, @response.status
     end
   end

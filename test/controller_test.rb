@@ -64,7 +64,7 @@ class ControllerTest < MiniTest::Unit::TestCase
     response = Harbor::Response.new(request)
     controller = Controllers::Foos.new(request, response)
 
-    catch(:abort_request) do
+    catch(:halt) do
       controller.send(:GET_login)
     end
 
@@ -77,7 +77,7 @@ class ControllerTest < MiniTest::Unit::TestCase
     response = Harbor::Response.new(request)
     controller = Controllers::Foos.new(request, response)
 
-    catch(:abort_request) do
+    catch(:halt) do
       controller.send(:GET_foo)
     end
 

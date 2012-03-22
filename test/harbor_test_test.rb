@@ -140,7 +140,7 @@ class HarborTestTest < MiniTest::Unit::TestCase
     assert_equal "Hello World. My Name is Bob.\n", hello.response.buffer_string
   end
 
-  def test_controller_with_throw_abort_request
+  def test_controller_with_throw_halt
     controller = Class.new do
       attr_accessor :request, :response
 
@@ -157,7 +157,7 @@ class HarborTestTest < MiniTest::Unit::TestCase
 
     hello = container.get(:hello_controller)
 
-    assert_throws :abort_request do
+    assert_throws :halt do
       hello.hello_world("Bob")
     end
 

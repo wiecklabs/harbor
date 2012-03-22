@@ -27,21 +27,36 @@ require "harbor/dispatcher"
 require "harbor/consoles"
 
 module Harbor
-  def self.dispatcher
-    @dispatcher ||= Harbor::Dispatcher::instance
+  
+  def initialize
+    self.class::applications.each do |application|
+      applications << application.new
+    end
+    
+    @dispatcher = Harbor::Dispatcher::instance
+  end
+  
+  def applications
+    @applications ||= []
+  end
+  
+  def dispatcher
+    @dispatcher
   end
 
-  def self.call(env)
+  def call(env)
     request = Request.new(self, env)
     response = Response.new(request)
 
-    catch(:abort_request) do
-      dispatcher.dispatch!(request, response)
-    end
+    @dispatcher.dispatch!(request, response)
 
     response.to_a
   end
 
+  def self.register_application(application)
+    applications << application unless applications.include? application
+  end
+  
   private
   def self.applications
     @applications ||= []

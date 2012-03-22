@@ -31,5 +31,5 @@ module Harbor
   end
 end
 
-Harbor::Application.register_event_handler(:request_complete) { |event| Harbor::RequestLogger.info(event) }
-Harbor::Application.register_event_handler(:exception) { |event| Harbor::RequestLogger.error(event) }
+Harbor::Dispatcher.register_event_handler(:request_complete) { |event| Harbor::RequestLogger.info(event) }
+Harbor::Dispatcher.register_event_handler(:exception) { |event| Harbor::RequestLogger.error(event) }
