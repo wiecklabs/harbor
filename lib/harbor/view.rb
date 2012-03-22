@@ -8,7 +8,7 @@ require_relative "view_context"
 require_relative "layouts"
 require_relative "plugin_list"
 
-module Harbor
+class Harbor
   class View
 
     class LayoutNotFoundError < StandardError

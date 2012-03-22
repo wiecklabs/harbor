@@ -10,7 +10,7 @@ end
 # Right now switching the dump/load methods to JSON breaks things. Which is weird.
 require "yaml"
 
-module Harbor
+class Harbor
   module Contrib
     class Session
       ##

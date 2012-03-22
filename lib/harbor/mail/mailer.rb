@@ -8,7 +8,7 @@ require_relative "servers/smtp"
 require_relative "servers/test"
 require_relative "filters/delivery_address_filter"
 
-module Harbor
+class Harbor
   module Mail
     class Mailer < Builder
 

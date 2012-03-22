@@ -4,7 +4,7 @@ else
   require_relative "locale/mri"
 end
 
-module Harbor
+class Harbor
   class Locale
     def self.active_locales
       @active_locales ||= []

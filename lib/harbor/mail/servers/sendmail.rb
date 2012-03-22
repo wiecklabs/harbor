@@ -1,6 +1,6 @@
 require 'open3'
 
-module Harbor
+class Harbor
   module Mail
     module Servers
       class Sendmail < Abstract

@@ -1,4 +1,4 @@
-module Harbor
+class Harbor
   class Router
     # A Ternary Search tree implementation that can be extended to a n-way search
     # tree at insertion time.
@@ -40,6 +40,7 @@ module Harbor
 
         return @left.search(tokens, current_token) if @left && current_token < @fragment
         return @right.search(tokens, current_token) if @right && current_token > @fragment
+        nil
       end
 
       # Inserts or updates tree nodes

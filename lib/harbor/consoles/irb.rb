@@ -1,6 +1,6 @@
 require "singleton"
 
-module Harbor
+class Harbor
   module Consoles
     module IRB
       

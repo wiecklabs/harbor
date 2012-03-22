@@ -3,7 +3,7 @@ require "fileutils"
 require "logger"
 require "erubis"
 
-module Harbor
+class Harbor
   module Commands
 
     class Setup

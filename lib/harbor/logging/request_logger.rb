@@ -1,4 +1,4 @@
-module Harbor
+class Harbor
   class RequestLogger
     ##
     # Logs requests and their params the configured request logger.

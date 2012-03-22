@@ -1,7 +1,7 @@
 require_relative 'session/abstract'
 require_relative 'session/cookie'
 
-module Harbor
+class Harbor
 
   class Session
     include Harbor::Events

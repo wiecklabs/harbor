@@ -1,4 +1,4 @@
-module Harbor
+class Harbor
   class Configuration < Harbor::Container
 
     def self.instance

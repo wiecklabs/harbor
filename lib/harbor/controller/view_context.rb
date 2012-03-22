@@ -1,4 +1,4 @@
-module Harbor
+class Harbor
   class Controller
     module ViewContext
       def render(view)

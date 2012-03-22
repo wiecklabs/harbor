@@ -1,6 +1,6 @@
 warn "\n\nWARNING: Locales are not fully supported on MRI yet"
 
-module Harbor
+class Harbor
   class Locale
     attr_reader :country, :language
 

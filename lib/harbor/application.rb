@@ -23,7 +23,7 @@ require_relative "events/server_error_event"
 require_relative "events/session_created_event_context"
 require_relative "messages"
 
-module Harbor
+class Harbor
   class Application
 
     def self.inherited(application)

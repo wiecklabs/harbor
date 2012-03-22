@@ -1,4 +1,4 @@
-module Harbor
+class Harbor
   module Mail
     class Builder
       class Attachment

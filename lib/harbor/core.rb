@@ -26,7 +26,7 @@ require "harbor/dispatcher"
 
 require "harbor/consoles"
 
-module Harbor
+class Harbor
   
   def initialize
     self.class::applications.each do |application|

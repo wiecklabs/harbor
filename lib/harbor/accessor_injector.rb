@@ -1,4 +1,4 @@
-module Harbor
+class Harbor
   ##
   # A simple module to facilitate accessor based injection. This is used by Harbor::Plugin
   # to allow you to easily construct plugins from hashes, i.e.:

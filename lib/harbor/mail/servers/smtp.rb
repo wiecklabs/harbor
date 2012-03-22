@@ -1,6 +1,6 @@
 require "net/smtp"
 
-module Harbor
+class Harbor
   module Mail
     module Servers
       class SmtpServer < Abstract

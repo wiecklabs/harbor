@@ -4,7 +4,7 @@ require_relative "wildcard_node"
 require_relative "deferred_route"
 require_relative "deferred_route_collection"
 
-module Harbor
+class Harbor
   class Router
     class HttpVerbRouter
       attr_accessor :root

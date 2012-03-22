@@ -5,7 +5,7 @@ require_relative "controller/view_context"
 require_relative "router/helpers"
 require_relative "auth/basic"
 
-module Harbor
+class Harbor
   class Controller
 
     def self.inherited(target)

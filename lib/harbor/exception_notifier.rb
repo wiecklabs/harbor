@@ -1,4 +1,4 @@
-module Harbor
+class Harbor
   ##
   # Utility class for receiving email notifications of exceptions in
   # non-development environments.

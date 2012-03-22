@@ -1,7 +1,7 @@
 require "rack/request"
 require_relative "session"
 
-module Harbor
+class Harbor
   class Request < Rack::Request
 
     BOT_AGENTS = [

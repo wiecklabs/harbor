@@ -1,4 +1,4 @@
-module Harbor
+class Harbor
   # Copyright (c) 2007, 2008, 2009 Christian Neukirchen <purl.org/net/chneukirchen>
   # This file originated from the Rack project, which can be found at rack.rubyforge.org
   module Mime

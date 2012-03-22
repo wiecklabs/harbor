@@ -1,4 +1,4 @@
-module Harbor
+class Harbor
   class Messages < Hash
     def initialize(messages = {})
       super()

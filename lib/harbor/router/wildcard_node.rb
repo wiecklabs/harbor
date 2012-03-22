@@ -1,4 +1,4 @@
-module Harbor
+class Harbor
   class Router
     # Used to replace a "simple" node with n-way search tree
     class WildcardNode

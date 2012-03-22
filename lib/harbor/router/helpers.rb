@@ -1,4 +1,4 @@
-module Harbor
+class Harbor
   class Router
     module Helpers
       

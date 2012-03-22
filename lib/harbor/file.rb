@@ -1,6 +1,6 @@
 require 'fileutils'
 
-module Harbor
+class Harbor
 
   class File
 

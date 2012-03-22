@@ -1,6 +1,6 @@
 require 'forwardable'
 
-module Harbor
+class Harbor
   class Router
     # Handles deferred wildcard routes
     class DeferredRouteCollection

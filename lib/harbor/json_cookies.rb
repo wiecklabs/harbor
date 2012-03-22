@@ -1,4 +1,4 @@
-module Harbor
+class Harbor
   ##
   # Middleware for storing data in a cookie using JSON, for later access
   # via javascript.

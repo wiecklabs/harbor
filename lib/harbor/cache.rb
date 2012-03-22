@@ -1,7 +1,7 @@
 require "thread"
 require_relative "cache/item"
 
-module Harbor
+class Harbor
 
   class Cache
 

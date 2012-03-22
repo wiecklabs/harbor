@@ -1,4 +1,4 @@
-module Harbor
+class Harbor
   module Hooks
 
     def self.included(target)

@@ -1,4 +1,4 @@
-module Harbor
+class Harbor
   module Mail
     module Servers
       class Test < Abstract

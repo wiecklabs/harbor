@@ -1,4 +1,4 @@
-module Harbor
+class Harbor
   class Dispatcher
     
     include Harbor::Events

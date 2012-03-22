@@ -1,4 +1,4 @@
-module Harbor
+class Harbor
   class Router
     class Route
       WILDCARD_CHAR     = ?:

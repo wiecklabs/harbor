@@ -1,6 +1,6 @@
 require "java"
 
-module Harbor
+class Harbor
   class Locale
     def self.[](culture_code)
       @locales ||=

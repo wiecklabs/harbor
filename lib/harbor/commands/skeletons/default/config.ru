@@ -4,4 +4,4 @@ $:.unshift File.dirname(__FILE__)
 
 require "lib/boot.rb"
 
-run Harbor
+run Harbor.new

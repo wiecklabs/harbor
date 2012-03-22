@@ -1,7 +1,7 @@
 require "stringio"
 require_relative "view"
 
-module Harbor
+class Harbor
   class Response
 
     attr_accessor :status, :headers, :errors

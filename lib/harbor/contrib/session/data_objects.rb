@@ -1,7 +1,7 @@
 require "data_objects"
 require 'yaml'
 
-module Harbor
+class Harbor
   module Contrib
     class Session
       ##

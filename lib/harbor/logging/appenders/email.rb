@@ -1,4 +1,4 @@
-module Harbor
+class Harbor
   module LogAppenders
 
     class Email < Logging::Appender

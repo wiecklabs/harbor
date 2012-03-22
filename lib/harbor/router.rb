@@ -1,6 +1,6 @@
 require_relative "router/http_verb_router"
 
-module Harbor
+class Harbor
   class Router
 
     def initialize

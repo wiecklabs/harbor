@@ -2,7 +2,7 @@ require "mime/types"
 require "uuidtools"
 require_relative "builder/attachment"
 
-module Harbor
+class Harbor
   module Mail
     ##
     # Harbor::Mail::Builder is a library for building RFC compliant MIME messages,

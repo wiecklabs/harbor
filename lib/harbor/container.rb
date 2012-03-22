@@ -1,6 +1,6 @@
 require 'set'
 
-module Harbor
+class Harbor
   ##
   # Harbor::Container is an inversion of control container for simple
   # dependency injection. For more information on dependency injection, see

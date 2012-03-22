@@ -1,4 +1,4 @@
-module Harbor
+class Harbor
   module Test
     class Request < Harbor::Request
 
