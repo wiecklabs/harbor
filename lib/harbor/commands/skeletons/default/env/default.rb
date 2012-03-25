@@ -10,5 +10,12 @@ Harbor::View::layouts.default("layouts/application")
 #  config.console = Harbor::Consoles::Pry
 #
 # Don't forget to add the following to your Gemfile and rebundle!
-# 
+#
 #  gem "pry"
+
+### Template Caching:
+# If you would like to enable Tilt (https://github.com/rtomayko/tilt) caching
+# for all environments, uncomment the configuration line below and remove the
+# same line from env/production.rb and env/stage.rb
+#
+#  Harbor::View.cache_templates!
