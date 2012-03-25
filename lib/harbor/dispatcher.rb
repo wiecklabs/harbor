@@ -19,19 +19,16 @@ class Harbor
       dispatch_request_event = Events::DispatchRequestEvent.new(request, response)
 
       fragments = Router::Route.expand(request.path_info)
+      route = router.match(request.request_method, fragments)
+      if route && route.action
+        request.params.merge!(extract_params_from_tokens(route.tokens, fragments))
 
-      if route = router.match(request.request_method, fragments)
-        if route.action
-          request.params.merge!(extract_params_from_tokens(route.tokens, fragments))
-          catch(:halt) do
-
-            raise_event(:request_dispatch, dispatch_request_event)
-
-            route.action.call(request, response)
-          end
-        else
-          handle_not_found(request, response)
+        catch(:halt) do
+          raise_event(:request_dispatch, dispatch_request_event)
+          route.action.call(request, response)
         end
+      else
+        handle_not_found(request, response)
       end
     rescue Exception => e
       handle_exception(e, request, response)

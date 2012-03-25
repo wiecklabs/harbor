@@ -10,7 +10,7 @@ class DispatcherTest < MiniTest::Unit::TestCase
     def match(verb, path)
       if path.first == 'parts'
         @route
-      else
+      elsif path.first == 'inner'
         @empty_route
       end
     end
