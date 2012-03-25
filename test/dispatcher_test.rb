@@ -44,7 +44,7 @@ class DispatcherTest < MiniTest::Unit::TestCase
     assert_equal '4321', @request.params['order_id']
   end
 
-  def test_halt_if_non_callable_node_is_matched
+  def test_sets_response_to_404_if_non_callable_node_is_matched
     @request.path_info = 'inner/node'
     @dispatcher.dispatch!(@request, @response)
     assert @@not_found
@@ -55,12 +55,6 @@ class DispatcherTest < MiniTest::Unit::TestCase
     @request.path_info = 'non/matching/route'
     @dispatcher.dispatch!(@request, @response)
     assert @@not_found
-    assert_equal 404, @response.status
-  end
-
-  def test_sets_response_to_404_if_non_callable_node_is_matched
-    @request.path_info = 'inner/node'
-    catch(:halt) { @dispatcher.dispatch!(@request, @response) }
     assert_equal 404, @response.status
   end
 
