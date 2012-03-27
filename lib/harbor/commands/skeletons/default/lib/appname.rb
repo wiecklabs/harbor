@@ -19,4 +19,6 @@ class <@= app_class @> < Harbor::Application
 
 end
 
-require_relative "../controllers/home"
+Dir[Pathname(__FILE__).dirname.parent + 'controllers/*.rb'].each do |controller|
+  require controller
+end
