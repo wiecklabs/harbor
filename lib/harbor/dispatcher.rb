@@ -1,8 +1,8 @@
 class Harbor
   class Dispatcher
-    
+
     include Harbor::Events
-    
+
     def self.instance
       @instance ||= self.new
     end
@@ -17,21 +17,18 @@ class Harbor
 
     def dispatch!(request, response)
       dispatch_request_event = Events::DispatchRequestEvent.new(request, response)
-      
-      fragments = Router::Route.expand(request.path_info)
 
-      if route = router.match(request.request_method, fragments)        
-        if route.action          
-          request.params.merge!(extract_params_from_tokens(route.tokens, fragments))
-          catch(:halt) do
-            
-            raise_event(:request_dispatch, dispatch_request_event)
-            
-            route.action.call(request, response)
-          end
-        else
-          handle_not_found(request, response)
+      fragments = Router::Route.expand(request.path_info)
+      route = router.match(request.request_method, fragments)
+      if route && route.action
+        request.params.merge!(extract_params_from_tokens(route.tokens, fragments))
+
+        catch(:halt) do
+          raise_event(:request_dispatch, dispatch_request_event)
+          route.action.call(request, response)
         end
+      else
+        handle_not_found(request, response)
       end
     rescue Exception => e
       handle_exception(e, request, response)
@@ -48,7 +45,7 @@ class Harbor
         params[token[1..-1]] = value if token && Router::Route.wildcard_token?(token)
       end
     end
-    
+
     ##
     # Method used to nicely handle cases where no routes or public files
     # match the incoming request.
@@ -58,7 +55,7 @@ class Harbor
     # To use a custom 404 message, create a view "exceptions/404.html.erb", and
     # optionally create a view "layouts/exception.html.erb" to style it.
     ##
-    def handle_not_found(request, response)      
+    def handle_not_found(request, response)
       response.flush
       response.status = 404
 
@@ -72,7 +69,7 @@ class Harbor
 
       raise_event(:not_found, Events::NotFoundEvent.new(request, response))
     end
-    
+
     ##
     # Method used to nicely handle uncaught exceptions.
     #
@@ -83,7 +80,7 @@ class Harbor
     # To use a custom 500 message, create a view "exceptions/500.html.erb", and
     # optionally create a view "layouts/exception.html.erb" to style it.
     ##
-    def handle_exception(exception, request, response)      
+    def handle_exception(exception, request, response)
       response.flush
       response.status = 500
 
