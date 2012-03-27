@@ -86,7 +86,6 @@ class Harbor
       full_path ||= self.class.exists?(@filename)
       raise "Could not find '#{@filename}' in #{self.class.path}" unless full_path
 
-      # TODO: This could probably be based on the current environment
       template = if self.class.cache_templates?
         self.class.tilt_cache.fetch(full_path) { Tilt.new(full_path.to_s) }
       else
