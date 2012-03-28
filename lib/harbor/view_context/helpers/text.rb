@@ -5,13 +5,9 @@
 module Harbor::ViewContext::Helpers::Text
 
   # Querystring escape +value+
+  # Replaces spaces with '%20' and hard stops (periods) with '%2E'.
   def q(value)
-    s = URI.encode_www_form_component(value).gsub('+', '%20')
-    if s.end_with?('.')
-      s.chop!
-      s << '%2E'
-    end
-    s
+     URI.encode_www_form_component(value).gsub('+', '%20').gsub('.', '%2E')
   end
 
   # HTML escape +value+
