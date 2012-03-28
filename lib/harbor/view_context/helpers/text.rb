@@ -6,8 +6,12 @@ module Harbor::ViewContext::Helpers::Text
 
   # Querystring escape +value+
   def q(value)
-    # TODO: Remove external dependency!
-    Rack::Utils::escape(value)
+    s = URI.encode_www_form_component(value).gsub('+', '%20')
+    if s.end_with?('.')
+      s.chop!
+      s << '%2E'
+    end
+    s
   end
 
   # HTML escape +value+
