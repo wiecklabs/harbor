@@ -41,13 +41,23 @@ module Harbor
             end
 
             value
+          elsif unfilled && !filled
+            # All backends are empty. Populate using 'key' as both the key and
+            # the value.
+            unfilled.each do |backend|
+              backend.store_translations(locale, {key => key}, :escape => false)
+            end
+
+            key
           else
             key
           end
         end
 
         def put(locale, key, value)
-          backends.last.store_translations(locale, {key => value}, :escape => false)
+          backends.each do |backend|
+            backend.store_translations(locale, {key => value}, :escape => false)
+          end
         end
 
         def keys(locale = nil)
