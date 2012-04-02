@@ -1,5 +1,3 @@
 h1. Welcome to Harbor!
 
 !https://secure.travis-ci.org/sam/harbor.png!:http://travis-ci.org/sam/harbor
-
-Current Status: Development on pause until 2012-03-26.
