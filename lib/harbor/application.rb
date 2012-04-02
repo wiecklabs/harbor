@@ -1,16 +1,9 @@
-rack = if RUBY_PLATFORM =~ /java/
-  "jruby-rack"
+if RUBY_PLATFORM =~ /java/
+  require "jruby-rack"
 else
-  "rack"
+  require "rack"
 end
-
-begin
-  require rack
-rescue LoadError
-  puts "   #{rack} gem is not available, please add it to you Gemfile and run bundle"
-  exit(1)
-end
-
+  
 require "yaml"
 
 require_relative "events"

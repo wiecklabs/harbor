@@ -3,6 +3,8 @@
 require "rubygems"
 require "harbor/core"
 
+$:.unshift Dir.pwd
+
 case ARGV[0]
 when "setup"   then
   require "harbor/commands/setup"
@@ -10,6 +12,9 @@ when "setup"   then
 when "console" then
   ENV["ENVIRONMENT"] = ARGV[1] if ARGV[1]
   require "harbor/commands/console"
+when "server" then
+  ENV["ENVIRONMENT"] = ARGV[1] if ARGV[1]
+  require "harbor/commands/server"
 else
   puts "harbor #{ARGV[0]} not found!"
   exit 1
