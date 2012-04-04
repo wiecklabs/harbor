@@ -15,6 +15,9 @@ when "console" then
 when "server" then
   ENV["ENVIRONMENT"] = ARGV[1] if ARGV[1]
   require "harbor/commands/server"
+when "routes" then
+  ENV["ENVIRONMENT"] = ARGV[1] if ARGV[1]
+  require "harbor/commands/routes"
 else
   puts "harbor #{ARGV[0]} not found!"
   exit 1
