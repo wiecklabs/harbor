@@ -6,7 +6,7 @@ class Harbor
         router.verbs.each do |verb, router|
           router.static_routes.each do |path, route|
             path = "/#{path}"
-            routes << {:path => path, :verb => verb, :controller => route.action.controller}
+            routes << {path: path, verb: verb, controller: route.action.controller}
           end
 
           router.build!
@@ -31,7 +31,7 @@ class Harbor
           end
         else
           if node.action
-            routes << {:path => "/" + node.tokens.join('/'), :verb => verb, :controller => node.action.controller}
+            routes << {path: "/" + node.tokens.join('/'), verb: verb, controller: node.action.controller}
           end
 
           _collect_routes(verb, routes, node.left)
