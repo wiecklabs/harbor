@@ -1,9 +1,4 @@
-if ::File.exists? "lib/boot.rb"
-  require "lib/boot"
-else
-  STDERR.puts "harbor server must be run from your application's root!"
-  exit 1
-end
+require_relative 'boot'
 
 if RUBY_PLATFORM =~ /java/
   require_relative "../jetty"
