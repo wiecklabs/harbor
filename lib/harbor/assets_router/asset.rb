@@ -6,7 +6,9 @@ class Harbor
       end
 
       def serve(response)
-        raise "Not working yet!"
+        response.cache(nil, ::File.mtime(@path), 86400) do
+          response.stream_file(@path)
+        end
       end
     end
   end
