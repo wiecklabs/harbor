@@ -314,7 +314,7 @@ class Harbor
         self.headers[key] = value.join("\n") if value.is_a?(Array)
       end
 
-      self.buffer.rewind
+      self.buffer.rewind if self.buffer.respond_to?(:rewind)
 
       [self.status, self.headers, self.buffer]
     end
