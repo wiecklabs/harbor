@@ -11,8 +11,13 @@ class Harbor
       @router ||= Harbor::Router::instance
     end
 
-    def initialize(router = nil)
+    def assets_router
+      @assets_router ||= Harbor::AssetsRouter::instance
+    end
+
+    def initialize(router = nil, assets_router = nil)
       @router = router
+      @assets_router = assets_router
     end
 
     def dispatch!(request, response)
@@ -27,6 +32,9 @@ class Harbor
           raise_event(:request_dispatch, dispatch_request_event)
           route.action.call(request, response)
         end
+      elsif asset = assets_router.match(request)
+        raise_event(:request_dispatch, dispatch_request_event)
+        asset.serve(response)
       else
         handle_not_found(request, response)
       end
