@@ -19,6 +19,6 @@ class <@= app_class @> < Harbor::Application
 
 end
 
-Dir[Pathname(__FILE__).dirname.parent + 'controllers/*.rb'].each do |controller|
+Dir[config.root + 'controllers/*.rb'].each do |controller|
   require controller
 end
