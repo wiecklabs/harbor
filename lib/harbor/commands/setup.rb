@@ -70,7 +70,7 @@ class Harbor
       #   'sample' => 'Sample'
       #   'cool_app' => 'CoolApp'
       def app_class
-        @app_name.gsub(/(^|-|_)[a-z0-9]{1}/) { |m| m.sub(/-|_/, '').upcase }
+        @app_name.camelize
       end
 
     end
