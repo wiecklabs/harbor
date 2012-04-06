@@ -1,5 +1,7 @@
 require_relative "harbor/core"
 
+config.assets.serve_static = false
+
 config.locales.default = Harbor::Locale::default
 
 require "harbor/mail/mailer"
