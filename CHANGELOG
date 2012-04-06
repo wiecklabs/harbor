@@ -2,8 +2,7 @@
 
 * MINOR: Request#env["APP_ENVIRONMENT"] no longer set. Use config.(test|development|production|etc)?
 * MINOR: Request#environment no longer exists. Use config.
-* MINOR: Harbor no longer serves public files directly. Use Rack::File: eg. Rack::File.new("public")
-* MAJOR: Harbor no longer serves public files from other applications. Copy those into your app.
+* MAJOR: Harbor no longer serves public files directly neither from other applications apart from development and test mode by default. Run "harbor assets" to copy those into your app's public folder when deploying.
 * MINOR: Request#application no longer exists
 * MAJOR: Events#raise_event2 has been renamed Events#raise_event. The previously deprecated #raise_event has been removed
 * MINOR: Harbor::ZippedIO has been removed
