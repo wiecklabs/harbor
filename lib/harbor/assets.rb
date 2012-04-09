@@ -39,7 +39,7 @@ class Harbor
     end
 
     def find_file(file)
-      pattern = "{#{paths.join(',')}}/#{file}*"
+      pattern = "{#{paths.join(',')}}/#{file}"
       Dir[pattern].first
     end
   end
