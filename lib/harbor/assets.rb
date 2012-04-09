@@ -1,7 +1,7 @@
 class Harbor
   class Assets
     attr_reader :serve_static, :paths
-    attr_writer :mount_path
+    attr_accessor :mount_path
 
     def initialize(cascade = nil)
       @paths = []
