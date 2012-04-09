@@ -38,5 +38,10 @@ module Dispatcher
       @cascade.unregister(@app)
       assert_equal 0, @cascade.apps.size
     end
+
+    def test_registers_apps_only_once
+      @cascade << @app
+      assert_equal 1, @cascade.apps.size
+    end
   end
 end

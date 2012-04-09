@@ -19,7 +19,7 @@ class Harbor
         unless app.respond_to?(:match) && app.respond_to?(:call)
           raise ArgumentError.new "#{app} should respond to match and call to be cascaded"
         end
-        @apps << app
+        @apps << app unless @apps.include? app
       end
       alias << register
 
