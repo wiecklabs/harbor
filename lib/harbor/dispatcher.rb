@@ -34,7 +34,9 @@ class Harbor
           route.action.call(request, response)
         end
       elsif app = cascade.match(request)
-        app.call(request, response)
+        catch(:halt) do
+          app.call(request, response)
+        end
       else
         handle_not_found(request, response)
       end

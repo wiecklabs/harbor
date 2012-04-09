@@ -73,4 +73,14 @@ class DispatcherTest < MiniTest::Unit::TestCase
     @request.path_info = 'some_app/route'
     @dispatcher.dispatch!(@request, @response)
   end
+
+  def test_support_halting_from_cascading_apps
+    some_app = stub(:match => true)
+    some_app.stubs(:call).throws(:halt)
+    @dispatcher.cascade << some_app
+
+    @request.path_info = 'some_app/route'
+    # This will throw an exception if it doesnt catch the throw
+    @dispatcher.dispatch!(@request, @response)
+  end
 end
