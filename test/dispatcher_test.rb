@@ -63,4 +63,14 @@ class DispatcherTest < MiniTest::Unit::TestCase
     @dispatcher.dispatch!(@request, @response)
     assert @action_called
   end
+
+  def test_cascades_to_registered_apps_when_no_route_is_matched
+    some_app = mock
+    some_app.expects(:match).with(@request).returns(true)
+    some_app.expects(:call).with(@request, @response)
+    @dispatcher.cascade << some_app
+
+    @request.path_info = 'some_app/route'
+    @dispatcher.dispatch!(@request, @response)
+  end
 end
