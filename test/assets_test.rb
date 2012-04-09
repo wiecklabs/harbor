@@ -23,22 +23,22 @@ class AssetsTest < MiniTest::Unit::TestCase
   end
 
   def test_does_not_match_if_not_enabled_to_serve_static
-    refute @assets.match(stub_request('public-file'))
+    refute @assets.match(stub_request('assets/public-file'))
   end
 
   def test_matches_static_assets
     @assets.serve_static = true
-    assert @assets.match(stub_request('public-file'))
+    assert @assets.match(stub_request('assets/public-file'))
   end
 
   def test_searches_on_multiple_paths
     @assets.serve_static = true
-    assert @assets.match(stub_request('public-file-2'))
+    assert @assets.match(stub_request('assets/public-file-2'))
   end
 
   def test_return_nil_if_no_match_is_found
     @assets.serve_static = true
-    refute @assets.match(stub_request('public-file-3'))
+    refute @assets.match(stub_request('assets/public-file-3'))
   end
 
   def test_caches_and_stream_file

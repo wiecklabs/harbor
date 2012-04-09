@@ -39,6 +39,7 @@ class Harbor
     end
 
     def find_file(file)
+      file = file.gsub("#{@mount_path}/", '')
       pattern = "{#{paths.join(',')}}/#{file}"
       Dir[pattern].first
     end
