@@ -8,7 +8,7 @@ class Harbor
         instance
       end
     end
-    
+
     def initialize(environment = nil)
       super()
       @debug = false
@@ -28,30 +28,30 @@ class Harbor
         end
       end
     end
-    
+
     def environment
       @environment
     end
-    
+
     def test?
       @environment == TEST
     end
-    
+
     def development?
       @environment == DEVELOPMENT
     end
-    
+
     def stage?
       @environment == STAGE
     end
-    
+
     def production?
       @environment == PRODUCTION
     end
-    
+
     def load!(path)
       env = Pathname(path)
-      
+
       host_configs = if hostname =~ /\./
         # If the hostname is something like "stage.demo", then we want to load our
         # configs in order of least specific to most specific. So we want:
@@ -60,14 +60,14 @@ class Harbor
       else
         [ "#{hostname}.rb" ]
       end
-      
+
       # It could be that the hostname split above duplicates an environment based config name.
-      cascade = [ "default.rb", "#{ENV["ENVIRONMENT"]}.rb", *host_configs ].uniq
-      
+      cascade = [ "default.rb", "#{@environment}.rb", *host_configs ].uniq
+
       if ENV["DEBUG"] then
         puts "env search cascade is #{cascade.inspect}"
       end
-      
+
       cascade.each do |file|
         configuration_file = Pathname(path) + file
         if ::File.exists?(configuration_file.to_s)
@@ -75,17 +75,17 @@ class Harbor
         end
       end
     end
-    
+
     def debug!
       @debug = true
     end
-    
+
     def debug?
       @debug
     end
-    
+
     private
-    
+
     TEST = "test".freeze
     DEVELOPMENT = "development".freeze
     STAGE = "stage".freeze

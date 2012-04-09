@@ -10,7 +10,7 @@ when "setup"
   require "harbor/commands/setup"
   Harbor::Commands::Setup.new(ARGV[1], ARGV[2] || ARGV[1]).run
 
-when "console", "server", "routes"
+when "console", "server", "routes", "assets"
   ENV["ENVIRONMENT"] = ARGV[1] if ARGV[1]
   require "harbor/commands/#{ARGV[0]}"
 

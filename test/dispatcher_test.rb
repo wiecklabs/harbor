@@ -22,10 +22,11 @@ class DispatcherTest < MiniTest::Unit::TestCase
     @route         = Harbor::Router::Route.new(@action, ['parts', ':id', ':order_id'])
     @empty_route   = Harbor::Router::Route.new
     @router        = TestRouter.new(@route, @empty_route)
+
     @dispatcher    = Harbor::Dispatcher.new(@router)
     @request       = Harbor::Test::Request.new
     @response      = Harbor::Test::Response.new
-    @@not_found     = false
+    @@not_found    = false
 
     @request.path_info = 'parts/1234/4321/'
   end
@@ -61,5 +62,25 @@ class DispatcherTest < MiniTest::Unit::TestCase
   def test_calls_route_action_with_request_and_response
     @dispatcher.dispatch!(@request, @response)
     assert @action_called
+  end
+
+  def test_cascades_to_registered_apps_when_no_route_is_matched
+    some_app = mock
+    some_app.expects(:match).with(@request).returns(true)
+    some_app.expects(:call).with(@request, @response)
+    @dispatcher.cascade << some_app
+
+    @request.path_info = 'some_app/route'
+    @dispatcher.dispatch!(@request, @response)
+  end
+
+  def test_support_halting_from_cascading_apps
+    some_app = stub(:match => true)
+    some_app.stubs(:call).throws(:halt)
+    @dispatcher.cascade << some_app
+
+    @request.path_info = 'some_app/route'
+    # This will throw an exception if it doesnt catch the throw
+    @dispatcher.dispatch!(@request, @response)
   end
 end

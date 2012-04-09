@@ -14,6 +14,7 @@ require "harbor/hooks"
 require "harbor/file_store"
 require "harbor/file"
 require "harbor/checksum"
+require "harbor/assets"
 require "harbor/router"
 require "harbor/plugin"
 require "harbor/mime"
@@ -27,19 +28,19 @@ require "harbor/dispatcher"
 require "harbor/consoles"
 
 class Harbor
-  
+
   def initialize
     self.class::applications.each do |application|
       applications << application.new
     end
-    
+
     @dispatcher = Harbor::Dispatcher::instance
   end
-  
+
   def applications
     @applications ||= []
   end
-  
+
   def dispatcher
     @dispatcher
   end
@@ -56,7 +57,7 @@ class Harbor
   def self.register_application(application)
     applications << application unless applications.include? application
   end
-  
+
   private
   def self.applications
     @applications ||= []

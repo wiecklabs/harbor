@@ -1,3 +1,5 @@
+require_relative 'dispatcher/cascade'
+
 class Harbor
   class Dispatcher
 
@@ -9,6 +11,10 @@ class Harbor
 
     def router
       @router ||= Harbor::Router::instance
+    end
+
+    def cascade
+      @cascade ||= Cascade.new
     end
 
     def initialize(router = nil)
@@ -26,6 +32,10 @@ class Harbor
         catch(:halt) do
           raise_event(:request_dispatch, dispatch_request_event)
           route.action.call(request, response)
+        end
+      elsif app = cascade.match(request)
+        catch(:halt) do
+          app.call(request, response)
         end
       else
         handle_not_found(request, response)
