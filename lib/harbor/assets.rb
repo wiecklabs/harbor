@@ -15,7 +15,7 @@ class Harbor
       if @serve_static
         cascade << self
       else
-        cascade.remove(self)
+        cascade.unregister(self)
       end
     end
 

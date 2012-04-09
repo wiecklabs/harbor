@@ -4,7 +4,7 @@ class AssetsTest < MiniTest::Unit::TestCase
   def setup
     @cascade = mock
     @cascade.stubs(:<<)
-    @cascade.stubs(:remove)
+    @cascade.stubs(:unregister)
 
     @assets = Harbor::Assets.new(@cascade)
 
