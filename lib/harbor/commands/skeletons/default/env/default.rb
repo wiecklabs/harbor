@@ -8,6 +8,8 @@ Harbor::View::layouts.default("layouts/application")
 # test environments. For production you'll have to run "harbor assets" when
 # deploying to copy all assets from ports and application itself to the public
 # folder.
+# For more information about assets check Harbor::Assets (config.assets is an
+# instance of it)
 config.assets.serve_static = false
 config.assets.paths.unshift(config.root + "assets")
 
