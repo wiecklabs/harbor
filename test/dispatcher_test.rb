@@ -22,9 +22,8 @@ class DispatcherTest < MiniTest::Unit::TestCase
     @route         = Harbor::Router::Route.new(@action, ['parts', ':id', ':order_id'])
     @empty_route   = Harbor::Router::Route.new
     @router        = TestRouter.new(@route, @empty_route)
-    @assets_router = stub(:match => nil)
 
-    @dispatcher    = Harbor::Dispatcher.new(@router, @assets_router)
+    @dispatcher    = Harbor::Dispatcher.new(@router)
     @request       = Harbor::Test::Request.new
     @response      = Harbor::Test::Response.new
     @@not_found    = false
@@ -44,15 +43,6 @@ class DispatcherTest < MiniTest::Unit::TestCase
     @dispatcher.dispatch!(@request, @response)
     assert_equal '1234', @request.params['id']
     assert_equal '4321', @request.params['order_id']
-  end
-
-  def test_fails_back_to_assets_router_if_no_route_is_matched
-    asset = mock
-    asset.expects(:serve).with(@response)
-    @assets_router.expects(:match).with(@request).returns(asset)
-    @request.path_info = 'style.css'
-
-    @dispatcher.dispatch!(@request, @response)
   end
 
   def test_sets_response_to_404_if_non_callable_node_is_matched
