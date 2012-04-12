@@ -1,5 +1,7 @@
 require_relative "router"
 require_relative "controller/action"
+require_relative "controller/action_filter"
+require_relative "controller/action_filter_helpers"
 require_relative "controller/normalized_path"
 require_relative "controller/view_context"
 require_relative "router/helpers"
@@ -22,6 +24,7 @@ class Harbor
     private
     extend Router::Helpers
     include Controller::ViewContext
+    include ActionFilterHelpers
 
     def self.route(method, path, handler)
       action_name = method_name_for_route(method, path)
