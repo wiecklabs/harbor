@@ -1,5 +1,6 @@
 class Harbor
   class Controller
+    # TODO: Documentation
     # TODO: Make it work with inheritance
     module ActionFilterHelpers
       def self.included(base)
@@ -8,11 +9,11 @@ class Harbor
 
       module ClassMethods
         def before(*args, &block)
-          filters[:before] << ActionFilter.new(*args, block)
+          filters[:before] << ActionFilter.new(self, *args, block)
         end
 
         def after(*args, &block)
-          filters[:after] << ActionFilter.new(*args, block)
+          filters[:after] << ActionFilter.new(self, *args, block)
         end
 
         def filters

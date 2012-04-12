@@ -2,10 +2,17 @@ require_relative "../helper"
 
 module Controller
   class ActionFilterHelperTest < MiniTest::Unit::TestCase
+    class TestController
+      include Harbor::Controller::ActionFilterHelpers
+    end
+
     def setup
-      @controller_class = Class.new do
-        include Harbor::Controller::ActionFilterHelpers
-      end
+      @controller_class = TestController
+    end
+
+    def teardown
+      @controller_class.filters[:before] = []
+      @controller_class.filters[:after] = []
     end
 
     def test_registers_before_and_after_filters
@@ -18,7 +25,7 @@ module Controller
 
     def test_creates_instances_of_action_filters
       a_block = lambda { nil }
-      Harbor::Controller::ActionFilter.expects(:new).with(:list_of_args, a_block)
+      Harbor::Controller::ActionFilter.expects(:new).with(@controller_class, :list_of_args, a_block)
       @controller_class.before :list_of_args, &a_block
     end
 
