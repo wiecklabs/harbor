@@ -15,16 +15,17 @@ class Harbor
 
       private
 
+      ALL_REQUEST_METHODS = ['GET', 'POST', 'PUT', 'HEAD', 'OPTIONS', 'PATCH', 'DELETE']
+
       def applies_to?(request)
-        (@path == :all || request.path_info =~ @path) &&
-          (@conditions[:request_method] == :all || @conditions[:request_method].include?(request.request_method))
+        request.path_info =~ @path && @conditions[:request_method].include?(request.request_method)
       end
 
       def normalize_conditions(options)
         request_method = options[:request_method]
-        request_method = :all unless request_method && request_method != []
+        request_method = ALL_REQUEST_METHODS unless request_method && request_method != []
 
-        if request_method != :all
+        if request_method != ALL_REQUEST_METHODS
           request_method = [request_method] unless options[:request_method].is_a? Array
           request_method.map!{|m| m.to_s.upcase}
         end
@@ -34,10 +35,11 @@ class Harbor
       end
 
       def normalize_path(controller_class, path)
-        return :all if path == :all
+        return // if path == :all
 
         regex_parts = NormalizedPath.new(controller_class, path).split('/')
 
+        # Handles root route
         return /^\/$/ if regex_parts.empty?
 
         if Router::Route::wildcard_token? regex_parts.last
