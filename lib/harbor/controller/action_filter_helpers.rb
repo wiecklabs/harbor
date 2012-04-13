@@ -9,11 +9,11 @@ class Harbor
 
       module ClassMethods
         def before(*args, &block)
-          filters[:before] << ActionFilter.new(self, *args, block)
+          filters[:before] << ActionFilter.new(self, *args, &block)
         end
 
         def after(*args, &block)
-          filters[:after] << ActionFilter.new(self, *args, block)
+          filters[:after] << ActionFilter.new(self, *args, &block)
         end
 
         def filters

@@ -16,17 +16,16 @@ module Controller
     end
 
     def test_registers_before_and_after_filters
-      @controller_class.before :some_filter_method
-      @controller_class.after :some_other_filter_method
+      @controller_class.before :all, :call => :auth
+      @controller_class.after :all, :call => :auth
 
       assert_equal 1, @controller_class.filters[:before].size
       assert_equal 1, @controller_class.filters[:after].size
     end
 
     def test_creates_instances_of_action_filters
-      a_block = lambda { nil }
-      Harbor::Controller::ActionFilter.expects(:new).with(@controller_class, :list_of_args, a_block)
-      @controller_class.before :list_of_args, &a_block
+      Harbor::Controller::ActionFilter.expects(:new).with(@controller_class, :all, :call => :log)
+      @controller_class.before :all, :call => :log
     end
 
     def test_delegates_filtering_to_registered_filters_based_on_type

@@ -17,6 +17,8 @@ module Controller
       def action_with_default(required, default = 'default')
         [required, default]
       end
+
+      def filter!(*args); end
     end
 
     def setup
