@@ -17,11 +17,8 @@ class Harbor
         controller = config.get(@controller_name, "request" => request, "response" => response)
 
         controller.filter! :before
-        # TODO: Refactor test/controller/action_test.rb to not depend on the
-        # return value of this method
-        @result = controller.send(@name, *args)
+        controller.send(@name, *args)
         controller.filter! :after
-        @result
       end
 
       def inspect
