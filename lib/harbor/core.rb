@@ -30,7 +30,7 @@ require "harbor/consoles"
 class Harbor
 
   def initialize
-    self.class::applications.each do |application|
+    self.class::registered_applications.each do |application|
       applications << application.new
     end
 
@@ -55,11 +55,12 @@ class Harbor
   end
 
   def self.register_application(application)
-    applications << application unless applications.include? application
+    unless registered_applications.include? application
+      registered_applications << application
+    end
   end
 
-  private
-  def self.applications
+  def self.registered_applications
     @applications ||= []
   end
 end
