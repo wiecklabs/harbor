@@ -8,7 +8,7 @@ class AssetsTest < MiniTest::Unit::TestCase
 
     @assets = Harbor::Assets.new(@cascade)
 
-    path = Pathname(__FILE__).dirname + "assets_files"
+    path = Pathname(__FILE__).dirname + "fixtures/assets_files"
     @assets.paths << "#{path}/app_1"
     @assets.paths << "#{path}/app_2"
   end

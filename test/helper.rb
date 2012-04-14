@@ -150,7 +150,7 @@ def upload(filename)
 Content-Disposition: form-data; name="file"; filename="#{filename}"\r
 Content-Type: image/jpeg\r
 \r
-#{File.read(Pathname(__FILE__).dirname + "samples" + filename)}\r
+#{File.read(Pathname(__FILE__).dirname + "fixtures/samples" + filename)}\r
 \r
 --AaB03x\r
 Content-Disposition: form-data; name="video[caption]"\r
