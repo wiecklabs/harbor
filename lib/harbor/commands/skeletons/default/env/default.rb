@@ -3,6 +3,12 @@ config.root = Pathname(__FILE__).dirname.parent
 Harbor::View::path.unshift(config.root + "views")
 Harbor::View::layouts.default("layouts/application")
 
+### View helpers:
+# Harbor will register all helpers from all applications on Harbor::ViewContext
+# when it boots and this allow Harbor::ViewHelpers to find them. (config.helpers
+# is an instance of it)
+config.helpers.paths << config.root + "helpers/**/*.rb"
+
 ### Assets:
 # By default the application will serve static assets only for development and
 # test environments. For production you'll have to run "harbor assets" when

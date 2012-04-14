@@ -35,6 +35,7 @@ class Harbor
     end
 
     @dispatcher = Harbor::Dispatcher::instance
+    config.helpers.register_all!
   end
 
   def applications

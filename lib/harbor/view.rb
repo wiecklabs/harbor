@@ -4,6 +4,7 @@ rescue LoadError; end
 
 require "tilt"
 
+require_relative "view_helpers"
 require_relative "view_context"
 require_relative "layouts"
 require_relative "plugin_list"
