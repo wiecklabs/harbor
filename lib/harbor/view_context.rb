@@ -104,12 +104,16 @@ module Harbor
       hash
     end
 
+    def theme
+      self[:theme] || self[:request] && self[:request].theme
+    end
+
     private
 
     def request
       @request
     end
-    
+
     def response
       @response
     end
@@ -120,7 +124,7 @@ module Harbor
 
     ##
     # Useful when you need to output content to the buffer.
-    # 
+    #
     #   def wrap_with_p_tag(&block)
     #     with_buffer(block) do |buffer|
     #       buffer << "<p>" << capture(&block) << "</p>"

@@ -75,7 +75,7 @@ module Harbor
     private
 
     def _erubis_render(context)
-      @path ||= self.class.exists?(@filename, context[:request] && context[:request].theme)
+      @path ||= self.class.exists?(@filename, context.theme)
       raise "Could not find '#{@filename}' in #{self.class.path.inspect}" unless @path
 
       full_path = @path + @filename
