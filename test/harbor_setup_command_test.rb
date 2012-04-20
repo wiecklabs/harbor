@@ -77,6 +77,17 @@ class HarborSetupCommandTest < MiniTest::Unit::TestCase
     RUBY
   end
 
+  def test_generator_creates_proper_helper_general_rb
+    assert_generated_file_matches "helpers/general.rb", <<-RUBY
+      class Petshop
+        module Helpers
+          module General
+          end
+        end
+      end
+    RUBY
+  end
+
   def test_generator_creates_proper_petshop_rb
     assert_generated_file_matches "lib/petshop.rb", <<-RUBY
       require "rubygems"
@@ -100,7 +111,7 @@ class HarborSetupCommandTest < MiniTest::Unit::TestCase
 
       end
 
-      Dir[Pathname(__FILE__).dirname.parent + 'controllers/*.rb'].each do |controller|
+      Dir[config.root + 'controllers/*.rb'].each do |controller|
         require controller
       end
     RUBY
