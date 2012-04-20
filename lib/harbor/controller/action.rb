@@ -5,7 +5,7 @@ class Harbor
         @controller = controller
         @name       = name.to_sym
         @parameters = controller.instance_method(@name).parameters
-        
+
         @controller_name = controller.name
         config.set(@controller_name, controller)
       end
@@ -14,7 +14,11 @@ class Harbor
 
       def call(request, response)
         args = build_args!(request, response)
-        config.get(@controller_name, "request" => request, "response" => response).send(@name, *args)
+        controller = config.get(@controller_name, "request" => request, "response" => response)
+
+        controller.filter! :before
+        controller.send(@name, *args)
+        controller.filter! :after
       end
 
       def inspect

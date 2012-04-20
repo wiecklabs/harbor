@@ -27,6 +27,10 @@ class Harbor
         @session.request = self
         @session
       end
+
+      def request_method=(method)
+        @env['REQUEST_METHOD'] = method.to_s.upcase
+      end
     end
   end
 end

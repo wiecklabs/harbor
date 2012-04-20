@@ -5,18 +5,10 @@ module Controller
 
     class TestController
       def initialize(*args); end
-
-      def action
-        :action_result
-      end
-
-      def action_with_args(first, second)
-        [first, second]
-      end
-
-      def action_with_default(required, default = 'default')
-        [required, default]
-      end
+      def action; end
+      def action_with_args(first, second); end
+      def action_with_default(required, default = 'default') end
+      def filter!(*args); end
     end
 
     def setup
@@ -26,25 +18,26 @@ module Controller
 
       @request    = Harbor::Test::Request.new
       @response   = Harbor::Test::Response.new
+
+      @controller = TestController.new(@request, @response)
+      config.stubs(:get => @controller)
     end
 
     def test_calls_simple_action
-      assert_equal :action_result, @action.call(@request, @response)
+      @controller.expects(:action).with()
+      @action.call(@request, @response)
     end
 
     def test_calls_action_with_args
+      @controller.expects(:action_with_args).with(1, 2)
       @request.params = {'first' => 1, 'second' => 2}
-      assert_equal [1, 2], @action_with_args.call(@request, @response)
+      @action_with_args.call(@request, @response)
     end
 
     def test_calls_action_with_optional_args
+      @controller.expects(:action_with_default).with(1)
       @request.params = {'required' => 1}
-      assert_equal [1, 'default'], @action_with_default.call(@request, @response)
-    end
-
-    def test_calls_action_with_optional_args
-      @request.params = {'required' => 1}
-      assert_equal [1, 'default'], @action_with_default.call(@request, @response)
+      @action_with_default.call(@request, @response)
     end
 
     def test_raises_halt_if_a_required_argument_is_not_provided
