@@ -1,3 +1,6 @@
+### Application's root path
+# If you are developing a port you should use <@= app_class @>.root outside
+# config / env files as it will be overwritten by other ports and main app
 config.root = Pathname(__FILE__).dirname.parent
 
 Harbor::View::path.unshift(config.root + "views")

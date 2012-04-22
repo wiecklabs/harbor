@@ -57,6 +57,7 @@ class Harbor
 
   def self.register_application(application)
     unless registered_applications.include? application
+      application.instance_variable_set :@root, config.root.expand_path
       registered_applications << application
     end
   end
