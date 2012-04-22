@@ -12,6 +12,13 @@ Harbor::View::layouts.default("layouts/application")
 # is an instance of it)
 config.helpers.paths << config.root + "helpers/**/*.rb"
 
+### Autoloader:
+# Harbor will autoload your application code based on some conventions, but you
+# can add other paths for your code to be found. (see Harbor::Autoloader for
+# more information)
+#
+#   config.autoloader.paths << config.root + "some/path"
+
 ### Assets:
 # By default the application will serve static assets only for development and
 # test environments. For production you'll have to run "harbor assets" when

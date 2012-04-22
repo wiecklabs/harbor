@@ -68,3 +68,4 @@ class Harbor
 end
 
 require "harbor/configuration"
+require "harbor/autoloader"
