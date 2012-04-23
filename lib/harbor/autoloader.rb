@@ -1,7 +1,5 @@
 class Harbor
   class Autoloader
-    INVALID_APP_SUFFIXES = %W( lib env assets log public views )
-
     def paths
       @paths ||= AutoloaderPaths.new
     end
@@ -11,50 +9,35 @@ class Harbor
         def load(context, constant)
           if app = app_for(context)
             return load_app_constant(app, context, constant)
-          elsif const = load_app_lib_or_model_root_constant(context, constant)
-            return const
-          elsif const = load_constant_from_registered_paths(context, constant)
+          elsif const = load_constant_from_known_paths(context, constant)
             return const
           end
-
-          nil
         end
 
         private
 
-        def load_constant_from_registered_paths(context, constant)
+        INVALID_APP_SUFFIXES = %W( lib env assets log public views )
+
+        ##
+        # Tries to find constants under known apps lib / models folders or
+        # registered paths that are not under registered apps namespace.
+        ##
+        def load_constant_from_known_paths(context, constant)
           suffix = suffix_for(context, constant)
 
-          paths = config.autoloader.paths.map(&:to_s).join(',')
+          application_paths = Harbor.registered_applications.map(&:root).map(&:to_s).join(',')
+          registered_paths  = config.autoloader.paths.map(&:to_s).join(',')
 
-          if file = Dir["{#{paths}}/#{suffix}.rb"].first
+          known_paths = "{{{#{application_paths}}/{lib,models}},{#{registered_paths}}}"
+
+          if file = Dir["#{known_paths}/#{suffix}.rb"].first
             require file
             return context.const_get constant if context.const_defined? constant
           end
 
-          module_candidate = Dir["{#{paths}}/#{suffix}/"].first
+          module_candidate = Dir["#{known_paths}/#{suffix}/"].first
           if module_candidate && autoloadable_module?(module_candidate)
-            mod = Module.new
-            context.const_set constant, mod
-            return mod
-          end
-        end
-
-        def load_app_lib_or_model_root_constant(context, constant)
-          suffix = suffix_for(context, constant)
-
-          paths = Harbor.registered_applications.map(&:root).map(&:to_s).join(',')
-
-          if file = Dir["{#{paths}}/{lib,models}/#{suffix}.rb"].first
-            require file
-            return context.const_get constant if context.const_defined? constant
-          end
-
-          module_candidate = Dir["{#{paths}}/{lib,models}/#{suffix}/"].first
-          if module_candidate && autoloadable_module?(module_candidate)
-            mod = Module.new
-            context.const_set constant, mod
-            return mod
+            return context.const_set constant, Module.new
           end
         end
 
@@ -64,33 +47,27 @@ class Harbor
           if suffix.include?('/') && ::File.exist?(app.root + "#{suffix}.rb")
             require app.root + suffix
             return context.const_get constant if context.const_defined? constant
+
           elsif file = Dir["#{app.root}/{lib,models}/#{suffix}.rb"].first
             require file
             return context.const_get constant if context.const_defined? constant
-          elsif autoloadable_module?(app.root + suffix)
-            return if Autoloader::INVALID_APP_SUFFIXES.include? suffix
 
-            mod = Module.new
-            return context.const_set constant, mod
+          elsif !INVALID_APP_SUFFIXES.include?(suffix) && autoloadable_module?(app.root + suffix)
+            return context.const_set constant, Module.new
           end
-
-          return
         end
 
         def autoloadable_module?(path)
-          ::Dir.exist?(path) && !Dir["{#{path}/**/*.rb}"].empty?
+          ::Dir.exist?(path) && !Dir["#{path}/**/*.rb"].empty?
         end
 
         def app_suffix(app, context, constant)
-          "#{context.name}::#{constant}".
-            gsub(/#{app.name}(::)?/, '').
-            gsub('::', '/').
-            underscore
+          suffix_for(context, constant, app.name)
         end
 
-        def suffix_for(context, constant)
+        def suffix_for(context, constant, root = 'Object')
           "#{context.name}::#{constant}".
-            gsub(/Object(::)?/, '').
+            gsub(/#{root}(::)?/, '').
             gsub('::', '/').
             underscore
         end
@@ -104,12 +81,8 @@ class Harbor
           end
         end
 
-        ##
-        # Checks if const_missing is being called from an application namespace
-        ##
         def app_for(context)
-          # use #name instead of #to_s ?
-          nesting = context.to_s.split('::')
+          nesting = context.name.split('::')
           return if nesting.empty?
 
           if Harbor::registered_applications.include?(app = constantize(nesting.first))
@@ -149,6 +122,9 @@ class Harbor
     private
 
     class AutoloaderPaths
+      extend Forwardable
+      def_delegators :@paths, :each, :map, :clear
+
       def initialize
         @paths = []
       end
@@ -157,14 +133,6 @@ class Harbor
         @paths << ::File.expand_path(path)
         @paths.uniq!
         self
-      end
-
-      def each(&block)
-        @paths.each &block
-      end
-
-      def map(&block)
-        @paths.map &block
       end
     end
   end

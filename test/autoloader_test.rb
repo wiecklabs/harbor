@@ -13,7 +13,7 @@ class AutoloaderTest < MiniTest::Unit::TestCase
   end
 
   def teardown
-    config.autoload.paths.clear
+    config.autoloader.paths.clear
     Object.instance_eval do
       [:ModuleWithFiles, :ClassOnRootPath, :EmptyModule, :AutoloadedAppModel, :OtherLibClass, :LibModule].each do |const|
         remove_const const if const_defined? const
