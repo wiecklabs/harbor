@@ -112,7 +112,6 @@ class Harbor
       end
 
       def const_missing(constant)
-        # Make this an object
         ConstMissingLoader.load(self, constant) or
           raise NameError, "uninitialized constant #{name == 'Object' ? '' : (name + "::")}#{constant}",
               caller.reject { |l| l =~ /^#{__FILE__}/ }
