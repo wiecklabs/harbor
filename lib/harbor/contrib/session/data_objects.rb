@@ -1,4 +1,5 @@
 require "data_objects"
+require 'ipaddr'
 require 'yaml'
 
 class Harbor

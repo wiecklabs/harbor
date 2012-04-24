@@ -85,12 +85,6 @@ end
 
 
 class MiniTest::Unit::TestCase
-  class MyApplication < Harbor::Application
-    def self.public_path
-      Pathname(__FILE__).dirname + "public"
-    end
-  end
-
   include Rack::Test::Methods
 
   def setup_browser!

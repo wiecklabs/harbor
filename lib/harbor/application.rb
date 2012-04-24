@@ -3,7 +3,7 @@ if RUBY_PLATFORM =~ /java/
 else
   require "rack"
 end
-  
+
 require "yaml"
 
 require_relative "events"
@@ -22,6 +22,9 @@ class Harbor
     def self.inherited(application)
       Harbor::register_application(application)
     end
-    
+
+    def self.root
+      @root
+    end
   end
 end

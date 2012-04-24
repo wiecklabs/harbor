@@ -1,3 +1,6 @@
+### Application's root path
+# If you are developing a port you should use <@= app_class @>.root outside
+# config / env files as it will be overwritten by other ports and main app
 config.root = Pathname(__FILE__).dirname.parent
 
 Harbor::View::path.unshift(config.root + "views")
@@ -8,6 +11,13 @@ Harbor::View::layouts.default("layouts/application")
 # when it boots and this allow Harbor::ViewHelpers to find them. (config.helpers
 # is an instance of it)
 config.helpers.paths << config.root + "helpers/**/*.rb"
+
+### Autoloader:
+# Harbor will autoload your application code based on some conventions, but you
+# can add other paths for your code to be found. (see Harbor::Autoloader for
+# more information)
+#
+#   config.autoloader.paths << config.root + "some/path"
 
 ### Assets:
 # By default the application will serve static assets only for development and
