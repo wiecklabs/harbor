@@ -33,7 +33,7 @@ class Harbor
     end
 
     def self.method_name_for_route(http_method, path)
-      return "GET__root__" if path == "/"
+      return "#{http_method.upcase}__root__" if path == "/"
       parts = [ http_method.upcase ]
 
       Router::Route::expand(path).each do |part|
