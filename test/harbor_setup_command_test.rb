@@ -37,7 +37,7 @@ class HarborSetupCommandTest < MiniTest::Unit::TestCase
       petshop/env/default.rb
       petshop/env/development.rb
       petshop/env/stage.rb
-      petshop/env/testing.rb
+      petshop/env/test.rb
       petshop/env/production.rb
       petshop/forms
       petshop/forms/example.rb
