@@ -35,6 +35,17 @@ module Harbor
       @default_culture_code = value
     end
 
+    def self.register(locale, activate = false)
+      registered_locale = self[locale.culture_code] || @locales[locale.culture_code] = locale
+
+      if activate
+        @active_locales ||= []
+        @active_locales << registered_locale
+      end
+
+      registered_locale
+    end
+
     attr_reader :culture_code, :abbreviation, :description
 
     def initialize(culture_code, abbreviation, description)
