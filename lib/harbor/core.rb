@@ -19,13 +19,11 @@ require "harbor/router"
 require "harbor/plugin"
 require "harbor/mime"
 require "harbor/errors"
-
 require "harbor/cache"
 require "harbor/controller"
-
 require "harbor/dispatcher"
-
 require "harbor/consoles"
+require "harbor/reloader"
 
 class Harbor
 
