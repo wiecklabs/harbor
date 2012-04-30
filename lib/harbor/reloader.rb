@@ -74,12 +74,12 @@ class Harbor
         const_str = path.split('/').last.gsub('.rb', '').camelize
         constant = nil
 
-        if @app.const_defined?(:Controllers)
-          constant = @app::Controllers.const_get const_str if @app::Controllers.const_defined? const_str
+        if app.const_defined?(:Controllers)
+          constant = app::Controllers.const_get const_str if app::Controllers.const_defined? const_str
         end
 
         unless constant
-          constant = @app.const_get const_str if @app.const_defined? const_str
+          constant = app.const_get const_str if app.const_defined? const_str
         end
 
         raise "Was not able to find controller constant for #{path}" unless constant
@@ -113,7 +113,7 @@ class Harbor
         return unless helper_file?
 
         helper = path.split('/').last.gsub('.rb', '').camelize
-        config.helpers.register @app::Helpers.const_get helper
+        config.helpers.register app::Helpers.const_get helper
       end
 
       def update
