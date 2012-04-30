@@ -2,6 +2,10 @@ class Harbor
   class Reloader
     attr_accessor :cooldown
 
+    FILES = Hash.new do |hash, file|
+      hash[file] = ReloadableFile.new(file)
+    end
+
     def initialize(cooldown = 1)
       @cooldown   = cooldown
       @last       = (Time.now - cooldown)
@@ -9,8 +13,9 @@ class Harbor
 
     def enable!
       Dispatcher::register_event_handler(:begin_request) do
+        # Populates FILES with initial mtimes
+        Dir[*paths].each { |file| FILES[file] }
         perform
-        load_watchers
       end
     end
 
@@ -22,32 +27,28 @@ class Harbor
     end
 
     def reload!
-      files_watched.each do |file|
-        if watcher = WATCHERS[file]
-          if watcher.updated?
-            watcher.remove_constant if watcher.controller_file?
-            watcher.reload
+      with_reloadable_files do |file|
+        if file.required?
+          if file.updated?
+            file.remove_constant if file.controller_file?
+            file.reload
+            file.update
           end
-        else # new file
-          watcher = WATCHERS[file] = FileWatcher.new(file)
-          watcher.reload
-          watcher.register_helper if watcher.helper_file?
+        else
+          # Always reload code that has been changed but not required yet, it
+          # will eventually be required anyway ;-)
+          file.reload
+          file.register_helper if file.helper_file?
         end
       end
     end
 
     private
 
-    WATCHERS = {}
-
-    def load_watchers
-      files_watched.each do |file|
-        WATCHERS[file] = FileWatcher.new(file)
+    def with_reloadable_files
+      Dir[*paths].each do |file|
+        yield FILES[file]
       end
-    end
-
-    def files_watched
-      Dir[*paths]
     end
 
     def paths
@@ -59,7 +60,7 @@ class Harbor
         end
     end
 
-    class FileWatcher
+    class ReloadableFile
       attr_reader :path, :mtime
 
       def initialize(path)
@@ -68,7 +69,7 @@ class Harbor
       end
 
       def remove_constant
-        return unless @app && controller_file?
+        return unless controller_file?
 
         const_str = path.split('/').last.gsub('.rb', '').camelize
         constant = nil
@@ -92,27 +93,24 @@ class Harbor
         end
 
         mod.instance_eval { remove_const constant }
-
       end
 
       def controller_file?
         @controller_file ||=
           begin
-            @app = Harbor::registered_applications.find { |app| path =~ /^#{app.root}\/controllers\// }
-            !!@app
+            app && path =~ /^#{app.root}\/controllers\//
           end
       end
 
       def helper_file?
         @helper_file ||=
           begin
-            @app = Harbor::registered_applications.find { |app| path =~ /^#{app.root}\/helpers\// }
-            !!@app
+            app && path =~ /^#{app.root}\/helpers\//
           end
       end
 
       def register_helper
-        return unless @app && helper_file?
+        return unless helper_file?
 
         helper = path.split('/').last.gsub('.rb', '').camelize
         config.helpers.register @app::Helpers.const_get helper
@@ -123,7 +121,7 @@ class Harbor
       end
 
       def updated?
-        required? && !removed? && mtime != ::File.mtime(path)
+        !removed? && mtime != ::File.mtime(path)
       end
 
       def removed?
@@ -138,6 +136,10 @@ class Harbor
         puts "[DEBUG] reloading #{path}" if ENV['DEBUG']
         $LOADED_FEATURES.delete path
         require path
+      end
+
+      def app
+        @app ||= Harbor::registered_applications.find { |app| path =~ /^#{app.root}\// }
       end
     end
   end
