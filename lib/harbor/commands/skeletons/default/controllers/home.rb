@@ -2,7 +2,7 @@ class <@= app_class @>
   class Home < Harbor::Controller
 
     get "/" do
-      response.render "home/index"
+      render "home/index"
     end
 
   end
