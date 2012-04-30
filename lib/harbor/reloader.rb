@@ -1,4 +1,15 @@
 class Harbor
+  ##
+  # Really basic code reloader.
+  #
+  # When enabled, it will listen for incoming requests on dispatcher and will
+  # reload changed files by simply removing them from $LOADED_FEATURES and
+  # requiring them again, only controllers and helpers have "special treatment".
+  #
+  # Controllers will have their classes / constants removed when reloaded
+  # so that we do not end up with filters being registerd multiple times and
+  # new helpers will be included on Harbor::ViewContext.
+  ##
   class Reloader
     attr_accessor :cooldown
 
@@ -68,6 +79,7 @@ class Harbor
         update
       end
 
+      # TODO: Clean this up
       def remove_constant
         return unless controller_file?
 
@@ -78,6 +90,8 @@ class Harbor
           constant = app::Controllers.const_get const_str if app::Controllers.const_defined? const_str
         end
 
+        # Support for controllers defined at application root namespace instead
+        # of controller modules
         unless constant
           constant = app.const_get const_str if app.const_defined? const_str
         end
