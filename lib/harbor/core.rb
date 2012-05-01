@@ -34,6 +34,7 @@ class Harbor
 
     @dispatcher = Harbor::Dispatcher::instance
     config.helpers.register_all!
+    config.reloader.populate_files if config.reloader.enabled?
   end
 
   def applications

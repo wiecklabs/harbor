@@ -23,10 +23,14 @@ class Harbor
     end
 
     def enable!
+      @enabled = true
       Dispatcher::register_event_handler(:begin_request) do
         perform
       end
-      populate_files
+    end
+
+    def enabled?
+      @enabled
     end
 
     def populate_files
