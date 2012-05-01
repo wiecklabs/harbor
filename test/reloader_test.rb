@@ -13,7 +13,9 @@ class ReloaderTest < MiniTest::Unit::TestCase
     FileUtils.rm_rf ReloadingApp.root
     FileUtils.cp_r (Pathname(__FILE__).dirname + "fixtures/reloading_app").expand_path, ::ReloadingApp.root.parent
     FileUtils.mkdir ReloadingApp.root + 'helpers' unless Dir.exist? ReloadingApp.root + 'helpers'
+
     @reloader = Harbor::Reloader.new
+    @reloader.populate_files
   end
 
   def teardown

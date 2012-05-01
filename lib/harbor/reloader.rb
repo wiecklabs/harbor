@@ -30,7 +30,7 @@ class Harbor
     end
 
     def populate_files
-      Dir[*paths].each { |file| FILES[file] = ReloadableFile.new(file) }
+      Dir[*paths].each { |file| FILES[file] = ReloadableFile.new(file, false) }
     end
 
     def perform
@@ -42,15 +42,12 @@ class Harbor
 
     def reload!
       with_reloadable_files do |file|
-        if file.required?
-          if file.updated?
-            file.remove_constant if file.controller_file?
-            file.reload
-            file.update
+        if file.updated?
+          if file.controller_file? && file.required?
+            file.remove_constant
           end
-        else
-          # Always reload code that has been changed but not required yet, it
-          # will eventually be required anyway ;-)
+          file.reload
+        elsif file.new_file?
           file.reload
           file.register_helper if file.helper_file?
         end
@@ -77,9 +74,10 @@ class Harbor
     class ReloadableFile
       attr_reader :path, :mtime
 
-      def initialize(path)
+      def initialize(path, new_file = true)
         @path = ::File.expand_path(path)
         update
+        @new_file = new_file
       end
 
       # TODO: Clean this up
@@ -126,6 +124,10 @@ class Harbor
           end
       end
 
+      def new_file?
+        @new_file
+      end
+
       def register_helper
         return unless helper_file?
 
@@ -135,6 +137,7 @@ class Harbor
 
       def update
         @mtime = ::File.mtime(path)
+        @new_file = false
       end
 
       def updated?
@@ -153,6 +156,7 @@ class Harbor
         puts "[DEBUG] reloading #{path}" if ENV['DEBUG']
         $LOADED_FEATURES.delete path
         require path
+        update
       end
 
       def app
