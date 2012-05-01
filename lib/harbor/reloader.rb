@@ -24,10 +24,13 @@ class Harbor
 
     def enable!
       Dispatcher::register_event_handler(:begin_request) do
-        # Populates FILES with initial mtimes
-        Dir[*paths].each { |file| FILES[file] }
         perform
       end
+      populate_files
+    end
+
+    def populate_files
+      Dir[*paths].each { |file| FILES[file] = ReloadableFile.new(file) }
     end
 
     def perform
