@@ -37,7 +37,7 @@ class HarborSetupCommandTest < MiniTest::Unit::TestCase
       petshop/env/default.rb
       petshop/env/development.rb
       petshop/env/stage.rb
-      petshop/env/testing.rb
+      petshop/env/test.rb
       petshop/env/production.rb
       petshop/forms
       petshop/forms/example.rb
@@ -69,7 +69,7 @@ class HarborSetupCommandTest < MiniTest::Unit::TestCase
         class Home < Harbor::Controller
 
           get "/" do
-            response.render "home/index"
+            render "home/index"
           end
 
         end
@@ -93,6 +93,8 @@ class HarborSetupCommandTest < MiniTest::Unit::TestCase
       require "rubygems"
       require "bundler/setup"
       require "harbor"
+
+      Bundler.require(:default, config.environment.to_sym)
 
       config.load!(Pathname(__FILE__).dirname.parent + "env")
 

@@ -15,6 +15,11 @@ class ControllerTest < MiniTest::Unit::TestCase
         :GET__root__
       end
 
+      # /
+      post "/" do
+        :POST__root__
+      end
+
       # /foos/executive_report
       get "executive_report" do
         :GET_executive_report
@@ -96,6 +101,7 @@ class ControllerTest < MiniTest::Unit::TestCase
 
   def test_generated_action_methods_return_expected_results
     assert_equal :GET__root__, @example.GET__root__
+    assert_equal :POST__root__, @example.POST__root__
     assert_equal :GET, @example.GET
     assert_equal :GET_executive_report, @example.GET_executive_report
     assert_equal :GET__id, @example.GET__id
@@ -106,6 +112,7 @@ class ControllerTest < MiniTest::Unit::TestCase
 
   def test_generated_routes_match_actions
     assert_controller_route_matches("GET", "/", Controllers::Foos, :GET__root__)
+    assert_controller_route_matches("POST", "/", Controllers::Foos, :POST__root__)
     assert_controller_route_matches("GET", "/controller_test/foos", Controllers::Foos, :GET)
     assert_controller_route_matches("GET", "/controller_test/foos/executive_report", Controllers::Foos, :GET_executive_report)
     assert_controller_route_matches("GET", "/controller_test/foos/42", Controllers::Foos, :GET__id)

@@ -2,6 +2,8 @@ require "rubygems"
 require "bundler/setup"
 require "harbor"
 
+Bundler.require(:default, config.environment.to_sym)
+
 config.load!(Pathname(__FILE__).dirname.parent + "env")
 
 class <@= app_class @> < Harbor::Application
