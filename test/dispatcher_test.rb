@@ -31,6 +31,10 @@ class DispatcherTest < MiniTest::Unit::TestCase
     @request.path_info = 'parts/1234/4321/'
   end
 
+  def teardown
+    Harbor::Dispatcher::clear_event_handlers! :begin_request
+  end
+
   Harbor::Dispatcher.register_event_handler :not_found do
     not_found!
   end
@@ -82,5 +86,14 @@ class DispatcherTest < MiniTest::Unit::TestCase
     @request.path_info = 'some_app/route'
     # This will throw an exception if it doesnt catch the throw
     @dispatcher.dispatch!(@request, @response)
+  end
+
+  def test_raises_begin_request_event_when_dispatching
+    event_raised = false
+    Harbor::Dispatcher::register_event_handler :begin_request do
+      event_raised = true
+    end
+    @dispatcher.dispatch!(@request, @response)
+    assert event_raised
   end
 end

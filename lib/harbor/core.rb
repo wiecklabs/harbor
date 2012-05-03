@@ -19,13 +19,11 @@ require "harbor/router"
 require "harbor/plugin"
 require "harbor/mime"
 require "harbor/errors"
-
 require "harbor/cache"
 require "harbor/controller"
-
 require "harbor/dispatcher"
-
 require "harbor/consoles"
+require "harbor/reloader"
 
 class Harbor
 
@@ -36,6 +34,7 @@ class Harbor
 
     @dispatcher = Harbor::Dispatcher::instance
     config.helpers.register_all!
+    config.reloader.populate_files if config.reloader.enabled?
   end
 
   def applications

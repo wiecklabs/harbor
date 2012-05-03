@@ -24,6 +24,7 @@ class Harbor
 
     def dispatch!(request, response)
       dispatch_request_event = Events::DispatchRequestEvent.new(request, response)
+      raise_event(:begin_request, dispatch_request_event)
 
       fragments = Router::Route.expand(request.path_info)
       route = router.match(request.request_method, fragments)
