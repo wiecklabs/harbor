@@ -1,12 +1,12 @@
 class Harbor
   class Dispatcher
-    class RackWrapper
-      def initialize(app)
-        @app = app
-      end
+    module RackWrapper
+      def self.call(app, request_or_env, response)
+        env = request_or_env.is_a?(Harbor::Request) ?
+          request_or_env.env :
+          request_or_env
 
-      def call(request, response)
-        status, headers, buffer = @app.call(request.env)
+        status, headers, buffer = app.call(env)
         response.status = status
         response.headers = headers
         response.buffer = buffer

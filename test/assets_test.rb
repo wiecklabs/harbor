@@ -9,9 +9,11 @@ class AssetsTest < MiniTest::Unit::TestCase
     @assets = Harbor::Assets.new
     @assets.stubs(:cascade => @cascade)
 
+    @assets.compile = true
+
     path = Pathname(__FILE__).dirname + "fixtures/assets_files"
-    @assets.paths << "#{path}/app_1"
-    @assets.paths << "#{path}/app_2"
+    @assets.paths << "#{path}/javascripts"
+    @assets.paths << "#{path}/stylesheets"
   end
 
   def stub_request(path)
@@ -20,33 +22,24 @@ class AssetsTest < MiniTest::Unit::TestCase
 
   def test_cascades_self_if_serve_static
     @cascade.expects(:<<).with(@assets)
-    @assets.serve_static = true
+    @assets.compile = true
   end
 
-  def test_does_not_match_if_not_enabled_to_serve_static
-    refute @assets.match(stub_request('assets/public-file'))
+  def test_does_not_match_if_compiling_is_disabled
+    @assets.compile = false
+    refute @assets.match(stub_request('assets/application.js'))
   end
 
-  def test_matches_static_assets
-    @assets.serve_static = true
-    assert @assets.match(stub_request('assets/public-file'))
-  end
-
-  def test_searches_on_multiple_paths
-    @assets.serve_static = true
-    assert @assets.match(stub_request('assets/public-file-2'))
+  def test_matches_assets_if_compiling_is_enabled
+    assert @assets.match(stub_request('assets/application.js'))
+    assert @assets.match(stub_request('assets/application.css'))
   end
 
   def test_return_nil_if_no_match_is_found
-    @assets.serve_static = true
-    refute @assets.match(stub_request('assets/public-file-3'))
+    refute @assets.match(stub_request('assets/whatever.css'))
   end
 
-  def test_caches_and_stream_file
-    response = mock
-    response.expects(:cache).yields(response)
-    response.expects(:stream_file)
-
-    @assets.call(stub_request('public-file'), response)
+  def test_delegates_call_to_sprockets_env
+    flunk("To implement")
   end
 end

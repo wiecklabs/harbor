@@ -1,17 +1,22 @@
+require 'sprockets'
+
 class Harbor
   class Assets
-    attr_reader :serve_static, :paths
+    extend Forwardable
+
+    attr_reader :compile, :paths
     attr_accessor :mount_path
 
-    def initialize
+    def initialize(sprockets_env = Sprockets::Environment.new)
       @paths = []
       @mount_path = 'assets'
+      @sprockets_env = sprockets_env
     end
 
-    def serve_static=(serve_static)
-      @serve_static = serve_static
+    def compile=(compile)
+      @compile = compile
 
-      if @serve_static
+      if @compile
         cascade << self
       else
         cascade.unregister(self)
@@ -19,28 +24,16 @@ class Harbor
     end
 
     def match(request)
-      return unless serve_static
-
-      find_file(request.path_info)
+      return unless compile
     end
 
     def call(request, response)
-      path = find_file(request.path_info)
-      response.cache(nil, ::File.mtime(path), 86400) do
-        response.stream_file(path)
-      end
     end
 
     private
 
     def cascade
       @cascade ||= Harbor::Dispatcher.instance.cascade
-    end
-
-    def find_file(file)
-      file = file.gsub("#{@mount_path}/", '')
-      pattern = "{#{paths.join(',')}}/#{file}"
-      Dir[pattern].first
     end
   end
 end

@@ -31,4 +31,5 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency "builder"
   s.add_runtime_dependency "tilt"
   s.add_runtime_dependency "logging"
+  s.add_runtime_dependency "sprockets"
 end
