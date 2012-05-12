@@ -56,4 +56,9 @@ class AssetsTest < MiniTest::Unit::TestCase
     @env.expects(:cache=).with(:file_cache)
     @assets.cache = :file_cache
   end
+
+  def test_builds_manifest_for_assets_on_public_folder
+    assert_kind_of Sprockets::Manifest, @assets.manifest
+    assert_equal File.expand_path('./public/assets/manifest.json'), @assets.manifest.path
+  end
 end
