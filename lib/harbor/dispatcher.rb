@@ -1,5 +1,6 @@
 require_relative 'dispatcher/cascade'
 require_relative 'dispatcher/helper'
+require_relative 'dispatcher/rack_wrapper'
 
 class Harbor
   class Dispatcher
