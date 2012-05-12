@@ -6,7 +6,8 @@ class AssetsTest < MiniTest::Unit::TestCase
     @cascade.stubs(:<<)
     @cascade.stubs(:unregister)
 
-    @assets = Harbor::Assets.new(@cascade)
+    @assets = Harbor::Assets.new
+    @assets.stubs(:cascade => @cascade)
 
     path = Pathname(__FILE__).dirname + "fixtures/assets_files"
     @assets.paths << "#{path}/app_1"

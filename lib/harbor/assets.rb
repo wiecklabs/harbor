@@ -3,10 +3,9 @@ class Harbor
     attr_reader :serve_static, :paths
     attr_accessor :mount_path
 
-    def initialize(cascade = nil)
+    def initialize
       @paths = []
       @mount_path = 'assets'
-      @cascade = cascade
     end
 
     def serve_static=(serve_static)
