@@ -14,6 +14,8 @@ class AssetsTest < MiniTest::Unit::TestCase
     path = Pathname(__FILE__).dirname + "fixtures/assets_files"
     @assets.append_path "#{path}/javascripts"
     @assets.append_path "#{path}/stylesheets"
+
+    @env = @assets.sprockets_env
   end
 
   def create_request(path)
@@ -45,8 +47,13 @@ class AssetsTest < MiniTest::Unit::TestCase
     response = Harbor::Test::Response.new
 
     Harbor::Dispatcher::RackWrapper.expects(:call).
-      with(@assets.sprockets_env, has_entry('PATH_INFO' => 'application.js'), response)
+      with(@env, has_entry('PATH_INFO' => 'application.js'), response)
 
     @assets.call(create_request('assets/application.js'), response)
+  end
+
+  def test_delegates_cache_store_to_sprockets_env
+    @env.expects(:cache=).with(:file_cache)
+    @assets.cache = :file_cache
   end
 end

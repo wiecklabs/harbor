@@ -4,7 +4,7 @@ class Harbor
   class Assets
     extend Forwardable
 
-    def_delegators :@sprockets_env, :prepend_path, :append_path
+    def_delegators :@sprockets_env, :prepend_path, :append_path, :cache=, :cache
 
     attr_reader :compile, :sprockets_env
     attr_accessor :mount_path
@@ -13,6 +13,7 @@ class Harbor
       @paths = []
       @mount_path = 'assets'
       @sprockets_env = sprockets_env
+      @sprockets_env.cache = Sprockets::Cache::FileStore.new("./tmp")
     end
 
     def compile=(compile)
