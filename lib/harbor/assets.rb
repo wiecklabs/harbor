@@ -7,7 +7,7 @@ class Harbor
     def_delegators :@sprockets_env, :prepend_path, :append_path, :cache=, :cache
 
     attr_reader :compile, :sprockets_env
-    attr_accessor :mount_path
+    attr_accessor :mount_path, :precompiled_assets, :compress
 
     def initialize(sprockets_env = Sprockets::Environment.new)
       @paths = []
