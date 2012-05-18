@@ -6,6 +6,8 @@ class AssetsTest < MiniTest::Unit::TestCase
     @cascade.stubs(:<<)
     @cascade.stubs(:unregister)
 
+    Bundler.stubs(:require)
+
     @assets = Harbor::Assets.new
     @assets.stubs(:cascade => @cascade)
 
@@ -26,6 +28,11 @@ class AssetsTest < MiniTest::Unit::TestCase
 
   def test_cascades_self_when_compiling_is_enabled
     @cascade.expects(:<<).with(@assets)
+    @assets.compile = true
+  end
+
+  def test_cascades_self_when_compiling_is_enabled
+    Bundler.expects(:require).with(:assets)
     @assets.compile = true
   end
 

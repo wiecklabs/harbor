@@ -22,6 +22,7 @@ class Harbor
 
       if @compile
         cascade << self
+        Bundler.require(:assets)
       else
         cascade.unregister(self)
       end
