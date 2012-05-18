@@ -6,7 +6,7 @@ class Harbor
 
     def_delegators :@sprockets_env, :prepend_path, :append_path, :cache=, :cache
 
-    attr_reader :compile, :sprockets_env, :manifest
+    attr_reader :compile, :sprockets_env
     attr_accessor :mount_path
 
     def initialize(sprockets_env = Sprockets::Environment.new)
@@ -14,7 +14,6 @@ class Harbor
       @mount_path = 'assets'
       @sprockets_env = sprockets_env
       @sprockets_env.cache = Sprockets::Cache::FileStore.new("./tmp")
-      @manifest = Sprockets::Manifest.new(@sprockets_env, "./public/#{@mount_path}/manifest.json")
     end
 
     def compile=(compile)
@@ -26,6 +25,10 @@ class Harbor
       else
         cascade.unregister(self)
       end
+    end
+
+    def manifest
+      @manifest ||= Sprockets::Manifest.new(@sprockets_env.index, "./public/#{@mount_path}/manifest.json")
     end
 
     def match(request)
