@@ -31,6 +31,21 @@ class Harbor
       @manifest ||= Sprockets::Manifest.new(@sprockets_env.index, "./public/#{@mount_path}/manifest.json")
     end
 
+    def find_asset(path, type = nil)
+      return nil if path =~ %r{^[-a-z]+://|^cid:|^//}
+
+      if compile
+        @sprockets_env.find_asset(path, type: type)
+      else
+        manifest.assets["#{path}.#{type}"]
+      end
+    end
+
+    def asset_path(asset)
+      asset = asset.logical_path unless asset.is_a? String
+      "/#{mount_path}/#{asset}"
+    end
+
     def match(request)
       return unless compile
       !!@sprockets_env[fix_path_info(request.env['PATH_INFO'])]

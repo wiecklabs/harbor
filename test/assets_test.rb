@@ -68,4 +68,31 @@ class AssetsTest < MiniTest::Unit::TestCase
     assert_kind_of Sprockets::Manifest, @assets.manifest
     assert_equal File.expand_path('./public/assets/manifest.json'), @assets.manifest.path
   end
+
+  def test_does_not_try_to_find_asset_for_absolute_urls
+    @env.expects(:find_asset).never
+    refute @assets.find_asset('http://foo.bar/my.js')
+  end
+
+  def test_find_assets_on_sprockets_env
+    @env.expects(:find_asset).with('application', type: 'js').returns('asset')
+    assert_equal 'asset', @assets.find_asset('application', 'js')
+  end
+
+  def test_finds_assets_on_manifest_if_compilation_is_disabled
+    @assets.manifest.stubs(assets: {'application.js' => 'precompiled-asset'})
+    @assets.stubs(:compile => false)
+    assert_equal 'precompiled-asset', @assets.find_asset('application', 'js')
+  end
+
+  def test_build_asset_path_using_sprockets_asset
+    logical_path = 'application.css'
+    asset = stub(logical_path: logical_path)
+    assert_equal "/#{@assets.mount_path}/#{logical_path}", @assets.asset_path(asset)
+  end
+
+  def test_build_asset_path_using_strings
+    asset = 'application.js'
+    assert_equal "/#{@assets.mount_path}/#{asset}", @assets.asset_path(asset)
+  end
 end

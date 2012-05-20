@@ -8,6 +8,7 @@ class Harbor
     include Helpers::Html
     include Helpers::Url
     include Helpers::Cache
+    include Helpers::Assets
 
     attr_accessor :view, :keys
 
@@ -109,7 +110,7 @@ class Harbor
     def request
       @request
     end
-    
+
     def response
       @response
     end
@@ -120,7 +121,7 @@ class Harbor
 
     ##
     # Useful when you need to output content to the buffer.
-    # 
+    #
     #   def wrap_with_p_tag(&block)
     #     with_buffer(block) do |buffer|
     #       buffer << "<p>" << capture(&block) << "</p>"
