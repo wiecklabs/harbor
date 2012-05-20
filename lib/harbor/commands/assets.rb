@@ -16,4 +16,7 @@ if config.assets.compress
   end
 end
 
-config.assets.manifest.compile(config.assets.precompiled_assets)
+config.asset.manifest.clean
+unless config.assets.precompiled_assets.empty?
+  config.assets.manifest.compile(config.assets.precompiled_assets)
+end
