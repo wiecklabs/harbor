@@ -20,14 +20,19 @@ config.helpers.paths << config.root + "helpers/**/*.rb"
 #   config.autoloader.paths << config.root + "some/path"
 
 ### Assets:
-# By default the application will serve static assets only for development and
-# test environments. For production you'll have to run "harbor assets" when
-# deploying to copy all assets from ports and application itself to the public
-# folder.
-# For more information about assets check Harbor::Assets (config.assets is an
-# instance of it)
-config.assets.serve_static = false
-config.assets.paths.unshift(config.root + "assets")
+# Harbor uses Sprockets gem for serving and compiling assets and by default it
+# will compile automatically development and test environments. For production
+# you'll have to run "harbor assets" when deploying to compile and compress all
+# assets from ports and application itself to the public folder.
+#
+# For more information check Harbor::Assets
+
+config.assets.append_path config.root + "assets/javascripts"
+config.assets.append_path config.root + "assets/stylesheets"
+
+config.assets.compress = true
+
+config.assets.precompiled_assets = %w( application.js application.css )
 
 ### Console setup:
 # If you would like to use Pry (http://pry.github.com/) instead

@@ -62,6 +62,11 @@ class Harbor
       end
     end
 
+    # Required to allow Rack apps to set the response from outside
+    def buffer=(buffer)
+      @io = buffer
+    end
+
     def buffer_string
       if @io.is_a?(StringIO)
         @io.string

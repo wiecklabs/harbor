@@ -1,3 +1,4 @@
 config.reloader.enable!
+config.assets.compile = true
 
-config.assets.serve_static = true
+Harbor.serve_public_files! config.root + 'public'
