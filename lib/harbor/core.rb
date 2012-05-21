@@ -64,6 +64,42 @@ class Harbor
   def self.registered_applications
     @applications ||= []
   end
+
+  def self.serve_public_files!(root)
+    # This will make sure a single public folder is served among all registered
+    # applications / ports, last registered one wins.
+    @public_files ||=
+      begin
+        files = PublicFiles.new
+        Dispatcher::instance.cascade << files
+        files
+      end
+    @public_files.root = root
+  end
+
+  private
+
+  # TODO: Check if we can use Rack::File
+  class PublicFiles
+    def root=(root)
+      @root = root
+    end
+
+    def match(request)
+      file = request.path_info
+      path = "#{@root}/#{file}"
+
+      ::File.exist?(path) && ::File.readable?(path)
+    end
+
+    def call(request, response)
+      file = request.path_info
+      path = "#{@root}/#{file}"
+      response.cache(nil, ::File.mtime(path), 86400) do
+        response.stream_file(path)
+      end
+    end
+  end
 end
 
 require "harbor/configuration"
