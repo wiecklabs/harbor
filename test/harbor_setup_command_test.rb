@@ -50,7 +50,9 @@ class HarborSetupCommandTest < MiniTest::Unit::TestCase
       petshop/models
       petshop/assets
       petshop/assets/javascripts
+      petshop/assets/javascripts/application.js
       petshop/assets/stylesheets
+      petshop/assets/stylesheets/application.css
       petshop/views
       petshop/views/layouts
       petshop/views/layouts/application.html.erb
