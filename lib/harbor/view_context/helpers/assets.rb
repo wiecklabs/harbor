@@ -21,7 +21,7 @@ module Harbor::ViewContext::Helpers::Assets
       asset = asset_for(source, type: 'css')
       if asset
         if compile_assets?
-          asset.to_a.map { |dependency| javascript_tag("#{asset_path(dependency)}?body=1") }
+          asset.to_a.map { |dependency| stylesheet_tag("#{asset_path(dependency)}?body=1") }
         else
           stylesheet_tag(asset_path(asset))
         end
