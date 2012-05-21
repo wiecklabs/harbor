@@ -40,6 +40,39 @@ module ViewContext
         tags = @helper.javascript('single-asset')
         assert tags.include? '"/assets/single-asset-digest-stuff.js"'
       end
+
+      def test_renders_stylesheet_tag_with_full_url
+        url = 'http://foo.bar/application.css'
+        assert_equal "<link href=\"#{url}\" rel=\"stylesheet\" type=\"text/css\"/>", @helper.stylesheet(url)
+      end
+
+      def test_appends_css_extension_for_application_scripts
+        assert @helper.stylesheet('my').include? '"/my.css"'
+      end
+
+      def test_renders_multiple_scripts
+        tags = @helper.stylesheet('my', 'other')
+        assert tags.include? '"/my.css"'
+        assert tags.include? '"/other.css"'
+      end
+
+      def test_expands_assets_with_body_if_compilation_is_enabled
+        assets = ['required-asset.css', 'asset.css']
+        @helper.stubs(:asset_path).with('required-asset.css').returns('required-asset.css')
+        @helper.stubs(:asset_path).with('asset.css').returns('asset.css')
+        @helper.stubs(compile_assets?: true, asset_for: assets)
+
+        tags = @helper.stylesheet('asset')
+
+        assert tags.include? '"required-asset.css?body=1"'
+        assert tags.include? '"asset.css?body=1"'
+      end
+
+      def test_renders_precompiled_assets
+        @helper.stubs(asset_for: 'single-asset-digest-stuff.css')
+        tags = @helper.stylesheet('single-asset')
+        assert tags.include? '"/assets/single-asset-digest-stuff.css"'
+      end
     end
   end
 end
