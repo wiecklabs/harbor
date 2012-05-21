@@ -30,6 +30,8 @@ config.helpers.paths << config.root + "helpers/**/*.rb"
 config.assets.append_path config.root + "assets/javascripts"
 config.assets.append_path config.root + "assets/stylesheets"
 
+config.assets.compress = true
+
 config.assets.precompiled_assets = %w( application.js application.css )
 
 ### Console setup:

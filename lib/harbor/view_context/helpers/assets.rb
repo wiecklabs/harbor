@@ -15,7 +15,7 @@ module Harbor::ViewContext::Helpers::Assets
 
   def with_assets(type, *sources)
     sources.collect do |source|
-      asset = asset_for(source, type: type)
+      asset = asset_for(source, type)
       if asset
         if compile_assets?
           asset.to_a.map { |dependency| yield "#{asset_path(dependency)}?body=1" }

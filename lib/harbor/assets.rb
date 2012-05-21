@@ -46,7 +46,7 @@ class Harbor
 
     def asset_path(asset)
       asset = asset.logical_path unless asset.is_a? String
-      "/#{mount_path}/#{asset}"
+      "/#{@mount_path}/#{asset}"
     end
 
     def match(request)
