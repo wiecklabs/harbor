@@ -1,3 +1,2 @@
 config.reloader.enable!
-
-config.assets.serve_static = true
+config.assets.compile = true

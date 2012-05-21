@@ -14,6 +14,7 @@ class Harbor
       @mount_path = 'assets'
       @sprockets_env = sprockets_env
       @sprockets_env.cache = Sprockets::Cache::FileStore.new("./tmp")
+      @precompiled_assets = []
     end
 
     def compile=(compile)
@@ -37,6 +38,8 @@ class Harbor
       if compile
         @sprockets_env.find_asset(path, type: type)
       else
+        # TODO: Check if asset has been precompiled and raise an exception if
+        #       it is not
         manifest.assets["#{path}.#{type}"]
       end
     end
