@@ -1,39 +1,34 @@
 module Harbor::ViewContext::Helpers::Assets
   def javascript(*sources)
-    sources.collect do |source|
-      asset = asset_for(source, type: 'js')
-      if asset
-        if compile_assets?
-          asset.to_a.map { |dependency| javascript_tag("#{asset_path(dependency)}?body=1") }
-        else
-          javascript_tag(asset_path(asset))
-        end
-      else
-        source << ".js" unless source =~ /\.js$/
-        source = "/#{source}" unless source =~ /^\// || source =~ /http(s)?:\/\//
-        javascript_tag(source)
-      end
+    with_assets('js', *sources) do |src|
+      javascript_tag(src)
     end.join("\n")
   end
 
   def stylesheet(*sources)
-    sources.collect do |source|
-      asset = asset_for(source, type: 'css')
-      if asset
-        if compile_assets?
-          asset.to_a.map { |dependency| stylesheet_tag("#{asset_path(dependency)}?body=1") }
-        else
-          stylesheet_tag(asset_path(asset))
-        end
-      else
-        source << ".css" unless source =~ /\.css$/
-        source = "/#{source}" unless source =~ /^\// || source =~ /http(s)?:\/\//
-        stylesheet_tag(source)
-      end
+    with_assets('css', *sources) do |src|
+      stylesheet_tag(src)
     end.join("\n")
   end
 
   private
+
+  def with_assets(type, *sources)
+    sources.collect do |source|
+      asset = asset_for(source, type: type)
+      if asset
+        if compile_assets?
+          asset.to_a.map { |dependency| yield "#{asset_path(dependency)}?body=1" }
+        else
+          yield asset_path(asset)
+        end
+      else
+        source << ".#{type}" unless source =~ /\.#{type}$/
+        source = "/#{source}" unless source =~ /^\// || source =~ %r{^[-a-z]+://|^cid:|^//}
+        yield source
+      end
+    end
+  end
 
   def javascript_tag(path)
     "<script type=\"text/javascript\" src=\"#{path}\"></script>"
