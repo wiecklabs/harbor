@@ -11,6 +11,20 @@ end
 # Remove this if you plan to use another templating engine
 gem "erubis"
 
+# This are the gems required for compiling assets with "harbor assets" and for
+# compiling assets during development
+group :assets do
+  # Uncomment the following lines to enable coffeescript
+  # gem "coffee-script"
+  # gem "therubyracer"
+
+  # Add your favorite CSS extensions framework here (like LESS or Sass)
+
+  # Enable JS and CSS compression for production
+  gem "uglifier"
+  gem "yui-compressor"
+end
+
 # Uncomment the following line to use Pry (http://pry.github.com/)
 # instead of IRB for your harbor console:
 #
