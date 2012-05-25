@@ -209,13 +209,13 @@ class Harbor
         view = View.new(view, context.merge({ :request => @request, :response => self }))
       end
 
-      self.content_type = view.content_type
-
       if context.has_key?(:layout) || @request.xhr?
         puts view.to_s(context[:layout])
       else
         puts view.to_s(:search)
       end
+
+      self.content_type = view.content_type
     end
 
     HEADER_BLACKLIST = ['X-Sendfile', "Content-Disposition"]
