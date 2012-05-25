@@ -67,10 +67,6 @@ class Harbor
       @filename = view
     end
 
-    def supports_layouts?
-      true
-    end
-
     def content
       @content ||= render(@context)
     end
@@ -84,7 +80,7 @@ class Harbor
     private
 
     def render(context)
-      full_path ||= self.class.exists?(@filename)
+      full_path = self.class.exists?(@filename)
       raise "Could not find '#{@filename}' in #{self.class.path}" unless full_path
 
       template = if self.class.cache_templates?
