@@ -84,7 +84,7 @@ class ResponseTest < MiniTest::Unit::TestCase
   def test_render_xml
     skip
 
-    @response.render Harbor::XMLView.new("list")
+    @response.render "list"
     assert_equal("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<site>\n  <name>Bob</name>\n</site>\n", @response.buffer_string)
     assert_equal("text/xml", @response.content_type)
   end
