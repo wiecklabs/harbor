@@ -20,6 +20,13 @@ class Harbor
     end
     module_function :mime_type
 
+    def extension(mime)
+      # Make sure all types are registered before calling this method for the
+      # first time
+      (@_invert_types ||= MIME_TYPES.invert)[mime]
+    end
+    module_function :extension
+
     # List of most common mime-types, selected various sources
     # according to their usefulness in a webserving scope for Ruby
     # users.
