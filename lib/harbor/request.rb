@@ -143,7 +143,31 @@ class Harbor
       path
     end
 
+    def accept
+      @accept ||= begin
+        entries = @env['HTTP_ACCEPT'].to_s.split(',')
+        entries.map { |e| accept_entry(e) }.sort_by(&:last).map(&:first)
+      end
+    end
+
+    def preferred_type(*types)
+      return accept.first if types.empty?
+      types.flatten!
+      accept.detect do |pattern|
+        type = types.detect { |t| ::File.fnmatch(pattern, t) }
+        return type if type
+      end
+    end
+
     private
+
+    def accept_entry(entry)
+      type, *options = entry.delete(' ').split(';')
+      quality = 0 # we sort smallest first
+      options.delete_if { |e| quality = 1 - e[2..-1].to_f if e.start_with? 'q=' }
+      [type, [quality, type.count('*'), 1 - options.size]]
+    end
+
     def request_method_in_params?
       @env["REQUEST_METHOD"] == "POST" && self.POST && %w(PUT DELETE).include?((self.POST['_method'] || "").upcase)
     end

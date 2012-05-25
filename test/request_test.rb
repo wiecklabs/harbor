@@ -25,6 +25,22 @@ class RequestTest < MiniTest::Unit::TestCase
     assert_equal(4, request.fetch('servings', 4))
   end
 
+  def test_extracts_accept_types_preserving_quality_order
+    request = get("/", { 'HTTP_ACCEPT' => 'text/plain; q=0.5, text/html, text/x-dvi; q=0.8, text/x-c, */*; q=0.1' })
+    expected_accept = ['text/x-c', 'text/html', 'text/x-dvi', 'text/plain', '*/*']
+    assert_equal expected_accept, request.accept
+  end
+
+  def test_returns_first_accepted_type_as_preferred
+    request = get("/", { 'HTTP_ACCEPT' => 'text/x-c, */*; q=0.1' })
+
+    text = 'text/x-c'
+    js = 'application/javascript'
+
+    assert_equal js, request.preferred_type([js])
+    assert_equal text, request.preferred_type([js, text])
+  end
+
   def get(path, options = {})
     request(path, "GET", options)
   end
