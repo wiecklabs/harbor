@@ -3,7 +3,7 @@ require_relative "helper"
 class ViewTest < MiniTest::Unit::TestCase
 
   def setup
-    Harbor::View::path.unshift Pathname(__FILE__).dirname + "views"
+    Harbor::View::path.unshift Pathname(__FILE__).dirname + "fixtures/views"
   end
 
   def teardown

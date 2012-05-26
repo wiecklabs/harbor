@@ -3,7 +3,7 @@ require_relative 'helper'
 class ResponseTest < MiniTest::Unit::TestCase
 
   def setup
-    Harbor::View::path.unshift Pathname(__FILE__).dirname + "views"
+    Harbor::View::path.unshift Pathname(__FILE__).dirname + "fixtures/views"
     Harbor::View::layouts.default("layouts/application")
     @request = Harbor::Test::Request.new
     @response = Harbor::Response.new(@request)

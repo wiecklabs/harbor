@@ -6,7 +6,7 @@ class HarborTestTest < MiniTest::Unit::TestCase
   include Harbor::Test
 
   def setup
-    Harbor::View::path.unshift Pathname(__FILE__).dirname + "views"
+    Harbor::View::path.unshift Pathname(__FILE__).dirname + "fixtures/views"
   end
 
   def teardown
