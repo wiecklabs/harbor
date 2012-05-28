@@ -150,6 +150,31 @@ class Harbor
       end
     end
 
+    # Returns the extension for the format used in the request.
+    #
+    # GET /posts/5.xml | request.format => xml
+    # GET /posts/5.js | request.format => js
+    # GET /posts/5 | request.format => request.accepts.first
+    #
+    def format
+      formats.first
+    end
+
+    BROWSER_LIKE_ACCEPTS = /,\s*\*\/\*|\*\/\*\s*,/
+
+    def formats
+      @formats ||= begin
+        http_accept = @env['HTTP_ACCEPT']
+        if params['format']
+          Array(params['format'])
+        elsif xhr? || (http_accept && http_accept !~ BROWSER_LIKE_ACCEPTS)
+          accept.map{|type| Mime.extension(type)[1..-1]}
+        else
+          ['html']
+        end
+      end
+    end
+
     private
 
     def accept_entry(entry)

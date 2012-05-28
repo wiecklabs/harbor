@@ -41,6 +41,22 @@ class RequestTest < MiniTest::Unit::TestCase
     assert_equal text, request.preferred_type([js, text])
   end
 
+  def test_extract_format_from_request_params
+    request = get("/", { 'QUERY_STRING' => 'format=js' })
+    assert_equal 'js', request.format
+  end
+
+  def test_returns_html_format_if_is_a_browser_request_and_not_ajax
+    # Apparently this is what Safari will provide by default
+    request = get("/", { 'HTTP_ACCEPT' => 'application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5' })
+    assert_equal 'html', request.format
+  end
+
+  def test_identifies_preferred_format_if_ajax_request
+    request = get("/", { 'HTTP_ACCEPT' => 'application/json,*/*', "HTTP_X_REQUESTED_WITH" => "XMLHttpRequest" })
+    assert_equal 'json', request.format
+  end
+
   def get(path, options = {})
     request(path, "GET", options)
   end
