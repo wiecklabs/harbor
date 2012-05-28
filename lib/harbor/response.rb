@@ -197,10 +197,6 @@ class Harbor
     end
 
     def render(view, context = {})
-      if context[:layout].is_a?(Array)
-        warn "Passing multiple layouts to response.render has been deprecated. See Harbor::Layouts."
-        context[:layout] = context[:layout].first
-      end
 
       case view
       when View

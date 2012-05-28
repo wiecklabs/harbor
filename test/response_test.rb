@@ -89,15 +89,6 @@ class ResponseTest < MiniTest::Unit::TestCase
     assert_equal("text/xml", @response.content_type)
   end
 
-  def test_deprecated_multiple_layout_behavior
-    result = capture_stderr do
-      @response.render "index", :text => "test", :layout => ["layouts/application", "layouts/other"]
-    end
-
-    assert_equal("LAYOUT\ntest\n", @response.buffer_string)
-    assert_match /deprecated/, result
-  end
-
   def test_errors_is_a_errors_collection
     assert_kind_of(Harbor::Errors, @response.errors)
   end
@@ -506,5 +497,4 @@ class ResponseTest < MiniTest::Unit::TestCase
     cache.delete_matching(/.*/)
     Harbor::View.cache = nil
   end
-
 end
