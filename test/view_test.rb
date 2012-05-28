@@ -1,7 +1,6 @@
 require_relative "helper"
 
 class ViewTest < MiniTest::Unit::TestCase
-
   def setup
     Harbor::View::path.unshift Pathname(__FILE__).dirname + "fixtures/views"
   end
@@ -56,9 +55,9 @@ class ViewTest < MiniTest::Unit::TestCase
     assert_equal(Harbor::View::plugins("/some/plugin/key"), Harbor::View::plugins("some/plugin/key"))
   end
 
-  def test_supports_engine_precedence
-    Harbor::View::engines.unshift "str"
-    view = Harbor::View.new("index", :text => "test")
+  def test_supports_multiple_engines
+    Harbor::View::engines << "str"
+    view = Harbor::View.new("index_str", :text => "test")
     assert_equal("test from str", view.to_s.strip)
   end
 
