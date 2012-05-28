@@ -37,6 +37,7 @@ class Harbor
     end
 
     def content_type=(content_type)
+      content_type = Mime.mime_type(".#{content_type}", 'text/html') if content_type.is_a?(Symbol) || content_type !~ /\//
       @headers["Content-Type"] = content_type
     end
 

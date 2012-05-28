@@ -28,6 +28,16 @@ class ResponseTest < MiniTest::Unit::TestCase
     assert_equal("text/html", @response.content_type)
   end
 
+  def test_set_content_type_with_extension
+    @response.content_type = 'xml'
+    assert_equal("application/xml", @response.content_type)
+  end
+
+  def test_set_content_type_with_symbol
+    @response.content_type = :json
+    assert_equal("application/json", @response.content_type)
+  end
+
   def test_set_cookie_with_hash
     cookie_expires_on = Time.now
     expires_gmt_string = cookie_expires_on.gmtime.strftime("%a, %d-%b-%Y %H:%M:%S GMT")
