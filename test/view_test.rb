@@ -7,20 +7,6 @@ class ViewTest < MiniTest::Unit::TestCase
 
   def teardown
     Harbor::View::path.clear
-    Harbor::View::engines.delete "str"
-  end
-
-  def test_view_exists
-    assert Harbor::View.exists?("index.html.erb")
-  end
-
-  def test_view_doesnt_exist
-    refute Harbor::View.exists?("somefilethatdoesnotexist")
-  end
-
-  def test_empty_view_path
-    Harbor::View::path.clear
-    refute Harbor::View.exists?("index.html.erb")
   end
 
   def test_render_with_variables
@@ -56,7 +42,6 @@ class ViewTest < MiniTest::Unit::TestCase
   end
 
   def test_supports_multiple_engines
-    Harbor::View::engines << "str"
     view = Harbor::View.new("index_str", :text => "test")
     assert_equal("test from str", view.to_s.strip)
   end

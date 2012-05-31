@@ -20,15 +20,7 @@ class Harbor
     end
 
     def self.path
-      @path ||= if ::File.directory?("lib/views")
-        [ Pathname("lib/views") ]
-      else
-        []
-      end
-    end
-
-    def self.engines
-      @engines ||= ['erb']
+      lookup.paths
     end
 
     def self.layouts
@@ -51,19 +43,12 @@ class Harbor
     end
 
     def self.exists?(filename)
-      return false if self.path.none?
-
-      extension = ::File.extname(filename)
-      file_pattern = filename
-      file_pattern << ".html.{#{self.engines.join(',')}}" if extension.empty?
-      pattern = "{#{self.path.join(',')}}/**/#{file_pattern}"
-      Dir[pattern].first
+      lookup.exists?(filename)
     end
 
-    attr_accessor :content_type, :context, :extension, :path
+    attr_accessor :content_type, :context
 
     def initialize(view, context = {})
-      @content_type = "text/html"
       @context = context.is_a?(ViewContext) ? context : ViewContext.new(self, context)
       @filename = view
     end
@@ -73,16 +58,15 @@ class Harbor
     end
 
     def to_s(layout = nil)
+      # TODO: Should use layout based on content type / format as well
       layout = self.class.layouts.match(@filename) if layout == :search
-
       layout ? View.new(layout, @context.merge(:content => content)).to_s : content
     end
 
     private
 
     def render(context)
-      full_path = self.class.exists?(@filename)
-      raise "Could not find '#{@filename}' in #{self.class.path}" unless full_path
+      full_path = self.class.lookup.find(@filename).last
 
       template = if self.class.cache_templates?
         self.class.tilt_cache.fetch(full_path) { Tilt.new(full_path.to_s) }
@@ -95,6 +79,9 @@ class Harbor
     def self.tilt_cache
       @tilt_cache ||= Tilt::Cache.new
     end
-  end
 
+    def self.lookup
+      @lookup ||= TemplateLookup.new
+    end
+  end
 end

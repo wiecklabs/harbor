@@ -14,7 +14,7 @@ class TemplateLookupTest < MiniTest::Unit::TestCase
 
   def test_empty_paths
     @collection.paths.clear
-    refute @collection.find("index.html.erb")
+    assert_raises(RuntimeError) { @collection.find("index.html.erb") }
   end
 
   def test_supports_multiple_engines
