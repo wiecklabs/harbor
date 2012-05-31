@@ -2,11 +2,11 @@ require_relative "helper"
 
 class ViewTest < MiniTest::Unit::TestCase
   def setup
-    Harbor::View::path.unshift Pathname(__FILE__).dirname + "fixtures/views"
+    Harbor::View::paths.unshift Pathname(__FILE__).dirname + "fixtures/views"
   end
 
   def teardown
-    Harbor::View::path.clear
+    Harbor::View::paths.clear
   end
 
   def test_render_with_variables
@@ -51,7 +51,7 @@ class ViewTest < MiniTest::Unit::TestCase
   end
 
   def test_loads_erubis_if_available
-    view = Harbor::View.new("erubis_test.erubis")
+    view = Harbor::View.new("erubis_test.html.erubis")
     assert_equal("Erubis::FastEruby", view.to_s)
   end
 end

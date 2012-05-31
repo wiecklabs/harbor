@@ -19,7 +19,7 @@ class Harbor
       end
     end
 
-    def self.path
+    def self.paths
       lookup.paths
     end
 
