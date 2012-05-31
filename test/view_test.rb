@@ -46,10 +46,6 @@ class ViewTest < MiniTest::Unit::TestCase
     assert_equal("test from str", view.to_s.strip)
   end
 
-  def test_supports_javascript_templates
-    skip
-  end
-
   def test_loads_erubis_if_available
     view = Harbor::View.new("erubis_test.html.erubis")
     assert_equal("Erubis::FastEruby", view.to_s)
