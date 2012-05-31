@@ -24,7 +24,7 @@ class Harbor
         end
         return exact_result if exact_result
 
-        # An exact match could be found? Lets give one last shot and try to match
+        # An exact match could not be found? Lets give one last shot and try to match
         # wildcard routes ;)
         @wildcard_tree.search(tokens) if @wildcard_tree
       end
