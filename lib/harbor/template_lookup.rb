@@ -1,7 +1,5 @@
 class Harbor
   class TemplateLookup
-    extend Forwardable
-
     attr_reader :paths
 
     def initialize(paths = [])
