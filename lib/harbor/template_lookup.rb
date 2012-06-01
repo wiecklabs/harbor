@@ -1,4 +1,5 @@
 class Harbor
+  # TODO: Put some caching in place
   class TemplateLookup
     attr_reader :paths
 
