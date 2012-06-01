@@ -11,9 +11,8 @@ class Harbor
       attr_reader :fragment
       attr_accessor :left, :right, :match
 
-      # TODO: Just accept a hash and don't worry about optional arguments...
-      def initialize(action = nil, tokens = nil, fragment = nil)
-        super(action, tokens)
+      def initialize(fragment = nil)
+        super(nil, nil)
         @fragment = self.class.fragment_from_token(fragment) if fragment
       end
 
