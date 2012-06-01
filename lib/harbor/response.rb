@@ -198,15 +198,16 @@ class Harbor
     end
 
     def render(view, context = {})
-      view = View.new(view, context.merge({ :request => @request, :response => self }))
+      context = context.merge({ :request => @request, :response => self, :format => @request.format })
+      view = View.new(view, context)
 
-      if context.has_key?(:layout) || @request.xhr?
-        puts view.to_s(context[:layout])
-      else
-        puts view.to_s(:search)
+      layout = context.fetch(:layout) do
+        (@request.xhr? || context[:format] != 'html') ?
+          nil :
+          :search
       end
-
-      self.content_type = view.content_type
+      puts view.to_s(layout)
+      self.content_type = @request.format
     end
 
     HEADER_BLACKLIST = ['X-Sendfile', "Content-Disposition"]

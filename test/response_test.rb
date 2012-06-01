@@ -91,12 +91,11 @@ class ResponseTest < MiniTest::Unit::TestCase
     assert_equal("LAYOUT\ntest\n", @response.buffer_string)
   end
 
-  def test_render_xml
-    skip
-
+  def test_render_based_on_format
+    @request.format = 'xml'
     @response.render "list"
     assert_equal("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<site>\n  <name>Bob</name>\n</site>\n", @response.buffer_string)
-    assert_equal("text/xml", @response.content_type)
+    assert_equal("application/xml", @response.content_type)
   end
 
   def test_errors_is_a_errors_collection

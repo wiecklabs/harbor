@@ -160,6 +160,11 @@ class Harbor
       formats.first
     end
 
+    def format=(format)
+      params['format'] = format
+      @formats = [format]
+    end
+
     BROWSER_LIKE_ACCEPTS = /,\s*\*\/\*|\*\/\*\s*,/
 
     def formats

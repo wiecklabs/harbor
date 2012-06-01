@@ -58,7 +58,7 @@ class Harbor
     end
 
     def to_s(layout = nil)
-      # TODO: Should use layout based on content type / format as well
+      # TODO: Should support layout based on content type / format as well
       layout = self.class.layouts.match(@filename) if layout == :search
       layout ? View.new(layout, @context.merge(:content => content)).to_s : content
     end
