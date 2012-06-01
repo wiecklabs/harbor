@@ -198,13 +198,7 @@ class Harbor
     end
 
     def render(view, context = {})
-
-      case view
-      when View
-        view.context.merge(context)
-      else
-        view = View.new(view, context.merge({ :request => @request, :response => self }))
-      end
+      view = View.new(view, context.merge({ :request => @request, :response => self }))
 
       if context.has_key?(:layout) || @request.xhr?
         puts view.to_s(context[:layout])
