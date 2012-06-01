@@ -21,15 +21,9 @@ class TemplateLookupTest < MiniTest::Unit::TestCase
     assert @collection.find('index_str').last =~ /\.str$/
   end
 
-  def test_finds_based_on_format_preference
-    result = @collection.find('index', :preferred_formats => ['json', 'html'])
+  def test_finds_based_on_format
+    result = @collection.find('index', 'json')
     assert_equal 'json', result.first
     assert result.last =~ /\.jsonify$/
-  end
-
-  def test_finds_with_specific_format
-    result = @collection.find('index', :preferred_formats => ['html'])
-    assert_equal 'html', result.first
-    assert result.last =~ /\.erb$/
   end
 end

@@ -66,7 +66,9 @@ class Harbor
     private
 
     def render(context)
-      full_path = self.class.lookup.find(@filename).last
+      format, full_path = self.class.lookup.find(@filename, @context[:format])
+      # Sets the format so that we render partials properly
+      @context[:format] = format unless @context[:format]
 
       template = if self.class.cache_templates?
         self.class.tilt_cache.fetch(full_path) { Tilt.new(full_path.to_s) }

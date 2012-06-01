@@ -7,28 +7,27 @@ class Harbor
       @paths = paths
     end
 
-    def find(template_name, options = {})
-      result = try_find(template_name, options)
+    def find(template_name, default_format = nil)
+      result = try_find(template_name, default_format)
       unless result
         raise "Could not find '#{template_name}' in #{paths.map(&:to_s)}"
       end
       result
     end
 
-    def exists?(template_name, options = {})
-      !!try_find(template_name, options)
+    def exists?(template_name, default_format = nil)
+      !!try_find(template_name, default_format)
     end
 
     private
 
-    def try_find(template_name, options)
+    def try_find(template_name, default_format)
       return nil if paths.empty?
 
-      preferred_formats = options.fetch(:preferred_formats, ['html'])
-      format, engine    = extract_format_and_engine(template_name)
+      format, engine = extract_format_and_engine(template_name)
 
       file_pattern = template_name.dup
-      file_pattern << ".{#{preferred_formats.join(',')}}" unless format
+      file_pattern << ".#{default_format || 'html'}" unless format
       # TODO: Do we really need to glob for available engines or just use a wildcard?
       file_pattern << engines_glob unless engine
       file_pattern = "#{paths_glob}/**/#{file_pattern}"
@@ -37,6 +36,7 @@ class Harbor
 
       if template_matches.size > 0
         full_path = template_matches.first
+        # TODO: Its probably better to wrap this in a class
         [format || format_from_file_name(full_path), full_path]
       end
     end
