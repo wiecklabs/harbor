@@ -52,7 +52,7 @@ class ViewTest < MiniTest::Unit::TestCase
   end
 
   def test_supports_partials_for_formats_other_than_html
-    view = Harbor::View.new("index.xml.builder")
+    view = Harbor::View.new("index.xml")
     assert_equal("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<site>\n<name>John</name>\n<name>James</name>\n</site>\n", view.to_s)
   end
 end
