@@ -1,3 +1,5 @@
+require "sequel"
+
 ### Application's root path
 # If you are developing a port you should use <@= app_class @>.root outside
 # config / env files as it will be overwritten by other ports and main app

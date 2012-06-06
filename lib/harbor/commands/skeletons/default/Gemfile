@@ -2,6 +2,7 @@ source "http://rubygems.org"
 
 gem "harbor", ">= 1.0"
 gem "rack"
+gem "sequel", ">= 3.36.1"
 
 platforms :jruby do
   gem "jruby-rack"

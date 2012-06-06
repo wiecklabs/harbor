@@ -1,4 +1,4 @@
-require 'forwardable'
+require "forwardable"
 
 class Harbor
   class Router

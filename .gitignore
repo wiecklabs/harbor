@@ -10,3 +10,4 @@ vendor
 *.swo
 .rvmrc
 Gemfile.lock
+pet_shop

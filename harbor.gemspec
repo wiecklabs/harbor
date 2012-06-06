@@ -24,7 +24,8 @@ Gem::Specification.new do |s|
   s.add_development_dependency "rdoc", ">= 2.4.2"
   s.add_development_dependency "erubis"
   s.add_development_dependency "redis_directory", ">= 1.0.4"
-  s.add_development_dependency "mocha"
+  s.add_development_dependency "minitest"
+  s.add_development_dependency "listen"
 
   s.add_runtime_dependency "mime-types"
   s.add_runtime_dependency "uuidtools"
