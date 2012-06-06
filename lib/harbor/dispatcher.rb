@@ -30,26 +30,31 @@ class Harbor
       fragments = Router::Route.expand(request.path_info)
       extract_format_from_fragments!(request, fragments)
 
-      fragments = Router::Route.expand(request.path)
-      route = router.match(request.request_method, fragments)
-      if route && route.action
-        request.params.merge!(extract_params_from_tokens(route.tokens, fragments))
-
-        catch(:halt) do
-          raise_event(:request_dispatch, dispatch_request_event)
-          route.action.call(request, response)
-        end
-      elsif app = cascade.match(request)
-        catch(:halt) do
-          app.call(request, response)
-        end
-      else
-        handle_not_found(request, response)
+      catch(:halt) do
+        inner_dispatch!(request, response, fragments, dispatch_request_event)
       end
     rescue Exception => e
       handle_exception(e, request, response)
     ensure
       raise_event(:request_complete, dispatch_request_event.complete!)
+    end
+
+    private
+
+    def inner_dispatch!(request, response, fragments, dispatch_request_event)
+      route = router.match(request.request_method, fragments)
+
+      if route && route.action
+        request.params.merge!(extract_params_from_tokens(route.tokens, fragments))
+        raise_event(:request_dispatch, dispatch_request_event)
+        route.action.call(request, response)
+
+      elsif app = cascade.match(request)
+        app.call(request, response)
+
+      else
+        handle_not_found(request, response)
+      end
     end
 
     def extract_format_from_fragments!(request, fragments)
