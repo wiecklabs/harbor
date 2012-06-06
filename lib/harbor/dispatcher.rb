@@ -27,7 +27,8 @@ class Harbor
       dispatch_request_event = Events::DispatchRequestEvent.new(request, response)
       raise_event(:begin_request, dispatch_request_event)
 
-      extract_format_from_path!(request)
+      fragments = Router::Route.expand(request.path_info)
+      extract_format_from_fragments!(request, fragments)
 
       fragments = Router::Route.expand(request.path)
       route = router.match(request.request_method, fragments)
@@ -51,7 +52,12 @@ class Harbor
       raise_event(:request_complete, dispatch_request_event.complete!)
     end
 
-    private
+    def extract_format_from_fragments!(request, fragments)
+      return unless request.params['format'] || fragments.last =~ /\.(\w+)$/
+
+      request.params['format'] = $1
+      fragments.last.gsub!(/\.#{Regexp.escape $1}$/, '')
+    end
 
     def extract_params_from_tokens(tokens, fragments)
       pairs = fragments.zip(tokens)
@@ -59,13 +65,6 @@ class Harbor
         value, token = pair
         params[token[1..-1]] = value if token && Router::Route.wildcard_token?(token)
       end
-    end
-
-    def extract_format_from_path!(request)
-      return unless request.params['format'] || request.path_info =~ /\.(\w+)$/
-
-      request.params['format'] = $1
-      request.path_info.gsub!(/\.#{Regexp.escape $1}$/, '')
     end
 
     ##

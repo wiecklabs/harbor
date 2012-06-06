@@ -49,19 +49,17 @@ class DispatcherTest < MiniTest::Unit::TestCase
     assert_equal '4321', @request.params['order_id']
   end
 
-  def test_extracts_format_from_request_path
-    original_path = @request.path_info.dup
-    @request.path_info << '.js'
-    @dispatcher.dispatch!(@request, @response)
-    assert_equal 'js', @request.params['format']
-    assert_equal original_path, @request.path_info
-  end
-
   def test_sets_response_to_404_if_non_callable_node_is_matched
     @request.path_info = 'inner/node'
     @dispatcher.dispatch!(@request, @response)
     assert @@not_found
     assert_equal 404, @response.status
+  end
+
+  def test_extracts_format_from_request_path
+    @request.path_info << '.js'
+    @dispatcher.dispatch!(@request, @response)
+    assert_equal 'js', @request.params['format']
   end
 
   def test_sets_response_to_404_if_no_route_matches
