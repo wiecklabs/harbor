@@ -53,7 +53,7 @@ module Router
     end
 
     def test_builds_a_deferred_route_collection
-      assert_instance_of Harbor::Router::DeferredRouteCollection, @tree.deferred_routes
+      assert_instance_of Harbor::Router::DeferredRouteSet, @tree.deferred_routes
     end
 
     def test_registers_deferred_routes

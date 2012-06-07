@@ -2,7 +2,7 @@ require_relative "route"
 require_relative "route_node"
 require_relative "wildcard_node"
 require_relative "deferred_route"
-require_relative "deferred_route_collection"
+require_relative "deferred_route_set"
 
 class Harbor
   class Router
@@ -39,7 +39,7 @@ class Harbor
       end
 
       def deferred_routes
-        @deferred_routes ||= DeferredRouteCollection.new
+        @deferred_routes ||= DeferredRouteSet.new
       end
 
       def static_routes
