@@ -165,7 +165,7 @@ class Harbor
       @formats = [format]
     end
 
-    BROWSER_LIKE_ACCEPTS = /,\s*\*\/\*|\*\/\*\s*,/
+    BROWSER_LIKE_ACCEPTS = /\*\/\*/
 
     def formats
       @formats ||= begin
