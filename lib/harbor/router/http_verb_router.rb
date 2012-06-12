@@ -13,7 +13,7 @@ class Harbor
         if wildcard?(tokens)
           deferred_routes << DeferredRoute.new(tokens, action)
         else
-          static_routes[tokens.join('/')] = Route.new(action, tokens)
+          static_routes[tokens] = Route.new(action, tokens)
         end
         self
       end
@@ -21,7 +21,7 @@ class Harbor
       def search(tokens)
         build!
 
-        if route = static_routes[tokens.join('/')]
+        if route = static_routes[tokens]
           route
         elsif root
           root.search(tokens)

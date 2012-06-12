@@ -5,7 +5,7 @@ class Harbor
         routes = []
         router.verbs.each do |verb, router|
           router.static_routes.each do |path, route|
-            path = "/#{path}"
+            path = "/#{path.join('/')}"
             routes << {path: path, verb: verb, controller: route.action.controller}
           end
 
