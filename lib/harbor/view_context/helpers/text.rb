@@ -58,6 +58,7 @@ module Harbor::ViewContext::Helpers::Text
         # The Regexp match here is to determine if the +trailing+ value is an HTML entity code,
         # in which case we assume it's length is 1, or a textual value, in which case we use the
         # actual size.
+        string_form = string_form.gsub(/(\r|\n)+/," ")
         string_form[0, character_count - (trailing =~ /\&\w+\;/ ? 1 : trailing.size)] + trailing
       end
     end
