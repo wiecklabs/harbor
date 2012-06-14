@@ -30,9 +30,12 @@ class HarborSetupCommandTest < MiniTest::Unit::TestCase
   def test_generator_creates_expected_app_structure
     expected_generated_file_and_directory_list = %w{
       petshop/Gemfile
+      petshop/README.textile
       petshop/config.ru
       petshop/controllers
       petshop/controllers/home.rb
+      petshop/db
+      petshop/db/001_create_users.rb
       petshop/env
       petshop/env/default.rb
       petshop/env/development.rb
@@ -48,6 +51,8 @@ class HarborSetupCommandTest < MiniTest::Unit::TestCase
       petshop/lib/petshop.rb
       petshop/log
       petshop/models
+      petshop/test
+      petshop/test/helper.rb
       petshop/assets
       petshop/assets/javascripts
       petshop/assets/javascripts/application.js
