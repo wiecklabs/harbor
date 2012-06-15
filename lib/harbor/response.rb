@@ -15,7 +15,6 @@ class Harbor
     def initialize(request)
       @request = request
       @headers = {}
-      @headers["Content-Type"] = "text/html"
       @status = 200
       @errors = Harbor::Errors.new
     end
@@ -207,7 +206,7 @@ class Harbor
           :search
       end
       puts view.to_s(layout)
-      self.content_type = @request.format
+      self.content_type ||= @request.format
     end
 
     HEADER_BLACKLIST = ['X-Sendfile', "Content-Disposition"]
@@ -306,6 +305,7 @@ class Harbor
         set_cookie(session.key, session.save)
       end
 
+      self.content_type ||= "html"
       # headers cannot be arrays
       self.headers.each_pair do |key, value|
         self.headers[key] = value.join("\n") if value.is_a?(Array)
