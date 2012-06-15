@@ -53,7 +53,7 @@ class RequestTest < MiniTest::Unit::TestCase
   end
 
   def test_identifies_preferred_format_if_ajax_request
-    request = get("/", { 'HTTP_ACCEPT' => 'application/json,*/*', "HTTP_X_REQUESTED_WITH" => "XMLHttpRequest" })
+    request = get("/", { 'HTTP_ACCEPT' => '*/*;q=0.5,application/json', "HTTP_X_REQUESTED_WITH" => "XMLHttpRequest" })
     assert_equal 'json', request.format
   end
 
