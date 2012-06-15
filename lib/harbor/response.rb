@@ -305,7 +305,7 @@ class Harbor
         set_cookie(session.key, session.save)
       end
 
-      self.content_type ||= "html"
+      self.content_type ||= "html" unless self.status == 304
       # headers cannot be arrays
       self.headers.each_pair do |key, value|
         self.headers[key] = value.join("\n") if value.is_a?(Array)

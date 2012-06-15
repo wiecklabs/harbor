@@ -109,6 +109,11 @@ class ResponseTest < MiniTest::Unit::TestCase
     assert_equal("application/json", @response.content_type)
   end
 
+  def test_does_not_set_content_type_if_status_is_304
+    @response.status = 304
+    refute @response.to_a[1]['Content-Type']
+  end
+
   def test_errors_is_a_errors_collection
     assert_kind_of(Harbor::Errors, @response.errors)
   end
