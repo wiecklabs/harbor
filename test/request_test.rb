@@ -52,6 +52,11 @@ class RequestTest < MiniTest::Unit::TestCase
     assert_equal 'html', request.format
   end
 
+  def test_returns_html_format_for_curl_like_requests
+    request = get("/", { 'HTTP_ACCEPT' => '*/*' })
+    assert_equal 'html', request.format
+  end
+
   def test_identifies_preferred_format_if_ajax_request
     request = get("/", { 'HTTP_ACCEPT' => '*/*;q=0.5,application/json', "HTTP_X_REQUESTED_WITH" => "XMLHttpRequest" })
     assert_equal 'json', request.format

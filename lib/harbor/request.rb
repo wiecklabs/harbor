@@ -165,18 +165,22 @@ class Harbor
       @formats = [format]
     end
 
-    BROWSER_LIKE_ACCEPTS = /\*\/\*/
+    BROWSER_LIKE_ACCEPTS = /,\s*\*\/\*|\*\/\*\s*,/
 
     def formats
       @formats ||= begin
         http_accept = @env['HTTP_ACCEPT']
-        if params['format']
+
+        accepted_formats = if params['format']
           Array(params['format'])
         elsif xhr? || (http_accept && http_accept !~ BROWSER_LIKE_ACCEPTS)
-          accept.map{|type| Mime.extension(type)[1..-1]}
+          # TODO: Mime types could be objects
+          accept.map{|type| Mime.extension(type).to_s.gsub(/^\./, '')}
         else
           ['html']
         end
+
+        accepted_formats == ['all'] ? ['html'] : accepted_formats
       end
     end
 
