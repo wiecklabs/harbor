@@ -10,7 +10,9 @@ class Harbor
     def find(template_name, default_format = nil)
       result = try_find(template_name, default_format)
       unless result
-        raise "Could not find '#{template_name}' in #{paths.map(&:to_s)}"
+        format, _ = extract_format_and_engine(template_name)
+        format_info = format.nil?? " with format '#{default_format || 'html'}'" : ''
+        raise "Could not find '#{template_name}'#{format_info} in #{paths.map(&:to_s)}"
       end
       result
     end
