@@ -27,7 +27,7 @@ class RequestTest < MiniTest::Unit::TestCase
 
   def test_extracts_accept_types_preserving_quality_order
     request = get("/", { 'HTTP_ACCEPT' => 'text/plain; q=0.5, text/html, text/x-dvi; q=0.8, text/x-c, */*; q=0.1' })
-    expected_accept = ['text/x-c', 'text/html', 'text/x-dvi', 'text/plain', '*/*']
+    expected_accept = ['text/html', 'text/x-c', 'text/x-dvi', 'text/plain', '*/*']
     assert_equal expected_accept, request.accept
   end
 
