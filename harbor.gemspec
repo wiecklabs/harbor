@@ -23,6 +23,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency "simplecov"
   s.add_development_dependency "rdoc", ">= 2.4.2"
   s.add_development_dependency "erubis"
+  s.add_development_dependency "builder"
   s.add_development_dependency "redis_directory", ">= 1.0.4"
   s.add_development_dependency "minitest"
   s.add_development_dependency "mocha"
@@ -30,7 +31,6 @@ Gem::Specification.new do |s|
 
   s.add_runtime_dependency "mime-types"
   s.add_runtime_dependency "uuidtools"
-  s.add_runtime_dependency "builder"
   s.add_runtime_dependency "tilt"
   s.add_runtime_dependency "logging"
   s.add_runtime_dependency "sprockets"

@@ -18,6 +18,7 @@ require "harbor/logging"
 require "harbor/logging/appenders/email"
 require "harbor/test/test"
 require "rack/test"
+require "builder"
 
 ENV['RACK_ENV'] = 'test'
 

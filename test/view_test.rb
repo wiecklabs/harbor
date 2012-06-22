@@ -1,27 +1,12 @@
 require_relative "helper"
 
 class ViewTest < MiniTest::Unit::TestCase
-
   def setup
-    Harbor::View::path.unshift Pathname(__FILE__).dirname + "views"
+    Harbor::View::paths.unshift Pathname(__FILE__).dirname + "fixtures/views"
   end
 
   def teardown
-    Harbor::View::path.clear
-    Harbor::View::engines.delete "str"
-  end
-
-  def test_view_exists
-    assert Harbor::View.exists?("index.html.erb")
-  end
-
-  def test_view_doesnt_exist
-    refute Harbor::View.exists?("somefilethatdoesnotexist")
-  end
-
-  def test_empty_view_path
-    Harbor::View::path.clear
-    refute Harbor::View.exists?("index.html.erb")
+    Harbor::View::paths.clear
   end
 
   def test_render_with_variables
@@ -56,18 +41,18 @@ class ViewTest < MiniTest::Unit::TestCase
     assert_equal(Harbor::View::plugins("/some/plugin/key"), Harbor::View::plugins("some/plugin/key"))
   end
 
-  def test_supports_engine_precedence
-    Harbor::View::engines.unshift "str"
-    view = Harbor::View.new("index", :text => "test")
+  def test_supports_multiple_engines
+    view = Harbor::View.new("index_str", :text => "test")
     assert_equal("test from str", view.to_s.strip)
   end
 
-  def test_supports_javascript_templates
-    skip
+  def test_loads_erubis_if_available
+    view = Harbor::View.new("erubis_test.html.erubis")
+    assert_equal("Erubis::FastEruby", view.to_s)
   end
 
-  def test_loads_erubis_if_available
-    view = Harbor::View.new("erubis_test.erubis")
-    assert_equal("Erubis::FastEruby", view.to_s)
+  def test_supports_partials_for_formats_other_than_html
+    view = Harbor::View.new("index.xml")
+    assert_equal("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<site>\n<name>John</name>\n<name>James</name>\n</site>\n", view.to_s)
   end
 end

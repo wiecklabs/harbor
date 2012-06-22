@@ -3,7 +3,7 @@ require "forwardable"
 class Harbor
   class Router
     # Handles deferred wildcard routes
-    class DeferredRouteCollection
+    class DeferredRouteSet
       extend Forwardable
       def_delegators :@routes, :size, :empty?
 

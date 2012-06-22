@@ -15,7 +15,6 @@ class Harbor
     def initialize(request)
       @request = request
       @headers = {}
-      @headers["Content-Type"] = "text/html"
       @status = 200
       @errors = Harbor::Errors.new
     end
@@ -37,6 +36,7 @@ class Harbor
     end
 
     def content_type=(content_type)
+      content_type = Mime.mime_type(".#{content_type}", 'text/html') if content_type.is_a?(Symbol) || content_type !~ /\//
       @headers["Content-Type"] = content_type
     end
 
@@ -197,25 +197,16 @@ class Harbor
     end
 
     def render(view, context = {})
-      if context[:layout].is_a?(Array)
-        warn "Passing multiple layouts to response.render has been deprecated. See Harbor::Layouts."
-        context[:layout] = context[:layout].first
-      end
+      context = context.merge({ :request => @request, :response => self, :format => @request.format })
+      view = View.new(view, context)
 
-      case view
-      when View
-        view.context.merge(context)
-      else
-        view = View.new(view, context.merge({ :request => @request, :response => self }))
+      layout = context.fetch(:layout) do
+        (@request.xhr? || context[:format] != 'html') ?
+          nil :
+          :search
       end
-
-      self.content_type = view.content_type
-
-      if context.has_key?(:layout) || @request.xhr?
-        puts view.to_s(context[:layout])
-      else
-        puts view.to_s(:search)
-      end
+      puts view.to_s(layout)
+      self.content_type ||= @request.format
     end
 
     HEADER_BLACKLIST = ['X-Sendfile', "Content-Disposition"]
@@ -314,6 +305,7 @@ class Harbor
         set_cookie(session.key, session.save)
       end
 
+      self.content_type ||= "html" unless self.status == 304
       # headers cannot be arrays
       self.headers.each_pair do |key, value|
         self.headers[key] = value.join("\n") if value.is_a?(Array)

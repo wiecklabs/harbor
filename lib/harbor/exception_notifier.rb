@@ -2,14 +2,14 @@ class Harbor
   ##
   # Utility class for receiving email notifications of exceptions in
   # non-development environments.
-  # 
+  #
   #   services.register("mailer", Harbor::Mailer)
   #   services.register("mail_server", Harbor::SendmailServer)
-  #   
+  #
   #   require 'harbor/exception_notifier'
-  # 
+  #
   # You will then receive email alerts for all 500 errors in the format of:
-  # 
+  #
   #   From:     errors@request_host
   #   Subject:  [ERROR] [request_host] [environment] Exception description
   #   Body:     stack trace found in log, with request details.
@@ -56,4 +56,4 @@ class Harbor
   end
 end
 
-Harbor::Application.register_event_handler(:exception) { |event| Harbor::ExceptionNotifier.notify(event.exception, event.request, event.response, event.trace) }
+Harbor::Dispatcher.register_event_handler(:exception) { |event| Harbor::ExceptionNotifier.notify(event.exception, event.request, event.response, event.trace) }

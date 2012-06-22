@@ -4,8 +4,8 @@ module Router
   class WildcardNodeTest < MiniTest::Unit::TestCase
     def setup
       @node = Harbor::Router::WildcardNode.new
-      @simple_node = Harbor::Router::RouteNode.new(nil, nil, 'parts')
-      @wild_node = Harbor::Router::RouteNode.new(nil, nil, ':id')
+      @simple_node = Harbor::Router::RouteNode.new('parts')
+      @wild_node = Harbor::Router::RouteNode.new(':id')
     end
 
     def test_creates_tree_entry_for_exact_matches_when_initialized

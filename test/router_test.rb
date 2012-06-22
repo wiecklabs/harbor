@@ -15,7 +15,7 @@ class RouterTest < MiniTest::Unit::TestCase
   end
 
   def test_matches_an_array_of_tokens
-    assert_equal(:index, @router.match("GET", ['']).action.call)
+    assert_equal(:index, @router.match("GET", []).action.call)
   end
 
   def test_duplicates_incoming_array_of_tokens_before_searching

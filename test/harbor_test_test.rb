@@ -6,11 +6,11 @@ class HarborTestTest < MiniTest::Unit::TestCase
   include Harbor::Test
 
   def setup
-    Harbor::View::path.unshift Pathname(__FILE__).dirname + "views"
+    Harbor::View::paths.unshift Pathname(__FILE__).dirname + "fixtures/views"
   end
 
   def teardown
-    Harbor::View::path.clear
+    Harbor::View::paths.clear
   end
 
   # ASSERTIONS
@@ -80,7 +80,7 @@ class HarborTestTest < MiniTest::Unit::TestCase
   end
 
   def test_response_context_can_be_accessed
-    Harbor::View::path.unshift Pathname(__FILE__).dirname + "views"
+    Harbor::View::paths.unshift Pathname(__FILE__).dirname + "views"
 
     container = Harbor::Container.new
     container.set(:request, Harbor::Test::Request)
@@ -92,7 +92,7 @@ class HarborTestTest < MiniTest::Unit::TestCase
   end
 
   def test_response_context_can_be_accessed_with_multiple_renders
-    Harbor::View::path.unshift Pathname(__FILE__).dirname + "views"
+    Harbor::View::paths.unshift Pathname(__FILE__).dirname + "views"
 
     container = Harbor::Container.new
     container.set(:request, Harbor::Test::Request)

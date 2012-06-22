@@ -3,7 +3,7 @@ require_relative 'helper'
 class ViewContextTest < MiniTest::Unit::TestCase
 
   def setup
-    Harbor::View.path << Pathname(__FILE__).dirname + "views/view_context"
+    Harbor::View.paths << Pathname(__FILE__).dirname + "fixtures/views/view_context"
     @assertor = Class.new do
       include MiniTest::Assertions
     end.new
@@ -15,7 +15,7 @@ class ViewContextTest < MiniTest::Unit::TestCase
   end
 
   def teardown
-    Harbor::View.path.clear
+    Harbor::View.paths.clear
   end
 
   def test_instance_variables_are_available_in_context

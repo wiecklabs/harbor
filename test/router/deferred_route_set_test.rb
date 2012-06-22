@@ -1,9 +1,9 @@
 require_relative "../helper"
 
 module Router
-  class DeferredRouteCollectionTest < MiniTest::Unit::TestCase
+  class DeferredRouteSetTest < MiniTest::Unit::TestCase
     def setup
-      @collection = Harbor::Router::DeferredRouteCollection.new
+      @collection = Harbor::Router::DeferredRouteSet.new
     end
 
     def test_replaces_duplicate_route_upon_insertion

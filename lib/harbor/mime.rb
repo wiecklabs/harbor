@@ -20,6 +20,13 @@ class Harbor
     end
     module_function :mime_type
 
+    def extension(mime)
+      # Make sure all types are registered before calling this method for the
+      # first time
+      (@_invert_types ||= MIME_TYPES.invert).fetch(mime)
+    end
+    module_function :extension
+
     # List of most common mime-types, selected various sources
     # according to their usefulness in a webserving scope for Ruby
     # users.
@@ -201,6 +208,10 @@ class Harbor
       ".yaml"    => "text/yaml",
       ".yml"     => "text/yaml",
       ".zip"     => "application/zip",
+
+      # This is not really a mime type, its just used to handle browsers'
+      # HTTP_ACCEPT headers
+      :all       => "*/*",
     }
   end
 end

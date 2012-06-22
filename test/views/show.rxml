@@ -1,4 +1,0 @@
-xml.instruct!
-xml.site do
-  xml.name @name
-end

@@ -5,7 +5,7 @@ require "sequel"
 # config / env files as it will be overwritten by other ports and main app
 config.root = Pathname(__FILE__).dirname.parent
 
-Harbor::View::path.unshift(config.root + "views")
+Harbor::View::paths.unshift(config.root + "views")
 Harbor::View::layouts.default("layouts/application")
 
 ### View helpers:

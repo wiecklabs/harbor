@@ -6,7 +6,7 @@ class Harbor
 
       def self.start
         require "pry"
-        ::Object.new.pry
+        ::Pry.start
       end
 
     end

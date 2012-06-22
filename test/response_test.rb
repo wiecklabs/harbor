@@ -3,14 +3,14 @@ require_relative 'helper'
 class ResponseTest < MiniTest::Unit::TestCase
 
   def setup
-    Harbor::View::path.unshift Pathname(__FILE__).dirname + "views"
+    Harbor::View::paths.unshift Pathname(__FILE__).dirname + "fixtures/views"
     Harbor::View::layouts.default("layouts/application")
     @request = Harbor::Test::Request.new
     @response = Harbor::Response.new(@request)
   end
 
   def teardown
-    Harbor::View::path.clear
+    Harbor::View::paths.clear
     Harbor::View::layouts.clear
   end
 
@@ -25,7 +25,17 @@ class ResponseTest < MiniTest::Unit::TestCase
   end
 
   def test_default_content_type
-    assert_equal("text/html", @response.content_type)
+    assert_equal("text/html", @response.to_a[1]['Content-Type'])
+  end
+
+  def test_set_content_type_with_extension
+    @response.content_type = 'xml'
+    assert_equal("application/xml", @response.content_type)
+  end
+
+  def test_set_content_type_with_symbol
+    @response.content_type = :json
+    assert_equal("application/json", @response.content_type)
   end
 
   def test_set_cookie_with_hash
@@ -73,7 +83,7 @@ class ResponseTest < MiniTest::Unit::TestCase
 
   def test_standard_headers
     @response.print "Hello World"
-    assert_equal({ "Content-Type" => "text/html", "Content-Length" => "Hello World".size.to_s }, @response.headers)
+    assert_equal({ "Content-Type" => "text/html", "Content-Length" => "Hello World".size.to_s }, @response.to_a[1])
   end
 
   def test_render_html_view_with_layout
@@ -81,21 +91,27 @@ class ResponseTest < MiniTest::Unit::TestCase
     assert_equal("LAYOUT\ntest\n", @response.buffer_string)
   end
 
-  def test_render_xml
-    skip
-
-    @response.render Harbor::XMLView.new("list")
+  def test_render_based_on_format
+    @request.format = 'xml'
+    @response.render "list"
     assert_equal("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<site>\n  <name>Bob</name>\n</site>\n", @response.buffer_string)
-    assert_equal("text/xml", @response.content_type)
   end
 
-  def test_deprecated_multiple_layout_behavior
-    result = capture_stderr do
-      @response.render "index", :text => "test", :layout => ["layouts/application", "layouts/other"]
-    end
+  def test_defaults_content_type_to_request_format_when_rendering
+    @request.format = 'xml'
+    @response.render "list"
+    assert_equal("application/xml", @response.content_type)
+  end
 
-    assert_equal("LAYOUT\ntest\n", @response.buffer_string)
-    assert_match /deprecated/, result
+  def test_does_not_override_content_type_if_already_set
+    @request.format = 'json'
+    @response.render "list.xml"
+    assert_equal("application/json", @response.content_type)
+  end
+
+  def test_does_not_set_content_type_if_status_is_304
+    @response.status = 304
+    refute @response.to_a[1]['Content-Type']
   end
 
   def test_errors_is_a_errors_collection
@@ -506,5 +522,4 @@ class ResponseTest < MiniTest::Unit::TestCase
     cache.delete_matching(/.*/)
     Harbor::View.cache = nil
   end
-
 end

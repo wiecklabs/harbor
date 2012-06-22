@@ -18,13 +18,13 @@ class Harbor
       def search(tokens)
         part = tokens.first
 
-        exact_result = if (tree = trees[part])
+        exact_match = if (tree = trees[part])
           # The dup is required as the search method will consume tokens
           tree.search(tokens.dup)
         end
-        return exact_result if exact_result
+        return exact_match if exact_match
 
-        # An exact match could be found? Lets give one last shot and try to match
+        # An exact match could not be found? Lets give one last shot and try to match
         # wildcard routes ;)
         @wildcard_tree.search(tokens) if @wildcard_tree
       end

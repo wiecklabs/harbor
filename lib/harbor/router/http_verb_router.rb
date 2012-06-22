@@ -2,7 +2,7 @@ require_relative "route"
 require_relative "route_node"
 require_relative "wildcard_node"
 require_relative "deferred_route"
-require_relative "deferred_route_collection"
+require_relative "deferred_route_set"
 
 class Harbor
   class Router
@@ -13,7 +13,7 @@ class Harbor
         if wildcard?(tokens)
           deferred_routes << DeferredRoute.new(tokens, action)
         else
-          static_routes[tokens.join('/')] = Route.new(action, tokens)
+          static_routes[tokens] = Route.new(action, tokens)
         end
         self
       end
@@ -21,7 +21,7 @@ class Harbor
       def search(tokens)
         build!
 
-        if route = static_routes[tokens.join('/')]
+        if route = static_routes[tokens]
           route
         elsif root
           root.search(tokens)
@@ -39,7 +39,7 @@ class Harbor
       end
 
       def deferred_routes
-        @deferred_routes ||= DeferredRouteCollection.new
+        @deferred_routes ||= DeferredRouteSet.new
       end
 
       def static_routes

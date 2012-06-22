@@ -56,6 +56,12 @@ class DispatcherTest < MiniTest::Unit::TestCase
     assert_equal 404, @response.status
   end
 
+  def test_extracts_format_from_request_path
+    @request.path_info << '.js'
+    @dispatcher.dispatch!(@request, @response)
+    assert_equal 'js', @request.params['format']
+  end
+
   def test_sets_response_to_404_if_no_route_matches
     @request.path_info = 'non/matching/route'
     @dispatcher.dispatch!(@request, @response)

@@ -8,12 +8,12 @@ module Router
 
     def test_creates_static_route
       @tree.register(['static', 'route'], :static)
-      assert_equal :static, @tree.static_routes['static/route'].action
+      assert_equal :static, @tree.static_routes[%w(static route)].action
     end
 
     def test_replaces_static_route_with_new_route
       @tree.register(['static'], :static).register(['static'], :new_static)
-      assert_equal :new_static, @tree.static_routes['static'].action
+      assert_equal :new_static, @tree.static_routes[['static']].action
     end
 
     def test_delegates_wildcard_insertion_to_root_node
@@ -53,7 +53,7 @@ module Router
     end
 
     def test_builds_a_deferred_route_collection
-      assert_instance_of Harbor::Router::DeferredRouteCollection, @tree.deferred_routes
+      assert_instance_of Harbor::Router::DeferredRouteSet, @tree.deferred_routes
     end
 
     def test_registers_deferred_routes

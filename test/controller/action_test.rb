@@ -4,7 +4,6 @@ module Controller
   class ActionTest < MiniTest::Unit::TestCase
 
     class TestController
-      def initialize(*args); end
       def action; end
       def action_with_args(first, second); end
       def action_with_default(required, default = 'default') end
@@ -19,8 +18,15 @@ module Controller
       @request    = Harbor::Test::Request.new
       @response   = Harbor::Test::Response.new
 
-      @controller = TestController.new(@request, @response)
+      @controller = TestController.new
       config.stubs(:get => @controller)
+    end
+
+    def test_action_initializes_controller_through_container
+      config.expects(:get).
+        with(TestController.name, "request" => @request, "response" => @response).
+        returns(@controller)
+      @action.call(@request, @response)
     end
 
     def test_calls_simple_action
