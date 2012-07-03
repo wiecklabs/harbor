@@ -12,7 +12,7 @@ module Harbor
     
     class PutArgumentError < ArgumentError; end
 
-    attr_accessor :logger
+    attr_accessor :logger, :store
 
     def initialize(store)
       raise ArgumentError.new("Harbor::Cache.new expects a non-null 'store' parameter") unless store
@@ -33,7 +33,12 @@ module Harbor
         return true if (cached_item = @store.get(key)) && cached_item.fresh? && cached_item.content.hash == content.hash
 
         logger.debug "PUT: #{key}  (ttl:#{ttl.inspect} maximum_age:#{maximum_age.inspect})" if logger
-        @store.put(key, ttl, maximum_age, content, Time.now)
+        # crappy hack because Sam isn't here, the rescue below eats the exceptions, and somehow @store is a Harbor::Cache and not a Harbor::Cache::Redis. TODO: FIX
+        if @store.is_a?(Harbor::Cache) and @store.store.is_a?(Harbor::Cache::Redis)
+          @store.store.put(key, ttl, maximum_age, content, Time.now)
+        else
+          @store.put(key, ttl, maximum_age, content, Time.now)
+        end
       end
     rescue
       log("Harbor::Cache#put unable to store cached content.", $!)
