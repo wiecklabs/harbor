@@ -46,12 +46,13 @@ module Harbor
       registered_locale
     end
 
-    attr_reader :culture_code, :abbreviation, :description
+    attr_reader :culture_code, :abbreviation, :description, :native_spelling
 
-    def initialize(culture_code, abbreviation, description)
+    def initialize(culture_code, abbreviation, description, native_spelling=nil)
       @culture_code = culture_code
       @abbreviation = abbreviation
       @description = description
+      @native_spelling = native_spelling
     end
 
     def to_s
