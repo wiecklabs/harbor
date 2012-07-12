@@ -1,5 +1,6 @@
 require "rubygems"
 require "pathname"
+require 'ci/reporter/rake/minitest'
 
 unless ENV["TRAVIS"]
   require "bundler/setup"
