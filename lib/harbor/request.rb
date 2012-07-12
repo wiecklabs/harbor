@@ -137,7 +137,9 @@ class Harbor
     def accept
       @accept ||= begin
         entries = @env['HTTP_ACCEPT'].to_s.split(',')
-        entries.map { |e| accept_entry(e) }.sort_by { |e| e[1][0] }.map(&:first)
+        entries.map! { |e| accept_entry(e) }
+        entries.sort_by! { |e| [e.last, entries.index(e)] }
+        entries.map(&:first)
       end
     end
 
