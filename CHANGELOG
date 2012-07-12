@@ -1,5 +1,6 @@
 1.0
 
+* MAJOR: Removed DataObjects Session support.
 * MAJOR: View paths are now registered on Harbor::View::paths and no longer Harbor::View::path
 * MAJOR: Support for passing multiple layouts to response.render has been removed. See Harbor::Layouts.
 * MINOR: lib/views is not a registered view path by default
