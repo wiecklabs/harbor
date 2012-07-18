@@ -1,12 +1,11 @@
 require "pathname"
 require Pathname(__FILE__).dirname + "helper"
-require "sequel_test_case"
 require "harbor/contrib/translations/translation_chain"
 
 module Contrib
   module Translations
 
-    class TranslationTest < SequelTestCase
+    class TranslationTest < Test::Unit::TestCase
 
       LOCALE_EN = 'en_us'
       LOCALE_ES = 'es_mx'
@@ -81,10 +80,9 @@ module Contrib
         @t.put(LOCALE_EN, KEY, VAL)
 
         assert(@t.exists?(LOCALE_EN, KEY))
-        assert(!@t.exists_in_backend?(be1, LOCALE_EN, KEY))
+        assert(@t.exists_in_backend?(be1, LOCALE_EN, KEY))
         assert(@t.exists_in_backend?(be2, LOCALE_EN, KEY))
         assert_equal(VAL, @t.get(LOCALE_EN, KEY))
-        assert(@t.exists_in_backend?(be2, LOCALE_EN, KEY))
       end
 
       def test_passthrough_gets

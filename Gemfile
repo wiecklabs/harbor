@@ -14,10 +14,8 @@ gem "rack"
 gem "rack-test"
 gem "rake"
 gem "redis_directory", :git => "git@github.com:sam/redis_directory.git"
-gem "sequel"
 gem "uuid"
 gem "autotest-fsevent"
-
 gem "active_support"
 
 group :development, :test do
