@@ -16,8 +16,12 @@ gem "rake"
 gem "redis_directory", :git => "git@github.com:sam/redis_directory.git"
 gem "sequel"
 gem "uuid"
-gem "ZenTest"
 gem "autotest-fsevent"
 
 gem "active_support"
 
+group :development, :test do
+  gem 'ci_reporter', '1.7.0'
+  # Pretty printed test output
+  gem 'turn', :require => false
+end
