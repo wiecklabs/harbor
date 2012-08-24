@@ -1,4 +1,4 @@
 language: ruby
 rvm:
   - 1.9.3
-  - jruby-1.7.0.preview2
+  - jruby-head
