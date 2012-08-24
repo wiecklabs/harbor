@@ -7,7 +7,7 @@ module Harbor::ViewContext::Helpers::Text
   # Querystring escape +value+
   def q(value)
     # TODO: Remove external dependency!
-    Rack::Utils::escape(value)
+    java.net.URLEncoder.encode value, ENCODED_CHARSET
   end
 
   # HTML escape +value+

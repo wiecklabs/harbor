@@ -1,9 +1,13 @@
 require "stringio"
 require_relative "view"
 
+java_import java.net.URLEncoder
+
 class Harbor
   class Response
-
+    
+    ENCODED_CHARSET = "UTF-8"
+    
     attr_accessor :status, :headers, :errors
 
     class UnsupportedSendfileTypeError < StandardError
@@ -357,8 +361,8 @@ class Harbor
         value = value[:value]
       end
       value = [value]  unless Array === value
-      cookie = Rack::Utils.escape(key) + "=" +
-        value.map { |v| Rack::Utils.escape v }.join("&") +
+      cookie = URLEncoder.encode(key, ENCODED_CHARSET) + "=" +
+        value.map { |v| URLEncoder.encode v, ENCODED_CHARSET }.join("&") +
         "#{domain}#{path}#{expires}#{http_only}"
 
       case self["Set-Cookie"]
@@ -371,14 +375,13 @@ class Harbor
       end
     end
 
-    # from Rack::Response.delete_cookie
     def delete_cookie(key, value={})
       unless Array === self["Set-Cookie"]
         self["Set-Cookie"] = [self["Set-Cookie"]].compact
       end
 
       self["Set-Cookie"].reject! { |cookie|
-        cookie =~ /\A#{Rack::Utils.escape(key)}=/
+        cookie =~ /\A#{URLEncoder.encode(key, ENCODED_CHARSET)}=/
       }
 
       set_cookie(key,

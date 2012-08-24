@@ -1,5 +1,4 @@
 require "mime/types"
-require "uuidtools"
 require_relative "builder/attachment"
 
 class Harbor
@@ -118,7 +117,7 @@ class Harbor
       # various states -- including bounces -- allowing it to be tracked.
       ##
       def envelope_id
-        @envelope_id ||= UUIDTools::UUID.random_create.to_s
+        @envelope_id ||= java.util.UUID.randomUUID.to_s
       end
 
       ##

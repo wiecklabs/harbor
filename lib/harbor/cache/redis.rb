@@ -1,14 +1,4 @@
-begin
-  require "redis_directory"
-
-  if RUBY_PLATFORM =~ /java/
-    require "java"
-  else
-    require "uuidtools"
-  end
-rescue LoadError
-  nil
-end
+require "redis_directory"
 
 class Harbor::Cache::Redis
 

@@ -86,30 +86,6 @@ end
 
 
 class MiniTest::Unit::TestCase
-  include Rack::Test::Methods
-
-  def setup_browser!
-    @request_log = StringIO.new
-    @error_log = StringIO.new
-
-    logger = Logging::Logger['request']
-    logger.clear_appenders
-    logger.add_appenders Logging::Appenders::IO.new('request', @request_log)
-
-    logger = Logging::Logger['error']
-    logger.clear_appenders
-    logger.add_appenders Logging::Appenders::IO.new('error', @error_log)
-
-    @router = Harbor::Router.new
-    @container = Harbor::Container.new
-    @application = MyApplication.new(@container, @router)
-
-    @browser = Rack::Test::Session.new(Rack::MockSession.new(@application))
-  end
-
-  def browser
-    @browser
-  end
 
   def capture_stderr(&block)
     $stderr = StringIO.new
