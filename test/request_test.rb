@@ -1,3 +1,5 @@
+#!/usr/bin/env ruby
+
 require_relative 'helper'
 
 class RequestTest < MiniTest::Unit::TestCase

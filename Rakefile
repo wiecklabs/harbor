@@ -22,11 +22,6 @@ end
 
 desc "Run tests with code coverage enabled"
 task :coverage do
-  if RUBY_PLATFORM =~ /java/
-    puts "Simplecov doesn't play well with Java, see http://jira.codehaus.org/browse/JRUBY-6106 for more info"
-    exit(1)
-  end
-
   ENV['COVERAGE'] = 'true'
   Rake::Task["test"].execute
 end

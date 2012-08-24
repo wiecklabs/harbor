@@ -42,7 +42,7 @@ class Harbor
     attr_accessor :layout
 
     def initialize(application, env)
-      raise ArgumentError.new("+env+ must be a Rack Environment Hash") unless env.is_a?(Hash)
+      raise ArgumentError.new("+env+ must be a Hash") unless env.is_a?(Hash)
       @application = application
       super(env)
     end
