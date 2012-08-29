@@ -95,7 +95,7 @@ module Harbor
 
   #logger ul {
     margin: 0; padding: 0; list-style: none; overflow: auto;
-    width: 293px;
+    width: 294px;
     margin: 0 auto;
     -webkit-border-top-right-radius: 5px;
     -webkit-border-top-left-radius: 5px;
