@@ -11,7 +11,7 @@ class Harbor::File::Checksum
   end
 
   def self.register(algorithm, generator_class, &block)
-    generators.set("#{algorithm}_checksum_generator", generator_class, &block)
+    generators.register("#{algorithm}_checksum_generator", generator_class, &block)
   end
 
   def initialize(algorithm, file)

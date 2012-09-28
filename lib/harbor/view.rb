@@ -1,16 +1,13 @@
-begin
-  require "erubis"
-rescue LoadError; end
+require "rubygems"
 
-require "tilt"
+gem "erubis"
+require "erubis"
 
-require_relative "view_helpers"
-require_relative "view_context"
-require_relative "layouts"
-require_relative "plugin_list"
-require_relative "template_lookup"
+require Pathname(__FILE__).dirname + "view_context"
+require Pathname(__FILE__).dirname + "layouts"
+require Pathname(__FILE__).dirname + "plugin_list"
 
-class Harbor
+module Harbor
   class View
 
     class LayoutNotFoundError < StandardError
@@ -19,8 +16,12 @@ class Harbor
       end
     end
 
-    def self.paths
-      lookup.paths
+    def self.path
+      @path ||= if ::File.directory?("lib/views")
+        [ Pathname("lib/views") ]
+      else
+        []
+      end
     end
 
     def self.layouts
@@ -42,71 +43,53 @@ class Harbor
       @cache_templates = true
     end
 
-<<<<<<< HEAD
     def self.exists?(filename, theme = nil)
       if theme
         self.path.map { |dir| dir + "themes" + theme }.detect { |path| ::File.file?(path + filename) }
       end || self.path.detect { |dir| ::File.file?(dir + filename) }
-=======
-    def self.exists?(filename)
-      lookup.exists?(filename)
->>>>>>> afcda6833a461947da81fee3e28965b762663c3e
     end
 
-    attr_accessor :content_type, :context
+    attr_accessor :content_type, :context, :extension, :path
 
     def initialize(view, context = {})
+      @content_type = "text/html"
+      @extension = ".html.erb"
       @context = context.is_a?(ViewContext) ? context : ViewContext.new(self, context)
-      @filename = view
+      @filename = ::File.extname(view) == "" ? (view + @extension) : view
     end
 
-<<<<<<< HEAD
     def supports_layouts?
       true
     end
 
-=======
->>>>>>> afcda6833a461947da81fee3e28965b762663c3e
     def content
-      @content ||= render(@context)
+      @content ||= _erubis_render(@context)
     end
 
     def to_s(layout = nil)
-      # TODO: Should support layout based on content type / format as well
       layout = self.class.layouts.match(@filename) if layout == :search
+
       layout ? View.new(layout, @context.merge(:content => content)).to_s : content
     end
 
     private
 
-<<<<<<< HEAD
     def _erubis_render(context)
       @path ||= self.class.exists?(@filename, context.theme)
       raise "Could not find '#{@filename}' in #{self.class.path.inspect}" unless @path
-=======
-    def render(context)
-      format, full_path = self.class.lookup.find(@filename, @context[:format])
-      # Sets the format so that we render partials properly
-      @context[:format] = format unless @context[:format]
->>>>>>> afcda6833a461947da81fee3e28965b762663c3e
 
-      template = if self.class.cache_templates?
-        self.class.tilt_cache.fetch(full_path) { Tilt.new(full_path.to_s) }
+      full_path = @path + @filename
+
+      if self.class.cache_templates?
+        (self.class.__templates[full_path] ||= Erubis::FastEruby.new(::File.read(full_path), :filename => full_path)).evaluate(context)
       else
-        Tilt.new(full_path.to_s)
+        Erubis::FastEruby.new(::File.read(full_path), :filename => full_path).evaluate(context)
       end
-      template.render(context)
     end
 
-    def self.tilt_cache
-      @tilt_cache ||= Tilt::Cache.new
-    end
-
-<<<<<<< HEAD
-=======
-    def self.lookup
-      @lookup ||= TemplateLookup.new
+    def self.__templates
+      @__templates ||= {}
     end
   end
->>>>>>> afcda6833a461947da81fee3e28965b762663c3e
+
 end

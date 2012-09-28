@@ -1,5 +1,0 @@
-h1. Welcome to Harbor!
-
-Latest test results:
-
-!https://secure.travis-ci.org/sam/harbor.png!:http://travis-ci.org/sam/harbor

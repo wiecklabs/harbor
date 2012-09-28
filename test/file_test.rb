@@ -1,7 +1,8 @@
-require_relative "helper"
+require "pathname"
+require Pathname(__FILE__).dirname + "helper"
 require "tempfile"
 
-class HarborFileTest < MiniTest::Unit::TestCase
+class HarborFileTest < Test::Unit::TestCase
   def setup
   end
 
@@ -47,7 +48,7 @@ class HarborFileTest < MiniTest::Unit::TestCase
     tempfile = Tempfile.new("file_test")
     destination = "testing/move/safely.txt"
 
-    assert_raises(RuntimeError) do
+    assert_raise(RuntimeError) do
       Harbor::File.move_safely(tempfile.path, destination) do
         raise
       end

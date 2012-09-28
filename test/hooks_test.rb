@@ -1,6 +1,7 @@
-require_relative "helper"
+require "pathname"
+require Pathname(__FILE__).dirname + "helper"
 
-class HooksTest < MiniTest::Unit::TestCase
+class HooksTest < Test::Unit::TestCase
 
   def setup
     @hooked_class = Class.new do
@@ -152,8 +153,10 @@ class HooksTest < MiniTest::Unit::TestCase
 
     @block_called = 0
 
-    hooked_instance.hooked_method_with_block("blue", 10) do
-      @block_called += 1
+    assert_nothing_raised do
+      hooked_instance.hooked_method_with_block("blue", 10) do
+        @block_called += 1
+      end
     end
 
     assert_equal(1, @block_called)
@@ -254,7 +257,10 @@ class HooksTest < MiniTest::Unit::TestCase
   def test_throw_halt_is_caught_and_returned
     hooked_instance = @hooked_class.new
 
-    result = hooked_instance.hooked_method_with_throw_halt
+    result = nil
+    assert_nothing_raised do
+      result = hooked_instance.hooked_method_with_throw_halt
+    end
 
     assert(result)
 

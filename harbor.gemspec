@@ -1,36 +1,26 @@
 lib = File.expand_path('../lib/', __FILE__)
 $:.unshift lib unless $:.include?(lib)
 
-require "harbor/version"
+require 'harbor/version'
+
+NAME = 'harbor'
+GEM_VERSION = Harbor::VERSION
 
 Gem::Specification.new do |s|
-  s.name = "harbor"
-  s.summary = s.description = "Harbor Framework"
-  s.author = "Sam Smoot"
-  s.homepage = "https://github.com/sam/harbor"
-  s.email = "ssmoot@gmail.com"
-  s.version = Harbor::VERSION
+  s.name = NAME
+  s.summary = s.description = 'Harbor Framework'
+  s.author = "Wieck Media"
+  s.homepage = "http://wiecklabs.com"
+  s.email = "dev@wieck.com"
+  s.version = GEM_VERSION
   s.platform = Gem::Platform::RUBY
-  s.files         = `git ls-files`.split("\n")
-  s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
-  s.executables   = "harbor"
-  s.require_paths = ["lib"]
+  s.require_path = 'lib'
+  s.files = %w(Rakefile) + Dir.glob("lib/**/*")
+  s.executables = ['harbor','apache_importer','page_view_reconciler']
 
-  s.add_development_dependency "rack-test"
-  s.add_development_dependency "do_sqlite3"
-  s.add_development_dependency "testdrive"
-  s.add_development_dependency "rake"
-  s.add_development_dependency "simplecov"
-  s.add_development_dependency "rdoc", ">= 2.4.2"
-  s.add_development_dependency "erubis"
-  s.add_development_dependency "builder"
-  s.add_development_dependency "redis_directory", ">= 1.0.4"
-  s.add_development_dependency "minitest"
-  s.add_development_dependency "mocha"
-  s.add_development_dependency "listen"
-
-  s.add_runtime_dependency "mime-types"
-  s.add_runtime_dependency "tilt"
-  s.add_runtime_dependency "logging"
-  s.add_runtime_dependency "sprockets"
+  s.add_dependency "builder"
+  s.add_dependency "erubis"
+  s.add_dependency "logging"
+  s.add_dependency "mail_builder"
+  s.add_dependency "rack"
 end

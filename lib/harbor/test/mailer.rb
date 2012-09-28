@@ -1,6 +1,6 @@
-class Harbor
+module Harbor
   module Test
-    class Mailer < Harbor::Mail::Mailer
+    class Mailer < Harbor::Mailer
 
       def send!
       end

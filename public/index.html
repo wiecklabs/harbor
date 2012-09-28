@@ -1,0 +1,497 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+  "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <title>Harbor Framework</title>
+  <style type="text/css" media="screen">
+    body { background-color: #fff; font: 75%/2em "Lucida Grande"; margin: 0; }
+    h1 { background-color: #048; color: #fff; font: 4em/2em "Lucida Grande", sans-serif normal; margin: 0; text-align: center; text-shadow: #026 1px 1px 5px; }
+    .article { margin: 0 auto; width: 60em; }
+    pre { margin: 1em; }
+  </style>
+  <style type="text/css" media="screen">
+    /* Stylesheet generated from TextMate theme
+     *
+     * Mac Classic
+     * 
+     *
+     */
+
+    /* Mostly to improve view within the TextMate HTML viewer */
+    body {
+    	margin: 0;
+    	padding: 0;
+    }
+
+    pre.textmate-source {
+    	margin: 2em 0;
+    	padding: 0 0 0 2px;
+    	font-family: Monaco, monospace;
+    	font-size: 12px;
+    	line-height: 1.3em;
+    	word-wrap: break-word;
+    	white-space: pre;
+    	white-space: pre-wrap;
+    	white-space: -moz-pre-wrap;
+    	white-space: -o-pre-wrap;
+    }
+
+    pre.textmate-source.mac_classic {
+    	color: #000000;
+    	background-color: #FFFFFF;
+    }
+
+    pre.textmate-source .linenum {
+    	width: 75px;
+    	padding: 0.1em 1em 0.2em 0;
+    	color: #888;
+    	background-color: #eee;
+    }
+    pre.textmate-source.mac_classic span {
+       padding-top: 0.2em;
+       padding-bottom: 0.1em;
+    }
+    pre.textmate-source.mac_classic ::selection {
+    	background-color: rgba(77, 151, 255, 0.33);
+    }
+    /* Comment */
+    pre.textmate-source.mac_classic .comment {
+    	color: #0066FF;
+    	font-style: italic;
+    }
+
+    /* Keyword */
+    pre.textmate-source.mac_classic .keyword, pre.textmate-source.mac_classic .storage {
+    	color: #0000FF;
+    	font-weight: bold;
+    }
+
+    /* Number */
+    pre.textmate-source.mac_classic .constant_numeric {
+    	color: #0000CD;
+    }
+
+    /* User-defined constant */
+    pre.textmate-source.mac_classic .constant {
+    	color: #C5060B;
+    	font-weight: bold;
+    }
+
+    /* Built-in constant */
+    pre.textmate-source.mac_classic .constant_language {
+    	color: #585CF6;
+    	font-weight: bold;
+    }
+
+    /* Variable */
+    pre.textmate-source.mac_classic .variable_language, pre.textmate-source.mac_classic .variable_other {
+    	color: #318495;
+    }
+
+    /* String */
+    pre.textmate-source.mac_classic .string {
+    	color: #036A07;
+    }
+
+    /* String interpolation */
+    pre.textmate-source.mac_classic .constant_character_escape, pre.textmate-source.mac_classic .string .source {
+    	color: #26B31A;
+    }
+
+    /* Preprocessor line */
+    pre.textmate-source.mac_classic .meta_preprocessor {
+    	color: #1A921C;
+    }
+
+    /* Preprocessor directive */
+    pre.textmate-source.mac_classic .keyword_control_import {
+    	color: #0C450D;
+    	font-weight: bold;
+    }
+
+    /* Function name */
+    pre.textmate-source.mac_classic .entity_name_function, pre.textmate-source.mac_classic .support_function_any-method {
+    	color: #0000A2;
+    	font-weight: bold;
+    }
+
+    /* Type name */
+    pre.textmate-source.mac_classic .entity_name_type {
+    	text-decoration: underline;
+    }
+
+    /* Inherited class name */
+    pre.textmate-source.mac_classic .entity_other_inherited-class {
+    	font-style: italic;
+    }
+
+    /* Function parameter */
+    pre.textmate-source.mac_classic .variable_parameter {
+    	font-style: italic;
+    }
+
+    /* Function argument and result types */
+    pre.textmate-source.mac_classic .storage_type_method {
+    	color: #70727E;
+    }
+
+    /* Section */
+    pre.textmate-source.mac_classic .meta_section .entity_name_section, pre.textmate-source.mac_classic .declaration_section .entity_name_section {
+    	font-style: italic;
+    }
+
+    /* Library function */
+    pre.textmate-source.mac_classic .support_function {
+    	color: #3C4C72;
+    	font-weight: bold;
+    }
+
+    /* Library object */
+    pre.textmate-source.mac_classic .support_class, pre.textmate-source.mac_classic .support_type {
+    	color: #6D79DE;
+    	font-weight: bold;
+    }
+
+    /* Library constant */
+    pre.textmate-source.mac_classic .support_constant {
+    	color: #06960E;
+    	font-weight: bold;
+    }
+
+    /* Library variable */
+    pre.textmate-source.mac_classic .support_variable {
+    	color: #21439C;
+    	font-weight: bold;
+    }
+
+    /* JS: Operator */
+    pre.textmate-source.mac_classic .keyword_operator_js {
+    	color: #687687;
+    }
+
+    /* Invalid */
+    pre.textmate-source.mac_classic .invalid {
+    	color: #FFFFFF;
+    	background-color: #FF0000;
+    }
+
+    /* Invalid trailing whitespace */
+    pre.textmate-source.mac_classic .invalid_deprecated_trailing-whitespace {
+    	background-color: #FFD0D0;
+    }
+
+    /* Embedded source */
+    pre.textmate-source.mac_classic .text .source, pre.textmate-source.mac_classic .string_unquoted {
+    	background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    /* Embedded embedded source */
+    pre.textmate-source.mac_classic .text .source .string_unquoted, pre.textmate-source.mac_classic .text .source .text .source {
+    	background-color: rgba(0, 0, 0, 0.06);
+    }
+
+    /* Markup XML declaration */
+    pre.textmate-source.mac_classic .meta_tag_preprocessor_xml {
+    	color: #68685B;
+    }
+
+    /* Markup DOCTYPE */
+    pre.textmate-source.mac_classic .meta_tag_sgml_doctype, pre.textmate-source.mac_classic .meta_tag_sgml_doctype .entity, pre.textmate-source.mac_classic .meta_tag_sgml_doctype .string, pre.textmate-source.mac_classic .meta_tag_preprocessor_xml, pre.textmate-source.mac_classic .meta_tag_preprocessor_xml .entity, pre.textmate-source.mac_classic .meta_tag_preprocessor_xml .string {
+    	color: #888888;
+    }
+
+    /* Markup DTD */
+    pre.textmate-source.mac_classic .string_quoted_docinfo_doctype_DTD {
+    	font-style: italic;
+    }
+
+    /* Markup tag */
+    pre.textmate-source.mac_classic .meta_tag, pre.textmate-source.mac_classic .declaration_tag {
+    	color: #1C02FF;
+    }
+
+    /* Markup name of tag */
+    pre.textmate-source.mac_classic .entity_name_tag {
+    	font-weight: bold;
+    }
+
+    /* Markup tag attribute */
+    pre.textmate-source.mac_classic .entity_other_attribute-name {
+    	font-style: italic;
+    }
+
+    /* Markup: Heading */
+    pre.textmate-source.mac_classic .markup_heading {
+    	color: #0C07FF;
+    	font-weight: bold;
+    }
+
+    /* Markup: Quote */
+    pre.textmate-source.mac_classic .markup_quote {
+    	color: #000000;
+    	font-style: italic;
+    }
+
+    /* Markup: List */
+    pre.textmate-source.mac_classic .markup_list {
+    	color: #B90690;
+    }
+  </style>
+</head>
+<body>
+  <h1>Harbor Framework</h1>
+  <div class="article">
+    <p>
+      <strong>Harbor</strong> is a Ruby web framework founded on the principles of composition,
+      testability, and consistency. It leverages the power of existing technologies like
+      <a target="_new" href="http://rubyforge.org/projects/rack">Rack</a> and <a target="_new" href="http://rubyforge.org/projects/mailfactory">MailFactory</a>.
+    </p>
+    
+    <p>
+      While <strong>Harbor</strong> will eventually be compatible with <a target="_new" href="http://jruby.org">JRuby</a>
+      only (we'll wait until the O/RM is ready), it also emphasizes using Ruby (the language) where practical as
+      opposed to a bunch of custom helpers. It generally makes things a little more verbose, but it's a lot more
+      explicit, and easier for new-comers to grasp if they have a good working understanding of Ruby.
+    </p>
+    
+    <p>
+      Speaking of being easy on new-comers, <strong>Harbor</strong> works practically out of the box; it's only
+      dependencies being <em>Rack</em> and <em>MailFactory</em>. Once you have JRuby setup, you can just
+      <em>gem install <a target="_new" href="http://rubyforge.org/projects/caldersphere">warbler</a></em> to get a JRuby
+      version of Rack along with the <em>rackup</em> command. Startup for JRuby is quite a bit slower (a few seconds),
+      but nothing too painful. For now, if you just want to experiment a bit with <strong>Harbor</strong> under
+      Ruby 1.8.x (tested on 1.8.6), you can just use the <a target="_new" href="http://rubyforge.org/projects/thin">thin</a>
+      web-server (<em>gem install thin</em>).
+    </p>
+    
+    <p>
+      We're also steadily working an ORM (<em>Worm</em>, internally). The goal is to
+      tap into all that Java performance behind the scenes, while keeping your work all Ruby all the time. <em>Worm</em>
+      is easy to get started with too. You don't even need <em>RSpec</em> (we're going back to our xUnit roots with <em>Test::Unit</em>).
+      Just <em>gem install jdbc-sqlite3 jdbc-mysql jdbc-hsqldb</em> and you're good to go. It doesn't do everything,
+      but everything is built in. Still, give us just a bit more time before you go trying to use it for anything useful.
+      <strong>Harbor</strong> is stable and vetted on production applications. <strong>Worm</strong>, not so much yet.
+    </p>
+    
+    <p>
+      If you'd like to get started with <strong>Harbor</strong>, or just want to play around with <strong>Worm</strong>,
+      visit Github and <a target="_new" href="http://github.com/wiecklabs">checkout the work going on at WieckLabs</a>.
+      We're putting together better documentation, too, but you can take a peek at what we have so far <a href="/doc">here</a>.
+    </p>
+    
+<pre class="textmate-source mac_classic"><span class='linenum'>    1</span> <span class="source source_ruby source_ruby_rails"><span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby"><span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> Let's create an application for managing users, logging in, all that good stuff.
+</span><span class='linenum'>    2</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby"><span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> You know, the sort of thing there are a million Rails plugins for, and none of
+</span><span class='linenum'>    3</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby"><span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> them work the way you want to.
+</span><span class='linenum'>    4</span> <span class="meta meta_class meta_class_ruby"><span class="keyword keyword_control keyword_control_class keyword_control_class_ruby">class</span> <span class="entity entity_name entity_name_type entity_name_type_class entity_name_type_class_ruby">UserManagement<span class="entity entity_other entity_other_inherited-class entity_other_inherited-class_ruby"> <span class="punctuation punctuation_separator punctuation_separator_inheritance punctuation_separator_inheritance_ruby">&lt;</span> Harbor::Application</span></span></span>
+<span class='linenum'>    5</span> 
+<span class='linenum'>    6</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> Harbor leaves your application layout almost entirely up to you.
+</span><span class='linenum'>    7</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> Just the same, the default generators provide a convention that works for us
+</span><span class='linenum'>    8</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> to help you get started.
+</span><span class='linenum'>    9</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> One convention is the ::default_routes method defined on your Application class.
+</span><span class='linenum'>   10</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> We'll assume that you pass in a Harbor::Container (a "Inversion of Control"
+</span><span class='linenum'>   11</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> container) to give you access to common services like loggers, mailers, etc.
+</span><span class='linenum'>   12</span>   <span class="meta meta_function meta_function_method meta_function_method_with-arguments meta_function_method_with-arguments_ruby"><span class="keyword keyword_control keyword_control_def keyword_control_def_ruby">def</span> <span class="entity entity_name entity_name_function entity_name_function_ruby">self.routes</span><span class="punctuation punctuation_definition punctuation_definition_parameters punctuation_definition_parameters_ruby">(</span><span class="variable variable_parameter variable_parameter_function variable_parameter_function_ruby">services</span><span class="punctuation punctuation_definition punctuation_definition_parameters punctuation_definition_parameters_ruby">)</span></span>
+<span class='linenum'>   13</span>     
+<span class='linenum'>   14</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">    <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> You don't have to use the Harbor::Router, but it's there if you want it.
+</span><span class='linenum'>   15</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">    <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> A Harbor::Application only requires that you pass your router in to it's
+</span><span class='linenum'>   16</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">    <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> initializer, and that it has a #match method that accepts a Rack env Hash
+</span><span class='linenum'>   17</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">    <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> and returns a lambda that accepts a Harbor::Request and a Harbor::Response.
+</span><span class='linenum'>   18</span>     <span class="support support_class support_class_ruby">Harbor</span><span class="punctuation punctuation_separator punctuation_separator_other punctuation_separator_other_ruby">::</span><span class="support support_class support_class_ruby">Router</span><span class="punctuation punctuation_separator punctuation_separator_method punctuation_separator_method_ruby">.</span><span class="keyword keyword_other keyword_other_special-method keyword_other_special-method_ruby">new</span> <span class="keyword keyword_control keyword_control_start-block keyword_control_start-block_ruby">do
+</span><span class='linenum'>   19</span>       
+<span class='linenum'>   20</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">      <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> get, post, put, delete. It's all there buddy! A little more typing, but
+</span><span class='linenum'>   21</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">      <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> aren't explicit routes so nice? Here we're being lazy and skipping using
+</span><span class='linenum'>   22</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">      <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> any controller at all, just rendering our View directly.
+</span><span class='linenum'>   23</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">      <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> Harbor only has two fundamental objects. The Request and the Response.
+</span><span class='linenum'>   24</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">      <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> Your params and Session is available through the Request (can't have a
+</span><span class='linenum'>   25</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">      <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> Session without one right?), and you #puts, #send_file, set your #cookies
+</span><span class='linenum'>   26</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">      <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> or #render on your Response.
+</span><span class='linenum'>   27</span>       get<span class="punctuation punctuation_section punctuation_section_function punctuation_section_function_ruby">(</span><span class="string string_quoted string_quoted_double string_quoted_double_ruby"><span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_begin punctuation_definition_string_begin_ruby">"</span>/login<span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_end punctuation_definition_string_end_ruby">"</span></span><span class="punctuation punctuation_section punctuation_section_function punctuation_section_function_ruby">)</span> <span class="punctuation punctuation_section punctuation_section_scope punctuation_section_scope_ruby">{</span><span class="meta meta_syntax meta_syntax_ruby meta_syntax_ruby_start-block"> </span><span class="punctuation punctuation_separator punctuation_separator_variable punctuation_separator_variable_ruby">|</span><span class="variable variable_other variable_other_block variable_other_block_ruby">request</span><span class="punctuation punctuation_separator punctuation_separator_variable punctuation_separator_variable_ruby">,</span> <span class="variable variable_other variable_other_block variable_other_block_ruby">response</span><span class="punctuation punctuation_separator punctuation_separator_variable punctuation_separator_variable_ruby">|</span> response<span class="punctuation punctuation_separator punctuation_separator_method punctuation_separator_method_ruby">.</span><span class="support support_function support_function_actionpack support_function_actionpack_rails">render</span> <span class="string string_quoted string_quoted_double string_quoted_double_ruby"><span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_begin punctuation_definition_string_begin_ruby">"</span>/account/login<span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_end punctuation_definition_string_end_ruby">"</span></span> <span class="punctuation punctuation_section punctuation_section_scope punctuation_section_scope_ruby">}</span>
+<span class='linenum'>   28</span>       
+<span class='linenum'>   29</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">      <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> The Router#using method takes a Container and a class to instantiate. Really
+</span><span class='linenum'>   30</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">      <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> it's just a helper method that calls
+</span><span class='linenum'>   31</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">      <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> Harbor::Container#register(controller.name, controller)
+</span><span class='linenum'>   32</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">      <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> and wraps your lambda so that the request, response, and whatever other
+</span><span class='linenum'>   33</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">      <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> accessors you might declare on your controller are set for you automatically.
+</span><span class='linenum'>   34</span>       using services<span class="punctuation punctuation_separator punctuation_separator_object punctuation_separator_object_ruby">,</span> <span class="support support_class support_class_ruby">UserManagement</span><span class="punctuation punctuation_separator punctuation_separator_other punctuation_separator_other_ruby">::</span><span class="variable variable_other variable_other_constant variable_other_constant_ruby">Account</span> <span class="keyword keyword_control keyword_control_start-block keyword_control_start-block_ruby">do
+</span><span class='linenum'>   35</span>         post<span class="punctuation punctuation_section punctuation_section_function punctuation_section_function_ruby">(</span><span class="string string_quoted string_quoted_double string_quoted_double_ruby"><span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_begin punctuation_definition_string_begin_ruby">"</span>/login<span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_end punctuation_definition_string_end_ruby">"</span></span><span class="punctuation punctuation_section punctuation_section_function punctuation_section_function_ruby">)</span> <span class="keyword keyword_control keyword_control_start-block keyword_control_start-block_ruby">do </span><span class="punctuation punctuation_separator punctuation_separator_variable punctuation_separator_variable_ruby">|</span><span class="variable variable_other variable_other_block variable_other_block_ruby">account</span><span class="punctuation punctuation_separator punctuation_separator_variable punctuation_separator_variable_ruby">,</span> <span class="variable variable_other variable_other_block variable_other_block_ruby">params</span><span class="punctuation punctuation_separator punctuation_separator_variable punctuation_separator_variable_ruby">|</span>
+<span class='linenum'>   36</span>           account<span class="punctuation punctuation_separator punctuation_separator_method punctuation_separator_method_ruby">.</span>login<span class="punctuation punctuation_section punctuation_section_function punctuation_section_function_ruby">(</span>params<span class="punctuation punctuation_section punctuation_section_array punctuation_section_array_ruby">[</span><span class="constant constant_other constant_other_symbol constant_other_symbol_ruby"><span class="punctuation punctuation_definition punctuation_definition_constant punctuation_definition_constant_ruby">:</span>user</span><span class="punctuation punctuation_section punctuation_section_array punctuation_section_array_ruby">][</span><span class="constant constant_other constant_other_symbol constant_other_symbol_ruby"><span class="punctuation punctuation_definition punctuation_definition_constant punctuation_definition_constant_ruby">:</span>email</span><span class="punctuation punctuation_section punctuation_section_array punctuation_section_array_ruby">]</span><span class="punctuation punctuation_separator punctuation_separator_object punctuation_separator_object_ruby">,</span> params<span class="punctuation punctuation_section punctuation_section_array punctuation_section_array_ruby">[</span><span class="constant constant_other constant_other_symbol constant_other_symbol_ruby"><span class="punctuation punctuation_definition punctuation_definition_constant punctuation_definition_constant_ruby">:</span>user</span><span class="punctuation punctuation_section punctuation_section_array punctuation_section_array_ruby">][</span><span class="constant constant_other constant_other_symbol constant_other_symbol_ruby"><span class="punctuation punctuation_definition punctuation_definition_constant punctuation_definition_constant_ruby">:</span>password</span><span class="punctuation punctuation_section punctuation_section_array punctuation_section_array_ruby">]</span><span class="punctuation punctuation_section punctuation_section_function punctuation_section_function_ruby">)</span>
+<span class='linenum'>   37</span>         <span class="keyword keyword_control keyword_control_ruby">end</span>
+<span class='linenum'>   38</span>         
+<span class='linenum'>   39</span>         get<span class="punctuation punctuation_section punctuation_section_function punctuation_section_function_ruby">(</span><span class="string string_quoted string_quoted_double string_quoted_double_ruby"><span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_begin punctuation_definition_string_begin_ruby">"</span>/account<span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_end punctuation_definition_string_end_ruby">"</span></span><span class="punctuation punctuation_section punctuation_section_function punctuation_section_function_ruby">)</span> <span class="punctuation punctuation_section punctuation_section_scope punctuation_section_scope_ruby">{</span><span class="meta meta_syntax meta_syntax_ruby meta_syntax_ruby_start-block"> </span><span class="punctuation punctuation_separator punctuation_separator_variable punctuation_separator_variable_ruby">|</span><span class="variable variable_other variable_other_block variable_other_block_ruby">account</span><span class="punctuation punctuation_separator punctuation_separator_variable punctuation_separator_variable_ruby">|</span> account<span class="punctuation punctuation_separator punctuation_separator_method punctuation_separator_method_ruby">.</span>index <span class="punctuation punctuation_section punctuation_section_scope punctuation_section_scope_ruby">}</span>
+<span class='linenum'>   40</span>       <span class="keyword keyword_control keyword_control_ruby">end</span>
+<span class='linenum'>   41</span> 
+<span class='linenum'>   42</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">      <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> Response#redirect sets your response-headers to redirect the user to the
+</span><span class='linenum'>   43</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">      <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> new location. If you want to jump out of the request right away call
+</span><span class='linenum'>   44</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">      <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> #redirect! and your current method will #throw an :abort_request symbol
+</span><span class='linenum'>   45</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">      <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> the Harbor::Application will catch.
+</span><span class='linenum'>   46</span>       get<span class="punctuation punctuation_section punctuation_section_function punctuation_section_function_ruby">(</span><span class="string string_quoted string_quoted_double string_quoted_double_ruby"><span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_begin punctuation_definition_string_begin_ruby">"</span>/<span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_end punctuation_definition_string_end_ruby">"</span></span><span class="punctuation punctuation_section punctuation_section_function punctuation_section_function_ruby">)</span> <span class="punctuation punctuation_section punctuation_section_scope punctuation_section_scope_ruby">{</span><span class="meta meta_syntax meta_syntax_ruby meta_syntax_ruby_start-block"> </span><span class="punctuation punctuation_separator punctuation_separator_variable punctuation_separator_variable_ruby">|</span><span class="variable variable_other variable_other_block variable_other_block_ruby">request</span><span class="punctuation punctuation_separator punctuation_separator_variable punctuation_separator_variable_ruby">,</span> <span class="variable variable_other variable_other_block variable_other_block_ruby">response</span><span class="punctuation punctuation_separator punctuation_separator_variable punctuation_separator_variable_ruby">|</span> response<span class="punctuation punctuation_separator punctuation_separator_method punctuation_separator_method_ruby">.</span>redirect!<span class="punctuation punctuation_section punctuation_section_function punctuation_section_function_ruby">(</span><span class="string string_quoted string_quoted_double string_quoted_double_ruby"><span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_begin punctuation_definition_string_begin_ruby">"</span>/account<span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_end punctuation_definition_string_end_ruby">"</span></span><span class="punctuation punctuation_section punctuation_section_function punctuation_section_function_ruby">)</span> <span class="punctuation punctuation_section punctuation_section_scope punctuation_section_scope_ruby">}</span>
+<span class='linenum'>   47</span>     <span class="keyword keyword_control keyword_control_ruby">end</span>
+<span class='linenum'>   48</span>   <span class="keyword keyword_control keyword_control_ruby">end</span>
+<span class='linenum'>   49</span>   
+<span class='linenum'>   50</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> Just a little more convention since Harbor::Application normally requires
+</span><span class='linenum'>   51</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> something that quacks like a Router.
+</span><span class='linenum'>   52</span>   <span class="meta meta_function meta_function_method meta_function_method_with-arguments meta_function_method_with-arguments_ruby"><span class="keyword keyword_control keyword_control_def keyword_control_def_ruby">def</span> <span class="entity entity_name entity_name_function entity_name_function_ruby">initialize</span><span class="punctuation punctuation_definition punctuation_definition_parameters punctuation_definition_parameters_ruby">(</span><span class="variable variable_parameter variable_parameter_function variable_parameter_function_ruby">services <span class="keyword keyword_operator keyword_operator_assignment keyword_operator_assignment_ruby">=</span> <span class="support support_class support_class_ruby">Harbor</span><span class="punctuation punctuation_separator punctuation_separator_other punctuation_separator_other_ruby">::</span><span class="support support_class support_class_ruby">Container</span><span class="punctuation punctuation_separator punctuation_separator_method punctuation_separator_method_ruby">.</span><span class="keyword keyword_other keyword_other_special-method keyword_other_special-method_ruby">new</span></span><span class="punctuation punctuation_definition punctuation_definition_parameters punctuation_definition_parameters_ruby">)</span></span>
+<span class='linenum'>   53</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">    <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> And here we satisfy the base-class's initializer by providing the Router
+</span><span class='linenum'>   54</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">    <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> returned by ::default_routes.
+</span><span class='linenum'>   55</span>     <span class="keyword keyword_control keyword_control_pseudo-method keyword_control_pseudo-method_ruby">super</span><span class="punctuation punctuation_section punctuation_section_function punctuation_section_function_ruby">(</span><span class="variable variable_language variable_language_ruby">self</span><span class="punctuation punctuation_separator punctuation_separator_method punctuation_separator_method_ruby">.</span>class<span class="punctuation punctuation_separator punctuation_separator_method punctuation_separator_method_ruby">.</span>routes<span class="punctuation punctuation_section punctuation_section_function punctuation_section_function_ruby">(</span>services<span class="punctuation punctuation_section punctuation_section_function punctuation_section_function_ruby">))</span>
+<span class='linenum'>   56</span>   <span class="keyword keyword_control keyword_control_ruby">end</span>
+<span class='linenum'>   57</span> <span class="keyword keyword_control keyword_control_ruby">end</span>
+<span class='linenum'>   58</span> 
+<span class='linenum'>   59</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby"><span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> Ok, we have our Application ready to go, but we'll need to setup our controller.
+</span><span class='linenum'>   60</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby"><span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> Notice Harbor doesn't care what your controller is. There's no Harbor::Controller
+</span><span class='linenum'>   61</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby"><span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> class. The most we do is provide the Harbor::Container to make it easy to write
+</span><span class='linenum'>   62</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby"><span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> your own. How do we get from A to B? Here's some pseudo-code that might help.
+</span><span class='linenum'>   63</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby"><span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> Here's basically how the Harbor::Application serves your request (env is a Rack
+</span><span class='linenum'>   64</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby"><span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> env Hash):
+</span><span class='linenum'>   65</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby"><span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span>
+</span><span class='linenum'>   66</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby"><span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span>   handler = router.match(env)
+</span><span class='linenum'>   67</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby"><span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span>   request = Harbor::Request.new(env)
+</span><span class='linenum'>   68</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby"><span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span>   response = Harbor::Response.new(request)
+</span><span class='linenum'>   69</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby"><span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span>   handler.call(request, response)
+</span><span class='linenum'>   70</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby"><span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span>   return response.to_s
+</span><span class='linenum'>   71</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby"><span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span>
+</span><span class='linenum'>   72</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby"><span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> So basically, you mutate the Response. Or not. Don't do anything with it if you
+</span><span class='linenum'>   73</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby"><span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> want. That would be a kind of pointless application, but it's your call.
+</span><span class='linenum'>   74</span> <span class="meta meta_class meta_class_ruby"><span class="keyword keyword_control keyword_control_class keyword_control_class_ruby">class</span> <span class="entity entity_name entity_name_type entity_name_type_class entity_name_type_class_ruby">UserManagement::Account</span></span>
+<span class='linenum'>   75</span>   
+<span class='linenum'>   76</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> What is this sir? Well, remember how I said the Harbor::Container helps you out?
+</span><span class='linenum'>   77</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> Wait, let's take a step back. What is an "Inversion of Control Container"?
+</span><span class='linenum'>   78</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> Simple. It's a form of "Dependency Injection" (DI). Ok, what's DI?
+</span><span class='linenum'>   79</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> It's an Object Oriented Programming Pattern that I'm not going to be able to
+</span><span class='linenum'>   80</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> do justice here. Instead, let me show you what it does, and you can read up on
+</span><span class='linenum'>   81</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> the details later.
+</span><span class='linenum'>   82</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span>
+</span><span class='linenum'>   83</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span>   container = Harbor::Container.new
+</span><span class='linenum'>   84</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span>   
+</span><span class='linenum'>   85</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span>   class Foo
+</span><span class='linenum'>   86</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span>     attr_accessor :bar
+</span><span class='linenum'>   87</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span>   end
+</span><span class='linenum'>   88</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span>
+</span><span class='linenum'>   89</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span>   class Bar
+</span><span class='linenum'>   90</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span>     attr_writer :baz
+</span><span class='linenum'>   91</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span>   end
+</span><span class='linenum'>   92</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span>
+</span><span class='linenum'>   93</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span>   class Zoo
+</span><span class='linenum'>   94</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span>   end
+</span><span class='linenum'>   95</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span>
+</span><span class='linenum'>   96</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span>   container.register("foo", Foo)
+</span><span class='linenum'>   97</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span>   container.register("bar", Bar)
+</span><span class='linenum'>   98</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span>   container.register("baz", Zoo)
+</span><span class='linenum'>   99</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span>   
+</span><span class='linenum'>  100</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span>   example = container.get("foo")
+</span><span class='linenum'>  101</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span>    
+</span><span class='linenum'>  102</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span>   assert_equal("Zoo", example.bar.baz.class.name)
+</span><span class='linenum'>  103</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span>
+</span><span class='linenum'>  104</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> Notice the "baz"/Zoo descrepency. It doesn't matter what a registration is,
+</span><span class='linenum'>  105</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> only what you decide to call it. So basically Harbor::Container#get uses the
+</span><span class='linenum'>  106</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> attr_writers defined on your classes to match up dependencies with
+</span><span class='linenum'>  107</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> registrations. The major limitation here is that your constructors have to be
+</span><span class='linenum'>  108</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> parameterless since Ruby doesn't declare types so we wouldn't know what to
+</span><span class='linenum'>  109</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> give them without something like ParseTree.
+</span><span class='linenum'>  110</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span>
+</span><span class='linenum'>  111</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> Anyways, back to the story. Harbor::Router#using, in conjunction with the
+</span><span class='linenum'>  112</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> Harbor::Container can setup your controllers for you. Just declare writers
+</span><span class='linenum'>  113</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> for :request and :response. Of course readers are convenient to, so we just
+</span><span class='linenum'>  114</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> used attr_accessor.
+</span><span class='linenum'>  115</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span>
+</span><span class='linenum'>  116</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> This way say you needed to provide your controller a logger, you could just
+</span><span class='linenum'>  117</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> do something like this:
+</span><span class='linenum'>  118</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span>
+</span><span class='linenum'>  119</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span>   module LogHelper
+</span><span class='linenum'>  120</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span>     def debug(message)
+</span><span class='linenum'>  121</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span>       logger.debug(message) if logger
+</span><span class='linenum'>  122</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span>     end
+</span><span class='linenum'>  123</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span>   end
+</span><span class='linenum'>  124</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span>
+</span><span class='linenum'>  125</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span>   class Account
+</span><span class='linenum'>  126</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span>     attr_accessor :logger
+</span><span class='linenum'>  127</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span>     include LogHelper
+</span><span class='linenum'>  128</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span>     def index
+</span><span class='linenum'>  129</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span>       debug("You've found the /index action!")
+</span><span class='linenum'>  130</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span>     end
+</span><span class='linenum'>  131</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span>   end
+</span><span class='linenum'>  132</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span>
+</span><span class='linenum'>  133</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span>   container.register("logger", Logger.new)
+</span><span class='linenum'>  134</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span>
+</span><span class='linenum'>  135</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> This makes our classes easier to test (you could stub out the logger, or in
+</span><span class='linenum'>  136</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> this example, just not provide one), and it's an awfully convenient way to
+</span><span class='linenum'>  137</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">  <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> register and consume services.
+</span><span class='linenum'>  138</span>   <span class="keyword keyword_other keyword_other_special-method keyword_other_special-method_ruby">attr_accessor</span> <span class="constant constant_other constant_other_symbol constant_other_symbol_ruby"><span class="punctuation punctuation_definition punctuation_definition_constant punctuation_definition_constant_ruby">:</span>request</span><span class="punctuation punctuation_separator punctuation_separator_object punctuation_separator_object_ruby">,</span> <span class="constant constant_other constant_other_symbol constant_other_symbol_ruby"><span class="punctuation punctuation_definition punctuation_definition_constant punctuation_definition_constant_ruby">:</span>response</span>
+<span class='linenum'>  139</span>   
+<span class='linenum'>  140</span>   <span class="meta meta_function meta_function_method meta_function_method_with-arguments meta_function_method_with-arguments_ruby"><span class="keyword keyword_control keyword_control_def keyword_control_def_ruby">def</span> <span class="entity entity_name entity_name_function entity_name_function_ruby">login</span><span class="punctuation punctuation_definition punctuation_definition_parameters punctuation_definition_parameters_ruby">(</span><span class="variable variable_parameter variable_parameter_function variable_parameter_function_ruby">email<span class="punctuation punctuation_separator punctuation_separator_object punctuation_separator_object_ruby">,</span> password</span><span class="punctuation punctuation_definition punctuation_definition_parameters punctuation_definition_parameters_ruby">)</span></span>
+<span class='linenum'>  141</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">    <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> You look like a trust-worthy sort!
+</span><span class='linenum'>  142</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">    <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> Let's give you a sneak-peak at our ORM while we're
+</span><span class='linenum'>  143</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">    <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> at it...
+</span><span class='linenum'>  144</span>     me <span class="keyword keyword_operator keyword_operator_assignment keyword_operator_assignment_ruby">=</span> orm<span class="punctuation punctuation_separator punctuation_separator_method punctuation_separator_method_ruby">.</span>first<span class="punctuation punctuation_section punctuation_section_function punctuation_section_function_ruby">(</span><span class="variable variable_other variable_other_constant variable_other_constant_ruby">User</span><span class="punctuation punctuation_section punctuation_section_function punctuation_section_function_ruby">)</span> <span class="keyword keyword_control keyword_control_start-block keyword_control_start-block_ruby">do </span><span class="punctuation punctuation_separator punctuation_separator_variable punctuation_separator_variable_ruby">|</span><span class="variable variable_other variable_other_block variable_other_block_ruby">user</span><span class="punctuation punctuation_separator punctuation_separator_variable punctuation_separator_variable_ruby">|</span>
+<span class='linenum'>  145</span>       user<span class="punctuation punctuation_separator punctuation_separator_method punctuation_separator_method_ruby">.</span>email<span class="punctuation punctuation_separator punctuation_separator_method punctuation_separator_method_ruby">.</span>eq<span class="punctuation punctuation_section punctuation_section_function punctuation_section_function_ruby">(</span>email<span class="punctuation punctuation_section punctuation_section_function punctuation_section_function_ruby">)</span><span class="punctuation punctuation_separator punctuation_separator_method punctuation_separator_method_ruby">.</span><span class="keyword keyword_operator keyword_operator_logical keyword_operator_logical_ruby">and</span><span class="punctuation punctuation_section punctuation_section_function punctuation_section_function_ruby">(</span>user<span class="punctuation punctuation_separator punctuation_separator_method punctuation_separator_method_ruby">.</span>password<span class="punctuation punctuation_separator punctuation_separator_method punctuation_separator_method_ruby">.</span>eq<span class="punctuation punctuation_section punctuation_section_function punctuation_section_function_ruby">(</span>password<span class="punctuation punctuation_section punctuation_section_function punctuation_section_function_ruby">))</span>
+<span class='linenum'>  146</span>     <span class="keyword keyword_control keyword_control_ruby">end</span>
+<span class='linenum'>  147</span>     
+<span class='linenum'>  148</span>     <span class="keyword keyword_control keyword_control_ruby">if</span> me
+<span class='linenum'>  149</span>       request<span class="punctuation punctuation_separator punctuation_separator_method punctuation_separator_method_ruby">.</span>session<span class="punctuation punctuation_section punctuation_section_array punctuation_section_array_ruby">[</span><span class="constant constant_other constant_other_symbol constant_other_symbol_ruby"><span class="punctuation punctuation_definition punctuation_definition_constant punctuation_definition_constant_ruby">:</span>user_id</span><span class="punctuation punctuation_section punctuation_section_array punctuation_section_array_ruby">]</span> <span class="keyword keyword_operator keyword_operator_assignment keyword_operator_assignment_ruby">=</span> me<span class="punctuation punctuation_separator punctuation_separator_method punctuation_separator_method_ruby">.</span>id
+<span class='linenum'>  150</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">      <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> Notice nothing else happens in this action, so we don't really care
+</span><span class='linenum'>  151</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">      <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> about using the Response#redirect! variation.
+</span><span class='linenum'>  152</span>       response<span class="punctuation punctuation_separator punctuation_separator_method punctuation_separator_method_ruby">.</span>redirect<span class="punctuation punctuation_section punctuation_section_function punctuation_section_function_ruby">(</span><span class="string string_quoted string_quoted_double string_quoted_double_ruby"><span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_begin punctuation_definition_string_begin_ruby">"</span>/account<span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_end punctuation_definition_string_end_ruby">"</span></span><span class="punctuation punctuation_section punctuation_section_function punctuation_section_function_ruby">)</span>
+<span class='linenum'>  153</span>     <span class="keyword keyword_control keyword_control_ruby">else</span>
+<span class='linenum'>  154</span>       response<span class="punctuation punctuation_separator punctuation_separator_method punctuation_separator_method_ruby">.</span><span class="support support_function support_function_actionpack support_function_actionpack_rails">render</span><span class="punctuation punctuation_section punctuation_section_function punctuation_section_function_ruby">(</span><span class="string string_quoted string_quoted_double string_quoted_double_ruby"><span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_begin punctuation_definition_string_begin_ruby">"</span>/account/login<span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_end punctuation_definition_string_end_ruby">"</span></span><span class="punctuation punctuation_separator punctuation_separator_object punctuation_separator_object_ruby">,</span> <span class="constant constant_other constant_other_symbol constant_other_symbol_ruby"><span class="punctuation punctuation_definition punctuation_definition_constant punctuation_definition_constant_ruby">:</span>message</span> <span class="punctuation punctuation_separator punctuation_separator_key-value">=&gt;</span> <span class="string string_quoted string_quoted_double string_quoted_double_ruby"><span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_begin punctuation_definition_string_begin_ruby">"</span>Nein!<span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_end punctuation_definition_string_end_ruby">"</span></span><span class="punctuation punctuation_section punctuation_section_function punctuation_section_function_ruby">)</span>
+<span class='linenum'>  155</span>     <span class="keyword keyword_control keyword_control_ruby">end</span>
+<span class='linenum'>  156</span>     
+<span class='linenum'>  157</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">    <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> Remember, all that matters is what you do with Request and Response.
+</span><span class='linenum'>  158</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">    <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> We don't care what you return from your handlers. We're not nosy like that.
+</span><span class='linenum'>  159</span>     <span class="constant constant_other constant_other_symbol constant_other_symbol_ruby"><span class="punctuation punctuation_definition punctuation_definition_constant punctuation_definition_constant_ruby">:</span>badgers</span>
+<span class='linenum'>  160</span>   <span class="keyword keyword_control keyword_control_ruby">end</span>
+<span class='linenum'>  161</span>   
+<span class='linenum'>  162</span>   <span class="meta meta_function meta_function_method meta_function_method_without-arguments meta_function_method_without-arguments_ruby"><span class="keyword keyword_control keyword_control_def keyword_control_def_ruby">def</span> <span class="entity entity_name entity_name_function entity_name_function_ruby">index</span></span>
+<span class='linenum'>  163</span>     me <span class="keyword keyword_operator keyword_operator_assignment keyword_operator_assignment_ruby">=</span> <span class="keyword keyword_control keyword_control_ruby">begin</span>
+<span class='linenum'>  164</span>       orm<span class="punctuation punctuation_separator punctuation_separator_method punctuation_separator_method_ruby">.</span>get<span class="punctuation punctuation_section punctuation_section_function punctuation_section_function_ruby">(</span><span class="variable variable_other variable_other_constant variable_other_constant_ruby">User</span><span class="punctuation punctuation_separator punctuation_separator_object punctuation_separator_object_ruby">,</span> request<span class="punctuation punctuation_separator punctuation_separator_method punctuation_separator_method_ruby">.</span>session<span class="punctuation punctuation_section punctuation_section_array punctuation_section_array_ruby">[</span><span class="constant constant_other constant_other_symbol constant_other_symbol_ruby"><span class="punctuation punctuation_definition punctuation_definition_constant punctuation_definition_constant_ruby">:</span>user_id</span><span class="punctuation punctuation_section punctuation_section_array punctuation_section_array_ruby">]</span><span class="punctuation punctuation_section punctuation_section_function punctuation_section_function_ruby">)</span>
+<span class='linenum'>  165</span>     <span class="keyword keyword_control keyword_control_ruby">rescue</span> <span class="support support_class support_class_ruby">Harbor</span><span class="punctuation punctuation_separator punctuation_separator_other punctuation_separator_other_ruby">::</span><span class="support support_class support_class_ruby">Orm</span><span class="punctuation punctuation_separator punctuation_separator_other punctuation_separator_other_ruby">::</span><span class="variable variable_other variable_other_constant variable_other_constant_ruby">ObjectNotFoundError</span>
+<span class='linenum'>  166</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">      <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> Ah, now we do want to escape this madhouse if you aren't who you say you are...
+</span><span class='linenum'>  167</span>       response<span class="punctuation punctuation_separator punctuation_separator_method punctuation_separator_method_ruby">.</span>redirect!<span class="punctuation punctuation_section punctuation_section_function punctuation_section_function_ruby">(</span><span class="string string_quoted string_quoted_double string_quoted_double_ruby"><span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_begin punctuation_definition_string_begin_ruby">"</span>/login<span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_end punctuation_definition_string_end_ruby">"</span></span><span class="punctuation punctuation_section punctuation_section_function punctuation_section_function_ruby">)</span>
+<span class='linenum'>  168</span>     <span class="keyword keyword_control keyword_control_ruby">end</span>
+<span class='linenum'>  169</span>     
+<span class='linenum'>  170</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">    <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> Did I mention that you have pass your variable declarations to your views
+</span><span class='linenum'>  171</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">    <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> explicitly? Keeps things easy to understand for the new guys. You do plan
+</span><span class='linenum'>  172</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby">    <span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> to get rich and be able to stop maintaining this application someday right?
+</span><span class='linenum'>  173</span>     response<span class="punctuation punctuation_separator punctuation_separator_method punctuation_separator_method_ruby">.</span><span class="support support_function support_function_actionpack support_function_actionpack_rails">render</span> <span class="string string_quoted string_quoted_double string_quoted_double_ruby"><span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_begin punctuation_definition_string_begin_ruby">"</span>/account/index<span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_end punctuation_definition_string_end_ruby">"</span></span><span class="punctuation punctuation_separator punctuation_separator_object punctuation_separator_object_ruby">,</span> <span class="constant constant_other constant_other_symbol constant_other_symbol_ruby"><span class="punctuation punctuation_definition punctuation_definition_constant punctuation_definition_constant_ruby">:</span>me</span> <span class="punctuation punctuation_separator punctuation_separator_key-value">=&gt;</span> me
+<span class='linenum'>  174</span>   <span class="keyword keyword_control keyword_control_ruby">end</span>
+<span class='linenum'>  175</span> <span class="keyword keyword_control keyword_control_ruby">end</span>
+<span class='linenum'>  176</span> 
+<span class='linenum'>  177</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby"><span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> And now finally we get to use our amazing Harbor::Container!
+</span><span class='linenum'>  178</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby"><span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> Oh, but we don't care about logging, sending email, or any of the rest of those
+</span><span class='linenum'>  179</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby"><span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> sorts of things for now. So we're just going to skip registering anything...
+</span><span class='linenum'>  180</span> container <span class="keyword keyword_operator keyword_operator_assignment keyword_operator_assignment_ruby">=</span> <span class="support support_class support_class_ruby">Harbor</span><span class="punctuation punctuation_separator punctuation_separator_other punctuation_separator_other_ruby">::</span><span class="support support_class support_class_ruby">Container</span><span class="punctuation punctuation_separator punctuation_separator_method punctuation_separator_method_ruby">.</span><span class="keyword keyword_other keyword_other_special-method keyword_other_special-method_ruby">new</span>
+<span class='linenum'>  181</span> 
+<span class='linenum'>  182</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby"><span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> Oops. Where are our Views? Harbor needs to know.
+</span><span class='linenum'>  183</span> <span class="support support_class support_class_ruby">Harbor</span><span class="punctuation punctuation_separator punctuation_separator_other punctuation_separator_other_ruby">::</span><span class="support support_class support_class_ruby">View</span><span class="punctuation punctuation_separator punctuation_separator_other punctuation_separator_other_ruby">::</span>path<span class="punctuation punctuation_separator punctuation_separator_method punctuation_separator_method_ruby">.</span>unshift<span class="punctuation punctuation_section punctuation_section_function punctuation_section_function_ruby">(</span><span class="variable variable_other variable_other_constant variable_other_constant_ruby">Pathname</span><span class="punctuation punctuation_section punctuation_section_function punctuation_section_function_ruby">(</span><span class="variable variable_language variable_language_ruby">__FILE__</span><span class="punctuation punctuation_section punctuation_section_function punctuation_section_function_ruby">)</span><span class="punctuation punctuation_separator punctuation_separator_method punctuation_separator_method_ruby">.</span>dirname <span class="keyword keyword_operator keyword_operator_arithmetic keyword_operator_arithmetic_ruby">+</span> <span class="string string_quoted string_quoted_double string_quoted_double_ruby"><span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_begin punctuation_definition_string_begin_ruby">"</span>views<span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_end punctuation_definition_string_end_ruby">"</span></span><span class="punctuation punctuation_section punctuation_section_function punctuation_section_function_ruby">)</span>
+<span class='linenum'>  184</span> 
+<span class='linenum'>  185</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby"><span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> Notice, Harbor::View::path is actually an Array of search paths. This way you
+</span><span class='linenum'>  186</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby"><span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> could package your application up as a gem and use all the views from the gem.
+</span><span class='linenum'>  187</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby"><span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> But you need a new awesome login page. Easy. Unshift another path, add an
+</span><span class='linenum'>  188</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby"><span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> "account" folder with a "login.html.erb" in it, and since it appears first on
+</span><span class='linenum'>  189</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby"><span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> the search path whenever we try to render "/account/login" we'll use your
+</span><span class='linenum'>  190</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby"><span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> sweet new view.
+</span><span class='linenum'>  191</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby"><span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span>
+</span><span class='linenum'>  192</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby"><span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> This means Harbor is powerfully awesome. Or awesomely powerful. One of those.
+</span><span class='linenum'>  193</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby"><span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> Maybe even both. Basically you can overwrite individual views, just apply new
+</span><span class='linenum'>  194</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby"><span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> layouts, overwrite individual routes (by using a Rack::Cascade and simply
+</span><span class='linenum'>  195</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby"><span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> making sure you handle the route you want to overwrite before it gets to the
+</span><span class='linenum'>  196</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby"><span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> application that would normally handle it), or entire controllers.
+</span><span class='linenum'>  197</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby"><span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> That's what we like to call a "Port". Really it's just convention. Any Harbor
+</span><span class='linenum'>  198</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby"><span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> application can work with another without modification. Now just sit back and
+</span><span class='linenum'>  199</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby"><span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> imagine the possibilities...
+</span><span class='linenum'>  200</span> 
+<span class='linenum'>  201</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby"><span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> Let's get this party started!
+</span><span class='linenum'>  202</span> run <span class="support support_class support_class_ruby">UserManagement</span><span class="punctuation punctuation_separator punctuation_separator_method punctuation_separator_method_ruby">.</span><span class="keyword keyword_other keyword_other_special-method keyword_other_special-method_ruby">new</span><span class="punctuation punctuation_section punctuation_section_function punctuation_section_function_ruby">(</span>container<span class="punctuation punctuation_section punctuation_section_function punctuation_section_function_ruby">)</span>
+<span class='linenum'>  203</span> 
+<span class='linenum'>  204</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby"><span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> How do we "take it to the limit" though? (It helps if you screech it with the
+</span><span class='linenum'>  205</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby"><span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> voice of an 80's hair-band singer.) Easy, slap it in a gem, install it, and next
+</span><span class='linenum'>  206</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby"><span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> time you need to write an application that requires you to login users or view
+</span><span class='linenum'>  207</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby"><span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> account pages you just run your great new Awesomeo application with a
+</span><span class='linenum'>  208</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby"><span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span> Rack::Cascade so UserManagement catches those routes:
+</span><span class='linenum'>  209</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby"><span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span>
+</span><span class='linenum'>  210</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby"><span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span>   run Rack::Cascade.new([
+</span><span class='linenum'>  211</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby"><span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span>     Awesomeo.new(container),
+</span><span class='linenum'>  212</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby"><span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span>     UserManagement.new(container)
+</span><span class='linenum'>  213</span> <span class="comment comment_line comment_line_number-sign comment_line_number-sign_ruby"><span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_ruby">#</span>   ])</span></span></pre>
+  </div>
+</body>
+</html>

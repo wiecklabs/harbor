@@ -1,4 +1,4 @@
-class Harbor
+module Harbor
 
   class Errors
   

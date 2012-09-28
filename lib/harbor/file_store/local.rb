@@ -1,4 +1,4 @@
-class Harbor
+module Harbor
   class FileStore
     class Local < Harbor::FileStore
 

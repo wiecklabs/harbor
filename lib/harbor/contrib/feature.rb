@@ -1,4 +1,4 @@
-class Harbor
+module Harbor
   module Contrib
     ##
     # Convenience class for bundling optional features in Harbor applications.

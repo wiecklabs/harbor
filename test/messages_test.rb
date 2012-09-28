@@ -1,6 +1,7 @@
-require_relative 'helper'
+require "pathname"
+require Pathname(__FILE__).dirname + "helper"
 
-class MessagesTest < MiniTest::Unit::TestCase
+class MessagesTest < Test::Unit::TestCase
 
   def test_messages_with_nil
     assert_equal({}, Harbor::Messages.new(nil))

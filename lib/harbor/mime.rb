@@ -1,4 +1,4 @@
-class Harbor
+module Harbor
   # Copyright (c) 2007, 2008, 2009 Christian Neukirchen <purl.org/net/chneukirchen>
   # This file originated from the Rack project, which can be found at rack.rubyforge.org
   module Mime
@@ -19,13 +19,6 @@ class Harbor
       MIME_TYPES.fetch(ext, fallback)
     end
     module_function :mime_type
-
-    def extension(mime)
-      # Make sure all types are registered before calling this method for the
-      # first time
-      (@_invert_types ||= MIME_TYPES.invert).fetch(mime)
-    end
-    module_function :extension
 
     # List of most common mime-types, selected various sources
     # according to their usefulness in a webserving scope for Ruby
@@ -208,10 +201,6 @@ class Harbor
       ".yaml"    => "text/yaml",
       ".yml"     => "text/yaml",
       ".zip"     => "application/zip",
-
-      # This is not really a mime type, its just used to handle browsers'
-      # HTTP_ACCEPT headers
-      :all       => "*/*",
     }
   end
 end

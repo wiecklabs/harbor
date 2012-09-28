@@ -1,4 +1,4 @@
-class Harbor
+module Harbor
   module Test
 
     require Pathname(__FILE__).dirname + "request"

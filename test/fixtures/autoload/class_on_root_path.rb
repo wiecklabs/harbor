@@ -1,2 +1,0 @@
-class ClassOnRootPath
-end

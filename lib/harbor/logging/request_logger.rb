@@ -1,4 +1,4 @@
-class Harbor
+module Harbor
   class RequestLogger
     ##
     # Logs requests and their params the configured request logger.
@@ -31,5 +31,5 @@ class Harbor
   end
 end
 
-Harbor::Dispatcher.register_event_handler(:request_complete) { |event| Harbor::RequestLogger.info(event) }
-Harbor::Dispatcher.register_event_handler(:exception) { |event| Harbor::RequestLogger.error(event) }
+Harbor::Application.register_event_handler(:request_complete) { |event| Harbor::RequestLogger.info(event) }
+Harbor::Application.register_event_handler(:exception) { |event| Harbor::RequestLogger.error(event) }

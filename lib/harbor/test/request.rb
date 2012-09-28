@@ -1,4 +1,4 @@
-class Harbor
+module Harbor
   module Test
     class Request < Harbor::Request
 
@@ -26,10 +26,6 @@ class Harbor
         @session = Session.new(session)
         @session.request = self
         @session
-      end
-
-      def request_method=(method)
-        @env['REQUEST_METHOD'] = method.to_s.upcase
       end
     end
   end

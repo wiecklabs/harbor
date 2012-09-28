@@ -1,6 +1,7 @@
-require_relative 'helper'
+require "pathname"
+require Pathname(__FILE__).dirname + "helper"
 
-class TextHelperTest < MiniTest::Unit::TestCase
+class TextHelperTest < Test::Unit::TestCase
 
   class TextHelper
     include Harbor::ViewContext::Helpers::Text
@@ -56,18 +57,22 @@ class TextHelperTest < MiniTest::Unit::TestCase
 
   def test_truncate_blank_values
     # Empty or Nil input should not error.
-    assert_equal("", @helper.truncate(""))
+    assert_nothing_raised do
+      assert_equal("", @helper.truncate(""))
+    end
 
-    assert_equal("", @helper.truncate(nil))
+    assert_nothing_raised do
+      assert_equal("", @helper.truncate(nil))
+    end
   end
 
   def test_truncate_errors
-    assert_raises(ArgumentError) do
+    assert_raise(ArgumentError) do
       # character_count should be a non-zero number.
       assert_equal("", @helper.truncate("...", 0))
     end
 
-    assert_raises(ArgumentError) do
+    assert_raise(ArgumentError) do
       # character_count should be non-nil.
       assert_equal("", @helper.truncate("", nil))
     end
@@ -115,12 +120,12 @@ class TextHelperTest < MiniTest::Unit::TestCase
   end
 
   def test_truncate_on_words_errors
-    assert_raises(ArgumentError) do
+    assert_raise(ArgumentError) do
       # character_count should be a non-zero number.
       assert_equal("", @helper.truncate_on_words("...", 0))
     end
 
-    assert_raises(ArgumentError) do
+    assert_raise(ArgumentError) do
       # character_count should be non-nil.
       assert_equal("", @helper.truncate_on_words("", nil))
     end
@@ -128,8 +133,13 @@ class TextHelperTest < MiniTest::Unit::TestCase
 
   def test_truncate_on_words_blank_values
     # Empty or Nil input should not error.
-    assert_equal("", @helper.truncate_on_words(""))
-    assert_equal("", @helper.truncate_on_words(nil))
+    assert_nothing_raised do
+      assert_equal("", @helper.truncate_on_words(""))
+    end
+
+    assert_nothing_raised do
+      assert_equal("", @helper.truncate_on_words(nil))
+    end
   end
 
 end

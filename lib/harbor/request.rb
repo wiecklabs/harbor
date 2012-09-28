@@ -1,7 +1,7 @@
 require "rack/request"
-require_relative "session"
+require Pathname(__FILE__).dirname + "session"
 
-class Harbor
+module Harbor
   class Request < Rack::Request
 
     BOT_AGENTS = [
@@ -40,14 +40,11 @@ class Harbor
     ].freeze
 
     attr_accessor :layout
-<<<<<<< HEAD
     attr_accessor :application
     attr_accessor :theme
-=======
->>>>>>> afcda6833a461947da81fee3e28965b762663c3e
 
     def initialize(application, env)
-      raise ArgumentError.new("+env+ must be a Hash") unless env.is_a?(Hash)
+      raise ArgumentError.new("+env+ must be a Rack Environment Hash") unless env.is_a?(Hash)
       @application = application
       super(env)
     end
@@ -87,6 +84,10 @@ class Harbor
       @env['REQUEST_METHOD']
     end
 
+    def environment
+      @env['APP_ENVIRONMENT'] || (@application ? @application.environment : "development")
+    end
+
     def health_check?
       !params["health_check"].nil?
     end
@@ -103,6 +104,15 @@ class Harbor
       end
 
       params || {}
+    end
+
+    # holdover method until Harbor::Router moves to oniguruma and can use named captures
+    def route_captures
+      @route_captures || []
+    end
+
+    def route_captures=(value)
+      @route_captures = value
     end
 
     def protocol
@@ -139,67 +149,7 @@ class Harbor
       path
     end
 
-    def accept
-      @accept ||= begin
-        entries = @env['HTTP_ACCEPT'].to_s.split(',')
-        entries.map! { |e| accept_entry(e) }
-        entries.sort_by! { |e| [e.last, entries.index(e)] }
-        entries.map(&:first)
-      end
-    end
-
-    def preferred_type(*types)
-      return accept.first if types.empty?
-      types.flatten!
-      accept.detect do |pattern|
-        type = types.detect { |t| ::File.fnmatch(pattern, t) }
-        return type if type
-      end
-    end
-
-    # Returns the extension for the format used in the request.
-    #
-    # GET /posts/5.xml | request.format => xml
-    # GET /posts/5.js | request.format => js
-    # GET /posts/5 | request.format => request.accepts.first
-    #
-    def format
-      formats.first
-    end
-
-    def format=(format)
-      params['format'] = format
-      @formats = [format]
-    end
-
-    BROWSER_LIKE_ACCEPTS = /,\s*\*\/\*|\*\/\*\s*,/
-
-    def formats
-      @formats ||= begin
-        http_accept = @env['HTTP_ACCEPT']
-
-        accepted_formats = if params['format']
-          Array(params['format'])
-        elsif xhr? || (http_accept && http_accept !~ BROWSER_LIKE_ACCEPTS)
-          # TODO: Mime types could be objects
-          accept.map{|type| Mime.extension(type).to_s.gsub(/^\./, '')}
-        else
-          ['html']
-        end
-
-        accepted_formats == ['all'] ? ['html'] : accepted_formats
-      end
-    end
-
     private
-
-    def accept_entry(entry)
-      type, *options = entry.delete(' ').split(';')
-      quality = 0 # we sort smallest first
-      options.delete_if { |e| quality = 1 - e[2..-1].to_f if e.start_with? 'q=' }
-      [type, [quality, type.count('*'), 1 - options.size]]
-    end
-
     def request_method_in_params?
       @env["REQUEST_METHOD"] == "POST" && self.POST && %w(PUT DELETE).include?((self.POST['_method'] || "").upcase)
     end

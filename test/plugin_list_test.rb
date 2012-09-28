@@ -1,7 +1,8 @@
-require_relative 'helper'
+require "pathname"
+require Pathname(__FILE__).dirname + "helper"
 
-class PluginListTest < MiniTest::Unit::TestCase
-
+class PluginListTest < Test::Unit::TestCase
+  
   class TestPlugin < Harbor::Plugin
     attr_accessor :plugin_type
 
@@ -9,7 +10,7 @@ class PluginListTest < MiniTest::Unit::TestCase
       "Fancy #{@plugin_type}Plugin"
     end
   end
-
+  
   def setup
     @map = Harbor::PluginList.new
   end
@@ -17,7 +18,7 @@ class PluginListTest < MiniTest::Unit::TestCase
   def test_appending_a_plugin
     @map << TestPlugin
     @map << "Sample String Plugin"
-
+    
     assert_equal(2, @map.size)
   end
 
@@ -28,5 +29,5 @@ class PluginListTest < MiniTest::Unit::TestCase
 
     assert_equal(0, @map.size)
   end
-
+  
 end

@@ -1,4 +1,4 @@
-class Harbor
+module Harbor
   module Auth
     ##
     # Simple mechanism for implementing HTTP basic authentication.

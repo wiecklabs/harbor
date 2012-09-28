@@ -1,23 +1,24 @@
-require_relative 'helper'
+require "pathname"
+require Pathname(__FILE__).dirname + "helper"
 
-class ResponseTest < MiniTest::Unit::TestCase
+class ResponseTest < Test::Unit::TestCase
 
   def setup
-    Harbor::View::paths.unshift Pathname(__FILE__).dirname + "fixtures/views"
+    Harbor::View::path.unshift Pathname(__FILE__).dirname + "views"
     Harbor::View::layouts.default("layouts/application")
     @request = Harbor::Test::Request.new
     @response = Harbor::Response.new(@request)
   end
 
   def teardown
-    Harbor::View::paths.clear
+    Harbor::View::path.clear
     Harbor::View::layouts.clear
   end
 
   def test_content_buffer
     @response.puts "Hello World"
     @response.print("Hello World\n")
-    assert_equal((["Hello World\n"] * 2).join, @response.buffer_string)
+    assert_equal((["Hello World\n"] * 2), @response.buffer.to_a)
   end
 
   def test_default_status
@@ -25,25 +26,15 @@ class ResponseTest < MiniTest::Unit::TestCase
   end
 
   def test_default_content_type
-    assert_equal("text/html", @response.to_a[1]['Content-Type'])
-  end
-
-  def test_set_content_type_with_extension
-    @response.content_type = 'xml'
-    assert_equal("application/xml", @response.content_type)
-  end
-
-  def test_set_content_type_with_symbol
-    @response.content_type = :json
-    assert_equal("application/json", @response.content_type)
+    assert_equal("text/html", @response.content_type)
   end
 
   def test_set_cookie_with_hash
     cookie_expires_on = Time.now
     expires_gmt_string = cookie_expires_on.gmtime.strftime("%a, %d-%b-%Y %H:%M:%S GMT")
 
-    assert_raises(ArgumentError) { @response.set_cookie(nil, { :value => '1234', :domain => 'www.example.com', :path => '/test', :expires => cookie_expires_on}) }
-    assert_raises(ArgumentError) { @response.set_cookie('', { :value => '1234', :domain => 'www.example.com', :path => '/test', :expires => cookie_expires_on}) }
+    assert_raise(ArgumentError) { @response.set_cookie(nil, { :value => '1234', :domain => 'www.example.com', :path => '/test', :expires => cookie_expires_on}) }
+    assert_raise(ArgumentError) { @response.set_cookie('', { :value => '1234', :domain => 'www.example.com', :path => '/test', :expires => cookie_expires_on}) }
 
     @response.set_cookie('session_id', { :value => '', :domain => 'www.example.com', :path => '/test', :expires => cookie_expires_on})
     assert_equal("session_id=; domain=www.example.com; path=/test; expires=#{expires_gmt_string}", @response['Set-Cookie'])
@@ -83,35 +74,27 @@ class ResponseTest < MiniTest::Unit::TestCase
 
   def test_standard_headers
     @response.print "Hello World"
-    assert_equal({ "Content-Type" => "text/html", "Content-Length" => "Hello World".size.to_s }, @response.to_a[1])
+    assert_equal({ "Content-Type" => "text/html", "Content-Length" => "Hello World".size.to_s }, @response.headers)
   end
 
   def test_render_html_view_with_layout
     @response.render "index", :text => "test"
-    assert_equal("LAYOUT\ntest\n", @response.buffer_string)
+    assert_equal("LAYOUT\ntest\n", @response.buffer)
   end
 
-  def test_render_based_on_format
-    @request.format = 'xml'
-    @response.render "list"
-    assert_equal("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<site>\n  <name>Bob</name>\n</site>\n", @response.buffer_string)
+  def test_render_xml
+    @response.render Harbor::XMLView.new("list")
+    assert_equal("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<site>\n  <name>Bob</name>\n</site>\n", @response.buffer)
+    assert_equal("text/xml", @response.content_type)
   end
 
-  def test_defaults_content_type_to_request_format_when_rendering
-    @request.format = 'xml'
-    @response.render "list"
-    assert_equal("application/xml", @response.content_type)
-  end
+  def test_deprecated_multiple_layout_behavior
+    result = capture_stderr do
+      @response.render "index", :text => "test", :layout => ["layouts/application", "layouts/other"]
+    end
 
-  def test_does_not_override_content_type_if_already_set
-    @request.format = 'json'
-    @response.render "list.xml"
-    assert_equal("application/json", @response.content_type)
-  end
-
-  def test_does_not_set_content_type_if_status_is_304
-    @response.status = 304
-    refute @response.to_a[1]['Content-Type']
+    assert_equal("LAYOUT\ntest\n", @response.buffer)
+    assert_match /deprecated/, result
   end
 
   def test_errors_is_a_errors_collection
@@ -304,7 +287,7 @@ class ResponseTest < MiniTest::Unit::TestCase
 
     @response.send_files("test.zip", [file])
 
-    assert_equal "#{Zlib.crc32(File.read(file.path)).to_s(16)} #{File.size(file.path)} #{File.expand_path(file.path)} #{file.name}\n", @response.buffer_string
+    assert_equal "#{Zlib.crc32(File.read(file.path)).to_s(16)} #{File.size(file.path)} #{File.expand_path(file.path)} #{file.name}\n", @response.buffer
 
     assert_equal "zip", @response.headers["X-Archive-Files"]
     assert_equal "attachment; filename=\"test.zip\"", @response.headers["Content-Disposition"]
@@ -324,7 +307,7 @@ class ResponseTest < MiniTest::Unit::TestCase
 
     @response.send_files("test.zip", [file])
 
-    assert_equal "#{Zlib.crc32(File.read(file.path)).to_s(16)} #{File.size(file.path)} #{File.expand_path(file.path)} #{file.name}\n", @response.buffer_string
+    assert_equal "#{Zlib.crc32(File.read(file.path)).to_s(16)} #{File.size(file.path)} #{File.expand_path(file.path)} #{file.name}\n", @response.buffer
 
     assert_equal "zip", @response.headers["X-Archive-Files"]
     assert_equal "attachment; filename=\"test.zip\"", @response.headers["Content-Disposition"]
@@ -364,7 +347,7 @@ class ResponseTest < MiniTest::Unit::TestCase
     response = Harbor::Response.new(request)
 
     called = false
-    assert_throws(:halt) do
+    assert_throws(:abort_request) do
       response.cache(nil, time) { called = true }
     end
     assert_equal 304, response.status
@@ -431,7 +414,7 @@ class ResponseTest < MiniTest::Unit::TestCase
       response = Harbor::Response.new(request)
       response.cache("key", time, 10) {}
 
-      assert_throws(:halt) do
+      assert_throws(:abort_request) do
         response.cache("key", time, 10) {}
       end
       assert_equal 304, response.status
@@ -447,7 +430,9 @@ class ResponseTest < MiniTest::Unit::TestCase
       response.cache("key", time, 10) {}
 
       Time.warp(20) do
-        response.cache("key", time, 10) {}
+        assert_nothing_thrown do
+          response.cache("key", time, 10) {}
+        end
       end
     end
   end
@@ -522,4 +507,5 @@ class ResponseTest < MiniTest::Unit::TestCase
     cache.delete_matching(/.*/)
     Harbor::View.cache = nil
   end
+
 end

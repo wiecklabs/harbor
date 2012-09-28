@@ -1,30 +1,25 @@
-require_relative "helper"
+require "pathname"
+require Pathname(__FILE__).dirname + "helper"
 require "harbor/test/test"
 
-class HarborTestTest < MiniTest::Unit::TestCase
+class HarborTestTest < Test::Unit::TestCase
 
   include Harbor::Test
-
-  def setup
-    Harbor::View::paths.unshift Pathname(__FILE__).dirname + "fixtures/views"
-  end
-
-  def teardown
-    Harbor::View::paths.clear
-  end
 
   # ASSERTIONS
   def test_assert_redirect_success
     response = Harbor::Test::Response.new
     response.redirect "/"
 
-    assert_redirect(response)
+    assert_nothing_raised do
+      assert_redirect(response)
+    end
   end
 
   def test_assert_redirect_failure
     response = Harbor::Test::Response.new
 
-    assert_raises MiniTest::Assertion do
+    assert_raises Test::Unit::AssertionFailedError do
       assert_redirect(response)
     end
   end
@@ -32,14 +27,16 @@ class HarborTestTest < MiniTest::Unit::TestCase
   def test_assert_success_success
     response = Harbor::Test::Response.new
 
-    assert_success(response)
+    assert_nothing_raised do
+      assert_success(response)
+    end
   end
 
   def test_assert_success_failure
     response = Harbor::Test::Response.new
     response.redirect "/"
 
-    assert_raises MiniTest::Assertion do
+    assert_raises Test::Unit::AssertionFailedError do
       assert_success(response)
     end
   end
@@ -48,20 +45,22 @@ class HarborTestTest < MiniTest::Unit::TestCase
     response = Harbor::Test::Response.new
     response.unauthorized
 
-    assert_unauthorized(response)
+    assert_nothing_raised do
+      assert_unauthorized(response)
+    end
   end
 
   def test_assert_unauthorized_failure
     response = Harbor::Test::Response.new
 
-    assert_raises MiniTest::Assertion do
+    assert_raises Test::Unit::AssertionFailedError do
       assert_unauthorized(response)
     end
   end
 
   def test_request_env_is_not_nil
     container = Harbor::Container.new
-    container.set(:request, Harbor::Test::Request)
+    container.register(:request, Harbor::Test::Request)
 
     request = container.get(:request)
 
@@ -70,7 +69,7 @@ class HarborTestTest < MiniTest::Unit::TestCase
 
   def test_request_env_can_be_passed_to_container
     container = Harbor::Container.new
-    container.set(:request, Harbor::Test::Request)
+    container.register(:request, Harbor::Test::Request)
 
     request = container.get(:request, :env => { "REQUEST_METHOD" => "PUT" })
 
@@ -80,28 +79,28 @@ class HarborTestTest < MiniTest::Unit::TestCase
   end
 
   def test_response_context_can_be_accessed
-    Harbor::View::paths.unshift Pathname(__FILE__).dirname + "views"
+    Harbor::View::path.unshift Pathname(__FILE__).dirname + "views"
 
     container = Harbor::Container.new
-    container.set(:request, Harbor::Test::Request)
-    container.set(:response, Harbor::Test::Response)
+    container.register(:request, Harbor::Test::Request)
+    container.register(:response, Harbor::Test::Response)
     response = container.get(:response)
-
+    
     response.render "index", :var => "test"
     assert_equal response.render_context[:var], "test"
   end
 
   def test_response_context_can_be_accessed_with_multiple_renders
-    Harbor::View::paths.unshift Pathname(__FILE__).dirname + "views"
+    Harbor::View::path.unshift Pathname(__FILE__).dirname + "views"
 
     container = Harbor::Container.new
-    container.set(:request, Harbor::Test::Request)
-    container.set(:response, Harbor::Test::Response)
+    container.register(:request, Harbor::Test::Request)
+    container.register(:response, Harbor::Test::Response)
     response = container.get(:response)
-
+    
     response.render "index", :var => "test1"
     response.render "index", :var => "test2"
-
+    
     assert_equal response.render_context[:var], "test1"
     assert_equal response.render_context(0)[:var], "test1"
     assert_equal response.render_context(1)[:var], "test2"
@@ -110,7 +109,7 @@ class HarborTestTest < MiniTest::Unit::TestCase
   # SESSION
   def test_session
     container = Harbor::Container.new
-    container.set(:request, Harbor::Test::Request)
+    container.register(:request, Harbor::Test::Request)
 
     request = container.get(:request)
     assert_equal Hash.new, request.session.data
@@ -130,17 +129,17 @@ class HarborTestTest < MiniTest::Unit::TestCase
     end
 
     container = Harbor::Container.new
-    container.set(:hello_controller, controller)
-    container.set(:request, Harbor::Test::Request)
-    container.set(:response, Harbor::Test::Response)
+    container.register(:hello_controller, controller)
+    container.register(:request, Harbor::Test::Request)
+    container.register(:response, Harbor::Test::Response)
 
     hello = container.get(:hello_controller)
     hello.hello_world("Bob")
 
-    assert_equal "Hello World. My Name is Bob.\n", hello.response.buffer_string
+    assert_equal "Hello World. My Name is Bob.\n", hello.response.buffer
   end
 
-  def test_controller_with_throw_halt
+  def test_controller_with_throw_abort_request
     controller = Class.new do
       attr_accessor :request, :response
 
@@ -151,18 +150,18 @@ class HarborTestTest < MiniTest::Unit::TestCase
     end
 
     container = Harbor::Container.new
-    container.set(:hello_controller, controller)
-    container.set(:request, Harbor::Test::Request)
-    container.set(:response, Harbor::Test::Response)
+    container.register(:hello_controller, controller)
+    container.register(:request, Harbor::Test::Request)
+    container.register(:response, Harbor::Test::Response)
 
     hello = container.get(:hello_controller)
 
-    assert_throws :halt do
+    assert_throws :abort_request do
       hello.hello_world("Bob")
     end
 
     assert_unauthorized hello.response
-    assert_equal "Unauthorized.\n", hello.response.buffer_string
+    assert_equal "Unauthorized.\n", hello.response.buffer
   end
 
 end

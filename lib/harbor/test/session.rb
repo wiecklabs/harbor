@@ -1,4 +1,4 @@
-class Harbor
+module Harbor
   module Test
     class Session < Harbor::Session
 

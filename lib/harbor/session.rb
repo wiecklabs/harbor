@@ -1,11 +1,11 @@
-require_relative 'session/abstract'
-require_relative 'session/cookie'
+require Pathname(__FILE__).dirname + 'session/abstract'
+require Pathname(__FILE__).dirname + 'session/cookie'
 
-class Harbor
+module Harbor
 
   class Session
     include Harbor::Events
-
+    
     DEFAULT_OPTIONS = {
       :key => "harbor.session",
       :domain => nil,
@@ -16,7 +16,7 @@ class Harbor
 
     ##
     # Configures non-default session settings.
-    #
+    # 
     #   Harbor::Session.configure do |session|
     #     session[:domain] = "*.domain.com"
     #     session[:store] = Custom::Session::Store
@@ -46,9 +46,9 @@ class Harbor
     end
 
     def session_created(session_id, remote_ip, user_agent_raw)
-      raise_event(:session_created, Harbor::Events::SessionCreatedEventContext.new(session_id, remote_ip, user_agent_raw)) unless @request.health_check?
+      raise_event2(:session_created, Harbor::Events::SessionCreatedEventContext.new(session_id, remote_ip, user_agent_raw)) unless @request.health_check?
     end
-
+    
     def key
       @options[:key]
     end

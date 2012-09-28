@@ -1,30 +1,16 @@
 require "rubygems"
-require "bundler/setup" unless Object::const_defined?("Bundler")
-
-if ENV['COVERAGE']
-  require 'simplecov'
-  SimpleCov.start do
-    add_filter "/test/"
-  end
-end
-
 require "pathname"
-require "minitest/autorun"
-require 'mocha'
+require "test/unit"
 require "uri"
 require Pathname(__FILE__).dirname.parent + "lib/harbor"
-require "harbor/mail/mailer"
+require "harbor/xml_view"
+require "harbor/mailer"
 require "harbor/logging"
-require "harbor/logging/appenders/email"
+require "lib/harbor/logging/appenders/email"
 require "harbor/test/test"
 require "rack/test"
-require "builder"
 
 ENV['RACK_ENV'] = 'test'
-
-(Harbor::Mail::Builder.private_instance_methods - Object.private_instance_methods).each do |method|
-  Harbor::Mail::Builder.send(:public, method)
-end
 
 class Time
 
@@ -62,31 +48,39 @@ class Time
 
 end
 
-class String
-
-  ##
-  # Remove whitespace margin.
-  #
-  # @return [String] receiver with whitespace margin removed
-  #
-  # @api public
-  def margin
-    lines = self.dup.split($/)
-
-    min_margin = 0
-    lines.each do |line|
-      if line =~ /^(\s+)/ && (min_margin == 0 || $1.size < min_margin)
-        min_margin = $1.size
-      end
+class Test::Unit::TestCase
+  
+  class MyApplication < Harbor::Application
+    def self.public_path
+      Pathname(__FILE__).dirname + "public"
     end
-    lines.map { |line| line.sub(/^\s{#{min_margin}}/, '') }.join($/)
   end
+  
+  include Rack::Test::Methods
 
-end
+  def setup_browser!
+    @request_log = StringIO.new
+    @error_log = StringIO.new
 
+    logger = Logging::Logger['request']
+    logger.clear_appenders
+    logger.add_appenders Logging::Appenders::IO.new('request', @request_log)
 
-class MiniTest::Unit::TestCase
-
+    logger = Logging::Logger['error']
+    logger.clear_appenders
+    logger.add_appenders Logging::Appenders::IO.new('error', @error_log)
+    
+    @router = Harbor::Router.new
+    @container = Harbor::Container.new
+    @application = MyApplication.new(@container, @router)
+    
+    @browser = Rack::Test::Session.new(Rack::MockSession.new(@application))
+  end
+  
+  def browser
+    @browser
+  end
+    
   def capture_stderr(&block)
     $stderr = StringIO.new
 
@@ -97,22 +91,6 @@ class MiniTest::Unit::TestCase
 
     result
   end
-
-  def assert_route_matches(http_method, path)
-    action = Harbor::Router::instance.match(http_method, path).action
-    refute_nil(action, "Expected router match for #{http_method}:#{path}, got nil.")
-
-    yield(action) if block_given?
-  end
-
-  def assert_controller_route_matches(http_method, path, controller, method_name)
-    action = Harbor::Router::instance.match(http_method, path).action
-
-    assert_kind_of(Harbor::Controller::Action, action)
-    assert_equal(controller, action.controller)
-    assert_equal(method_name, action.name)
-  end
-
 end
 
 def upload(filename)
@@ -121,7 +99,7 @@ def upload(filename)
 Content-Disposition: form-data; name="file"; filename="#{filename}"\r
 Content-Type: image/jpeg\r
 \r
-#{File.read(Pathname(__FILE__).dirname + "fixtures/samples" + filename)}\r
+#{File.read(Pathname(__FILE__).dirname + "samples" + filename)}\r
 \r
 --AaB03x\r
 Content-Disposition: form-data; name="video[caption]"\r
@@ -144,6 +122,6 @@ on\r
 EOF
   Rack::Request.new Rack::MockRequest.env_for("/",
                     "CONTENT_TYPE" => "multipart/form-data, boundary=AaB03x",
-                    "CONTENT_LENGTH" => input.bytesize,
+                    "CONTENT_LENGTH" => input.size,
                     :input => input)
 end
