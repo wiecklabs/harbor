@@ -1,4 +1,4 @@
-module Harbor
+class Harbor
   module Events
     class NotFoundEvent
       

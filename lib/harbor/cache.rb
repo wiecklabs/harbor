@@ -1,7 +1,7 @@
 require "thread"
-require Pathname(__FILE__).dirname + "cache/item"
+require_relative "cache/item"
 
-module Harbor
+class Harbor
 
   class Cache
 
@@ -9,7 +9,7 @@ module Harbor
       require "harbor/cache/redis"
       self.new(Harbor::Cache::Redis.new(connection, name))
     end
-    
+
     class PutArgumentError < ArgumentError; end
 
     attr_accessor :logger, :store

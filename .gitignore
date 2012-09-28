@@ -8,3 +8,9 @@ tmp
 vendor
 *.swp
 *.swo
+<<<<<<< HEAD
+=======
+.rvmrc
+Gemfile.lock
+pet_shop
+>>>>>>> afcda6833a461947da81fee3e28965b762663c3e

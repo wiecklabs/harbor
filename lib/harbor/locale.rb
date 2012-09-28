@@ -1,20 +1,11 @@
-module Harbor
+if RUBY_PLATFORM =~ /java/
+  require_relative "locale/java"
+else
+  require_relative "locale/mri"
+end
+
+class Harbor
   class Locale
-
-    def self.[](culture_code)
-      unless @locales
-        @locales = {}
-
-        ::File.read(Pathname(__FILE__).dirname + "locales.txt").split("\n").each do |line|
-          next if line =~ /^\s*(\#.*)?$/
-          values = line.split(/\|/).map { |value| value.strip }
-          @locales[values[1]] = Locale.new(values[1], values[0], values[2])
-        end
-      end
-
-      @locales[culture_code]
-    end
-
     def self.active_locales
       @active_locales ||= []
     end
@@ -28,12 +19,13 @@ module Harbor
     end
 
     def self.default_culture_code
-      @default_culture_code ||= "en-US"
+      @default_culture_code ||= "en_US"
     end
 
     def self.default_culture_code=(value)
       @default_culture_code = value
     end
+<<<<<<< HEAD
 
     def self.register(locale, activate = false)
       registered_locale = self[locale.culture_code] || @locales[locale.culture_code] = locale
@@ -58,5 +50,7 @@ module Harbor
     def to_s
       @description
     end
+=======
+>>>>>>> afcda6833a461947da81fee3e28965b762663c3e
   end
 end

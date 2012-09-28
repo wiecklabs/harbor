@@ -11,17 +11,17 @@ module SynchronizedCacheTestBootstrap
   end
   
   def test_put
-    assert_raise(Harbor::Cache::PutArgumentError) { @cache.put(nil, CACHE_CONTENT, 1, 1) }
+    assert_raises(Harbor::Cache::PutArgumentError) { @cache.put(nil, CACHE_CONTENT, 1, 1) }
   
-    assert_raise(Harbor::Cache::PutArgumentError) { @cache.put('key', CACHE_CONTENT, nil) }
-    assert_raise(Harbor::Cache::PutArgumentError) { @cache.put('key', CACHE_CONTENT, -1) }
-    assert_raise(Harbor::Cache::PutArgumentError) { @cache.put('key', CACHE_CONTENT, 0) }
+    assert_raises(Harbor::Cache::PutArgumentError) { @cache.put('key', CACHE_CONTENT, nil) }
+    assert_raises(Harbor::Cache::PutArgumentError) { @cache.put('key', CACHE_CONTENT, -1) }
+    assert_raises(Harbor::Cache::PutArgumentError) { @cache.put('key', CACHE_CONTENT, 0) }
   
-    assert_raise(Harbor::Cache::PutArgumentError) { @cache.put('key', CACHE_CONTENT, 1, -1) }
-    assert_raise(Harbor::Cache::PutArgumentError) { @cache.put('key', CACHE_CONTENT, 1, 0) }
+    assert_raises(Harbor::Cache::PutArgumentError) { @cache.put('key', CACHE_CONTENT, 1, -1) }
+    assert_raises(Harbor::Cache::PutArgumentError) { @cache.put('key', CACHE_CONTENT, 1, 0) }
   
-    assert_nothing_raised { @cache.put('key', CACHE_CONTENT, 1) }
-    assert_nothing_raised { @cache.put('key', CACHE_CONTENT, 1, 5) }
+    assert @cache.put('key', CACHE_CONTENT, 1)
+    assert @cache.put('key', CACHE_CONTENT, 1, 5)
   end
   
   def test_content_is_retrievable_before_ttl

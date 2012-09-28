@@ -1,4 +1,4 @@
-module Harbor
+class Harbor
   ##
   # Used by Harbor::Response#send_file and Harbor::Response#stream_file to send
   # large files or streams in chunks. This is a fallback measure for the cases

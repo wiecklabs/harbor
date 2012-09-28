@@ -1,31 +1,16 @@
-require "rubygems"
-require "pathname"
+require_relative "harbor/core"
 
-$:.unshift(Pathname(__FILE__).dirname.expand_path.to_s)
+config.assets = Harbor::Assets.new
+config.helpers = Harbor::ViewHelpers.new
+config.locales.default = Harbor::Locale::default
 
-require "harbor/version"
-require "harbor/support/array"
-require "harbor/support/blank"
-require "harbor/container"
-require "harbor/locale"
-require "harbor/hooks"
-require "harbor/file_store"
-require "harbor/shellwords"
-require "harbor/file"
-require "harbor/checksum"
-require "harbor/router"
-require "harbor/application"
-require "harbor/cascade"
-require "harbor/plugin"
-require "harbor/mime"
-require "harbor/errors"
+require "harbor/mail/mailer"
+require "harbor/mail/servers/sendmail"
 
-require "harbor/cache"
+config.mailer = Harbor::Mail::Mailer
+config.mail_server = Harbor::Mail::Servers::Sendmail
 
-module Harbor
-  def self.env_path
-    @env_path ||= Pathname(__FILE__).dirname.parent + "env"
-  end
-end
+config.console = Harbor::Consoles::IRB
 
-require "harbor/configuration"
+config.autoloader = Harbor::Autoloader.new
+config.reloader   = Harbor::Reloader.new

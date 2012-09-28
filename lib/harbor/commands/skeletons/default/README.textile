@@ -1,0 +1,7 @@
+h1. Welcome to Harbor!
+
+The first thing you probably want to do is run:
+
+bc. rvm use --rvmrc --create jruby-1.7.0.preview1@<@= app_name @>
+
+After that, just start creating tests in the test folder.

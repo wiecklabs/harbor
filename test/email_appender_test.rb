@@ -1,13 +1,12 @@
-require "pathname"
-require Pathname(__FILE__).dirname + "helper"
+require_relative "helper"
 require "ostruct"
 
-class EmailAppenderTestTest < Test::Unit::TestCase
+class EmailAppenderTestTest < MiniTest::Unit::TestCase
 
   def setup
     @container = Harbor::Container.new
 
-    mail_server = Class.new(Harbor::MailServers::Abstract) do
+    mail_server = Class.new(Harbor::Mail::Servers::Abstract) do
       attr_accessor :last_delivery
 
       def deliver(message)
@@ -20,8 +19,8 @@ class EmailAppenderTestTest < Test::Unit::TestCase
     end
 
     @mail_server = mail_server.new
-    @container.register(:mail_server, @mail_server)
-    @container.register(:mailer, Harbor::Mailer)
+    @container.set(:mail_server, @mail_server)
+    @container.set(:mailer, Harbor::Mail::Mailer)
     @appender = Harbor::LogAppenders::Email.new(@container, "from@example.com", "to1@example.com", "to2@example.com")
     @appender.level = 3 # :error
   end

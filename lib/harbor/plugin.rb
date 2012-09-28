@@ -1,6 +1,6 @@
-require "harbor/accessor_injector"
+require_relative "accessor_injector"
 
-module Harbor
+class Harbor
   class Plugin
 
     class VariableMissingError < StandardError
@@ -47,6 +47,6 @@ module Harbor
       end
 
     end
-    
+
   end
 end

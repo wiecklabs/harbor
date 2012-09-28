@@ -7,7 +7,12 @@ module Harbor::ViewContext::Helpers::Text
   # Querystring escape +value+
   # Replaces spaces with '%20' and hard stops (periods) with '%2E'.
   def q(value)
+<<<<<<< HEAD
      URI.encode_www_form_component(value).gsub('+', '%20').gsub('.', '%2E')
+=======
+    # TODO: Remove external dependency!
+    java.net.URLEncoder.encode value, ENCODED_CHARSET
+>>>>>>> afcda6833a461947da81fee3e28965b762663c3e
   end
 
   # HTML escape +value+

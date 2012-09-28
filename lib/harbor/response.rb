@@ -1,9 +1,13 @@
 require "stringio"
-require Pathname(__FILE__).dirname + "view"
+require_relative "view"
 
-module Harbor
+java_import java.net.URLEncoder
+
+class Harbor
   class Response
-
+    
+    ENCODED_CHARSET = "UTF-8"
+    
     attr_accessor :status, :headers, :errors
 
     class UnsupportedSendfileTypeError < StandardError
@@ -15,7 +19,6 @@ module Harbor
     def initialize(request)
       @request = request
       @headers = {}
-      @headers["Content-Type"] = "text/html"
       @status = 200
       @errors = Harbor::Errors.new
     end
@@ -37,6 +40,7 @@ module Harbor
     end
 
     def content_type=(content_type)
+      content_type = Mime.mime_type(".#{content_type}", 'text/html') if content_type.is_a?(Symbol) || content_type !~ /\//
       @headers["Content-Type"] = content_type
     end
 
@@ -55,6 +59,19 @@ module Harbor
     end
 
     def buffer
+      if @io.is_a?(StringIO)
+        @io
+      else
+        @io || StringIO.new
+      end
+    end
+
+    # Required to allow Rack apps to set the response from outside
+    def buffer=(buffer)
+      @io = buffer
+    end
+
+    def buffer_string
       if @io.is_a?(StringIO)
         @io.string
       else
@@ -180,29 +197,20 @@ module Harbor
       end
 
       yield self
-      store.put(key, buffer, ttl, max_age) if store
+      store.put(key, buffer_string, ttl, max_age) if store
     end
 
     def render(view, context = {})
-      if context[:layout].is_a?(Array)
-        warn "Passing multiple layouts to response.render has been deprecated. See Harbor::Layouts."
-        context[:layout] = context[:layout].first
-      end
+      context = context.merge({ :request => @request, :response => self, :format => @request.format })
+      view = View.new(view, context)
 
-      case view
-      when View
-        view.context.merge(context)
-      else
-        view = View.new(view, context.merge({ :request => @request, :response => self }))
+      layout = context.fetch(:layout) do
+        (@request.xhr? || context[:format] != 'html') ?
+          nil :
+          :search
       end
-
-      self.content_type = view.content_type
-
-      if context.has_key?(:layout) || @request.xhr?
-        puts view.to_s(context[:layout])
-      else
-        puts view.to_s(:search)
-      end
+      puts view.to_s(layout)
+      self.content_type ||= @request.format
     end
 
     HEADER_BLACKLIST = ['X-Sendfile', "Content-Disposition"]
@@ -232,7 +240,7 @@ module Harbor
     end
 
     def redirect!(url, params = nil)
-      redirect(url, params) and throw(:abort_request)
+      redirect(url, params) and throw(:halt)
     end
 
     def abort!(code)
@@ -241,7 +249,7 @@ module Harbor
       end
 
       self.status = code
-      throw(:abort_request)
+      throw(:halt)
     end
 
     def unauthorized
@@ -268,7 +276,7 @@ module Harbor
     def not_modified!
       NOT_MODIFIED_OMIT_HEADERS.each { |name| headers.delete(name) }
       self.status = 304
-      throw(:abort_request)
+      throw(:halt)
     end
 
     def inspect
@@ -301,10 +309,13 @@ module Harbor
         set_cookie(session.key, session.save)
       end
 
+      self.content_type ||= "html" unless self.status == 304
       # headers cannot be arrays
       self.headers.each_pair do |key, value|
         self.headers[key] = value.join("\n") if value.is_a?(Array)
       end
+
+      self.buffer.rewind if self.buffer.respond_to?(:rewind)
 
       [self.status, self.headers, self.buffer]
     end
@@ -350,8 +361,8 @@ module Harbor
         value = value[:value]
       end
       value = [value]  unless Array === value
-      cookie = Rack::Utils.escape(key) + "=" +
-        value.map { |v| Rack::Utils.escape v }.join("&") +
+      cookie = URLEncoder.encode(key, ENCODED_CHARSET) + "=" +
+        value.map { |v| URLEncoder.encode v, ENCODED_CHARSET }.join("&") +
         "#{domain}#{path}#{expires}#{http_only}"
 
       case self["Set-Cookie"]
@@ -364,14 +375,13 @@ module Harbor
       end
     end
 
-    # from Rack::Response.delete_cookie
     def delete_cookie(key, value={})
       unless Array === self["Set-Cookie"]
         self["Set-Cookie"] = [self["Set-Cookie"]].compact
       end
 
       self["Set-Cookie"].reject! { |cookie|
-        cookie =~ /\A#{Rack::Utils.escape(key)}=/
+        cookie =~ /\A#{URLEncoder.encode(key, ENCODED_CHARSET)}=/
       }
 
       set_cookie(key,

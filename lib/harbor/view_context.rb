@@ -1,4 +1,4 @@
-module Harbor
+class Harbor
   class ViewContext
     include Enumerable
     require Pathname(__FILE__).dirname + "view_context/helpers"
@@ -8,6 +8,7 @@ module Harbor
     include Helpers::Html
     include Helpers::Url
     include Helpers::Cache
+    include Helpers::Assets
 
     attr_accessor :view, :keys
 

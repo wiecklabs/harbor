@@ -1,4 +1,4 @@
-module Harbor
+class Harbor
   class Session
 
     ##
@@ -10,7 +10,7 @@ module Harbor
         cookie = super
         
         unless cookie[:session_id]
-          cookie[:session_id] = `uuidgen`.chomp
+          cookie[:session_id] = java.util.UUID.randomUUID.to_s
           delegate.session_created(cookie[:session_id], request.remote_ip, request.env["HTTP_USER_AGENT"])
         end
         

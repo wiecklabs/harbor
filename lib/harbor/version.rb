@@ -1,3 +1,3 @@
-module Harbor
-  VERSION = "0.24.1"
+class Harbor
+  VERSION = "1.0"
 end

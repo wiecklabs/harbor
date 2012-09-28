@@ -1,4 +1,4 @@
-module Harbor
+class Harbor
   class FileStore
 
     require Pathname(__FILE__).dirname + "file_store/file"

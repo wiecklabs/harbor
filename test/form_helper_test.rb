@@ -1,7 +1,6 @@
-require "pathname"
-require Pathname(__FILE__).dirname + "helper"
+require_relative "helper"
 
-class FormHelperTest < Test::Unit::TestCase
+class FormHelperTest < MiniTest::Unit::TestCase
   def test_basic_form
     form = <<-HTML
 <form action="/users" method="post">

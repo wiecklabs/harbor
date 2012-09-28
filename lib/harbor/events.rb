@@ -1,37 +1,12 @@
-module Harbor
+class Harbor
 
   module Events
 
     def self.included(target)
       target.extend(ClassMethods)
     end
-
-    def raise_event(name, *args)
-      if args.size == 1 && args.first.is_a?(Hash)
-        args = EventContext.new(args.first)
-      else
-        warn "Using ordinal arguments when calling Harbor::Events#raise_event is deprecated. Harbor::Events#raise_event expects the name of the event, and a hash representing the context."
-        #warn "Using ordinal arguments when calling Harbor::Events#raise_event is deprecated. Harbor::Events#raise_event expects the name of the event, and a hash representing the context. (event name: #{name.inspect})\n\t#{caller.join("\n\t")}"
-      end
-
-      if self.class.events[name.to_s].nil?
-        return false
-      else
-        self.class.events[name.to_s].each do |event|
-          case event
-          when Proc
-            event.call(*args)
-          when Class
-            event.new(*args).call
-          else
-            raise "Unsupported handler class (#{event.class}) for event (#{name})"
-          end
-        end
-        return true
-      end
-    end
     
-    def raise_event2(name, event)
+    def raise_event(name, event)
       registered_handlers = self.class.events[name.to_s]
       if registered_handlers.nil?
         false
@@ -67,12 +42,6 @@ module Harbor
 
       def events
         class_variable_defined?(:@@events) ? class_variable_get(:@@events) : class_variable_set(:@@events, {})
-      end
-
-      def register_event(name, &block)
-        warn  "Harbor::Events::register_event has been deprecated. Use Harbor::Events::register_event_handler instead."
-        #warn  "Harbor::Events::register_event has been deprecated. Use Harbor::Events::register_event_handler instead. (event_name: #{name.inspect})\n\t#{caller.join("\n\t")}"
-        register_event_handler(name, nil, &block)
       end
 
       def register_event_handler(name, klass = nil, &block)
