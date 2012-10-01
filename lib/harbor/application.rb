@@ -14,6 +14,10 @@ require Pathname(__FILE__).dirname + "events" + "session_created_event_context"
 require Pathname(__FILE__).dirname + "event_context"
 require Pathname(__FILE__).dirname + "messages"
 
+Dir[Pathname(__FILE__).dirname + 'contrib/infinispan/jar_files/*.jar'].each { |jar| require jar }
+
+require Pathname(__FILE__).dirname + 'contrib/infinispan/jar-bootstrap'
+
 module Harbor
   class Application
 
