@@ -21,6 +21,11 @@ class ViewTest < Test::Unit::TestCase
     assert_equal("EDIT PAGE\nFORM PARTIAL", view.to_s)
   end
   
+  def test_render_with_html_file
+    view = Harbor::View.new("index.html")
+    assert_equal("PLAIN HTML TEST\n", view.to_s)
+  end
+  
   def test_passing_a_partial_as_a_variable
     view = Harbor::View.new("new", :form => Harbor::View.new("_form"))
     assert_equal("NEW PAGE\nFORM PARTIAL", view.to_s)

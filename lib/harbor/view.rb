@@ -53,9 +53,9 @@ module Harbor
 
     def initialize(view, context = {})
       @content_type = "text/html"
-      @extension = ".html.erb"
+      @extension = ::File.extname(view).downcase
       @context = context.is_a?(ViewContext) ? context : ViewContext.new(self, context)
-      @filename = ::File.extname(view) == "" ? (view + @extension) : view
+      @filename = ::File.extname(view) == "" ? (view + ".html.erb") : view
     end
 
     def supports_layouts?
@@ -63,7 +63,7 @@ module Harbor
     end
 
     def content
-      @content ||= _erubis_render(@context)
+      @content ||= render(@context)
     end
 
     def to_s(layout = nil)
@@ -74,11 +74,22 @@ module Harbor
 
     private
 
-    def _erubis_render(context)
+    def render(context)
       @path ||= self.class.exists?(@filename, context.theme)
       raise "Could not find '#{@filename}' in #{self.class.path.inspect}" unless @path
 
       full_path = @path + @filename
+
+      if @extension == ".html"
+        ::File.read(full_path)
+      else
+        _erubis_render(context, full_path)
+      end
+    end
+
+    def _erubis_render(context, full_path)
+      @path ||= self.class.exists?(@filename, context.theme)
+      raise "Could not find '#{@filename}' in #{self.class.path.inspect}" unless @path
 
       if self.class.cache_templates?
         (self.class.__templates[full_path] ||= Erubis::FastEruby.new(::File.read(full_path), :filename => full_path)).evaluate(context)
@@ -91,5 +102,4 @@ module Harbor
       @__templates ||= {}
     end
   end
-
 end
