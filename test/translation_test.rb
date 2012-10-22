@@ -90,7 +90,7 @@ module Contrib
         redis.flushdb
         be1 = I18n::Backend::KeyValue.new(redis)
         be2 = I18n::Backend::Simple.new
-        be2.store_translations(LOCALE_EN, {KEY, VAL}, :ecape => false)
+        be2.store_translations(LOCALE_EN, {KEY => VAL}, :escape => false)
         @t = Harbor::Contrib::Translations::TranslationChain.new(be1, be2)
 
         assert(!@t.exists_in_backend?(be1, LOCALE_EN, KEY))

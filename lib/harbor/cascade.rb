@@ -45,7 +45,8 @@ module Harbor
 
         application, handler = nil
 
-        @applications.each do |application|
+        @applications.each do |a|
+          application = a
           break if handler = application.router.match(request)
         end
 
@@ -73,3 +74,4 @@ module Harbor
 
   end
 end
+

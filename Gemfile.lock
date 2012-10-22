@@ -82,7 +82,7 @@ GEM
       little-plugger (>= 1.1.2)
     macaddr (1.5.0)
       systemu (>= 2.4.0)
-    mail_builder (0.3)
+    mail_builder (0.4)
       mime-types
       uuidtools
     mime-types (1.16)

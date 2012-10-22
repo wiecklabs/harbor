@@ -56,9 +56,9 @@ module Harbor
 
     def buffer
       if @io.is_a?(StringIO)
-        @io.string
+        [@io.string]
       else
-        @io || ""
+        @io || [""]
       end
     end
 
