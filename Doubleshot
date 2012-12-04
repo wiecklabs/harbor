@@ -1,0 +1,46 @@
+# encoding: utf-8
+
+Doubleshot.new do |config|
+  config.project = "harbor"
+  config.group = "com.wiecklabs"
+  config.version = "0.25"
+
+  # List of file extensions within source folders
+  # that will be included during packaging.
+  # Does NOT override defaults, but adds to them.
+  # The default list can be found in
+  # Doubleshot::Configuration::DEFAULT_WHITELIST.
+  #   config.whitelist ".ext"
+
+  config.gem "builder", ">= 0"
+  config.gem "erubis", ">= 0"
+  config.gem "logging", ">= 0"
+  config.gem "mail_builder", ">= 0"
+  config.gem "rack", ">= 0"
+  config.gem "i18n"
+  config.gem "rake"
+  config.gem "redis_directory", ">= 1.0.4"
+  config.gem "uuid"
+  config.gem "active_support"
+
+  config.development do
+    config.gem "rack-test"
+  end
+
+  # A subset of Gem::Specification compatible
+  # with Doubleshot. Since Doubleshot manages
+  # your Rubygems dependencies, and what files
+  # are included in your build, those options
+  # are not applicable (and will be discarded if
+  # provided).
+  config.gemspec do |spec|
+    spec.summary        = "Harbor Framework"
+    spec.description    = <<-DESCRIPTION
+Harbor Framework
+DESCRIPTION
+    spec.homepage       = "http://wiecklabs.com"
+    spec.author         = "Wieck Media"
+    spec.email          = "dev@wieck.com"
+    spec.license        = "MIT-LICENSE"
+  end
+end
