@@ -1,16 +1,142 @@
-require "rubygems"
-require "pathname"
-require "test/unit"
-require "uri"
-require Pathname(__FILE__).dirname.parent + "lib/harbor"
-require "harbor/xml_view"
-require "harbor/mailer"
-require "harbor/logging"
-require "lib/harbor/logging/appenders/email"
-require "harbor/test/test"
-require "rack/test"
+ENV["RACK_ENV"] = "test"
 
-ENV['RACK_ENV'] = 'test'
+require "doubleshot/setup"
+
+require "minitest/autorun"
+require "minitest/pride"
+require "minitest/wscolor"
+
+require Pathname(__FILE__).dirname.parent + "lib/harbor"
+require "rack/test"
+require "harbor/logging"
+
+# require "harbor/xml_view"
+# require "harbor/mailer"
+# require "lib/harbor/logging/appenders/email"
+# require "harbor/test/test"
+
+module MiniTest
+  module Assertions
+    def assert_predicate o1, op, msg = nil
+      msg = message(msg) { "Expected #{mu_pp(o1)} to be #{op}" }
+      if !o1.respond_to?(op) && o1.respond_to?("#{op}?")
+        assert o1.__send__("#{op}?"), msg
+      else
+        assert o1.__send__(op), msg
+      end
+    end
+
+    def refute_predicate o1, op, msg = nil
+      msg = message(msg) { "Expected #{mu_pp(o1)} to not be #{op}" }
+      if !o1.respond_to?(op) && o1.respond_to?("#{op}?")
+        refute o1.__send__("#{op}?"), msg
+      else
+        refute o1.__send__(op), msg
+      end
+    end
+  end
+
+  module Expectations
+    # This is for aesthetics, so instead of:
+    #   something.must_be :validate
+    # Or:
+    #   something.validate.must_equal true
+    # Which are both terribly ugly, we can:
+    #   something.must :validate
+    infect_an_assertion :assert_operator, :must, :reverse
+    infect_an_assertion :refute_operator, :wont, :reverse
+  end
+end
+
+module Helper
+  def self.tmp(path = "tmp")
+    dir = Pathname(path.to_s)
+    dir.rmtree if dir.exist?
+    dir.mkpath
+
+    yield dir
+
+  ensure
+    dir.rmtree if dir.exist?
+  end
+
+  def self.upload(filename)
+    input = <<EOF
+--AaB03x\r
+Content-Disposition: form-data; name="file"; filename="#{filename}"\r
+Content-Type: image/jpeg\r
+\r
+#{File.read(Pathname(__FILE__).dirname + "samples" + filename)}\r
+\r
+--AaB03x\r
+Content-Disposition: form-data; name="video[caption]"\r
+\r
+test\r
+--AaB03x\r
+Content-Disposition: form-data; name="video[transcoder][1]"\r
+\r
+on\r
+--AaB03x\r
+Content-Disposition: form-data; name="video[transcoder][4]"\r
+\r
+on\r
+--AaB03x\r
+Content-Disposition: form-data; name="video[transcoder][5]"\r
+\r
+on\r
+--AaB03x--\r
+\r
+EOF
+    Rack::Request.new Rack::MockRequest.env_for("/",
+                      "CONTENT_TYPE" => "multipart/form-data, boundary=AaB03x",
+                      "CONTENT_LENGTH" => input.size,
+                      :input => input)
+  end
+
+  class MyApplication < Harbor::Application
+    def self.public_path
+      Pathname(__FILE__).dirname + "public"
+    end
+  end
+
+  include Rack::Test::Methods
+
+  class Browser
+    def initialize
+      @request_log = StringIO.new
+      @error_log = StringIO.new
+
+      logger = Logging::Logger['request']
+      logger.clear_appenders
+      logger.add_appenders Logging::Appenders::IO.new('request', @request_log)
+
+      logger = Logging::Logger['error']
+      logger.clear_appenders
+      logger.add_appenders Logging::Appenders::IO.new('error', @error_log)
+
+      @router = Harbor::Router.new
+      @container = Harbor::Container.new
+      @application = MyApplication.new(@container, @router)
+
+      @session = Rack::Test::Session.new(Rack::MockSession.new(@application))
+    end
+
+    def session
+      @session
+    end
+
+    def capture_stderr(&block)
+      $stderr = StringIO.new
+
+      yield
+
+      result = $stderr.string
+      $stderr = STDERR
+
+      result
+    end
+  end
+end
 
 class Time
 
@@ -46,82 +172,4 @@ class Time
 
   end
 
-end
-
-class Test::Unit::TestCase
-  
-  class MyApplication < Harbor::Application
-    def self.public_path
-      Pathname(__FILE__).dirname + "public"
-    end
-  end
-  
-  include Rack::Test::Methods
-
-  def setup_browser!
-    @request_log = StringIO.new
-    @error_log = StringIO.new
-
-    logger = Logging::Logger['request']
-    logger.clear_appenders
-    logger.add_appenders Logging::Appenders::IO.new('request', @request_log)
-
-    logger = Logging::Logger['error']
-    logger.clear_appenders
-    logger.add_appenders Logging::Appenders::IO.new('error', @error_log)
-    
-    @router = Harbor::Router.new
-    @container = Harbor::Container.new
-    @application = MyApplication.new(@container, @router)
-    
-    @browser = Rack::Test::Session.new(Rack::MockSession.new(@application))
-  end
-  
-  def browser
-    @browser
-  end
-    
-  def capture_stderr(&block)
-    $stderr = StringIO.new
-
-    yield
-
-    result = $stderr.string
-    $stderr = STDERR
-
-    result
-  end
-end
-
-def upload(filename)
-  input = <<-EOF
---AaB03x\r
-Content-Disposition: form-data; name="file"; filename="#{filename}"\r
-Content-Type: image/jpeg\r
-\r
-#{File.read(Pathname(__FILE__).dirname + "samples" + filename)}\r
-\r
---AaB03x\r
-Content-Disposition: form-data; name="video[caption]"\r
-\r
-test\r
---AaB03x\r
-Content-Disposition: form-data; name="video[transcoder][1]"\r
-\r
-on\r
---AaB03x\r
-Content-Disposition: form-data; name="video[transcoder][4]"\r
-\r
-on\r
---AaB03x\r
-Content-Disposition: form-data; name="video[transcoder][5]"\r
-\r
-on\r
---AaB03x--\r
-\r
-EOF
-  Rack::Request.new Rack::MockRequest.env_for("/",
-                    "CONTENT_TYPE" => "multipart/form-data, boundary=AaB03x",
-                    "CONTENT_LENGTH" => input.size,
-                    :input => input)
 end

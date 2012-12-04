@@ -1,9 +1,11 @@
+#!/usr/bin/env jruby
+
 require "pathname"
 require Pathname(__FILE__).dirname + "helper"
 
-class ApplicationTest < Test::Unit::TestCase
+describe Harbor::Application do
 
-  def setup
+  before do
     @router = Harbor::Router.new do
       get("/") { |request, response| response.puts "Hello World" }
       get("/exception") { raise "Error in /exception" }
@@ -22,28 +24,24 @@ class ApplicationTest < Test::Unit::TestCase
     logger.clear_appenders
     logger.add_appenders Logging::Appenders::IO.new('error', @error_log)
 
-    @application = MyApplication.new(Harbor::Container.new, @router)
+    @application = Helper::MyApplication.new(Harbor::Container.new, @router)
   end
 
-  def teardown
-  end
-
-  def test_call_returns_rack_response_array
+  it "must return rack response Array" do
     result = @application.call({ "PATH_INFO" => "/", "REQUEST_METHOD" => "GET" })
-    assert_equal(200, result[0])
-    assert result[1]['Content-Type'] = 'text/html'
-    assert result[1]['Content-Length'] = ("Hello World".size + 1).to_s
-    assert_equal("Hello World\n", result[2])
+    result[0].must_equal 200
+    result[1]['Content-Type'].must_equal "text/html"
+    result[1]['Content-Length'].must_equal ("Hello World".size + 1).to_s
+    result[2].must_equal "Hello World\n"
   end
 
-  def test_not_found
+  it "must return 404" do
     status, = @application.call({ "PATH_INFO" => "/", "REQUEST_METHOD" => "DELETE"})
-    assert_equal(404, status)
-
-    assert_match(/\(.*404.*\)/, @request_log.string)
+    status.must_equal 404
+    @request_log.string.must_match /\(.*404.*\)/
   end
 
-  def test_exception
+  it "must return a 500" do
     rack_errors = StringIO.new
     status, = @application.call({
       "PATH_INFO" => "/exception",
@@ -53,18 +51,16 @@ class ApplicationTest < Test::Unit::TestCase
       "rack.request.form_hash" => {},
       "rack.input" => ""
     })
-    assert_equal(500, status)
-
-    assert_match(/Error in \/exception/, @error_log.string)
+    status.must_equal 500
+    @error_log.string.must_match /Error in \/exception/
   end
 
-  def test_find_public_file
+  it "must serve public files" do
     status, headers, body = @application.call({ "PATH_INFO" => "/public-file", "REQUEST_METHOD" => "GET"})
-    assert_equal(200, status)
-
-    assert headers.has_key?("Last-Modified")
-    assert headers.has_key?("Cache-Control")
-    assert_match(/From public/, body.to_s)
+    status.must_equal 200
+    headers.must_include "Last-Modified"
+    headers.must_include "Cache-Control"
+    body.to_s.must_match /From public/
   end
 
 end
