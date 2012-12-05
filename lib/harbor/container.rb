@@ -64,7 +64,7 @@ module Harbor
       end
 
       optional_instances.each_pair do |k, v|
-        writer = "#{k}="
+        writer = :"#{k}="
         service.send(writer, v) if service.respond_to?(writer)
         optional_instances.each_pair do |k2,v2|
           next if k2 == k || !v2.respond_to?(writer)

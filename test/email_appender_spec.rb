@@ -1,10 +1,13 @@
+#!/usr/bin/env jruby
+
 require "pathname"
 require Pathname(__FILE__).dirname + "helper"
+require "lib/harbor/logging/appenders/email"
 require "ostruct"
 
-class EmailAppenderTestTest < Test::Unit::TestCase
+describe Harbor::LogAppenders::Email do
 
-  def setup
+  before do
     @container = Harbor::Container.new
 
     mail_server = Class.new(Harbor::MailServers::Abstract) do
@@ -26,57 +29,57 @@ class EmailAppenderTestTest < Test::Unit::TestCase
     @appender.level = 3 # :error
   end
 
-  def test_does_not_send_email_when_event_is_below_severity_threshold
+  it "does not send email when event is below severity threshold" do
     assert_email_is_not_sent(1)
     assert_email_is_not_sent(2)
   end
 
-  def test_sends_email_when_event_is_at_or_above_severity_threshold
+  it "sends email when event is at or above severity threshold" do
     assert_email_is_sent(3)
     assert_email_is_sent(4)
     assert_email_is_sent(5)
   end
 
-  def test_waits_for_threshold_before_sending_duplicate_email
+  it "waits for threshold before sending duplicate email" do
     event = Logging::LogEvent.new(nil, 4, "Some error\nSome Details", false)
 
     @appender.write(event)
-    assert(@mail_server.last_delivery)
+    @mail_server.last_delivery.wont_be_nil
     @mail_server.clear!
 
     @appender.write(event)
-    assert_equal(nil, @mail_server.last_delivery)
+    @mail_server.last_delivery.must_be_nil
 
     # One second before an email can be sent
     Time.warp(@appender.duplicate_subject_delivery_threshold - 1) do
       @appender.write(event)
-      assert_equal(nil, @mail_server.last_delivery)
+      @mail_server.last_delivery.must_be_nil
     end
 
     # Exactly when an email can be sent
     Time.warp(@appender.duplicate_subject_delivery_threshold) do
       @appender.write(event)
-      assert(@mail_server.last_delivery)
-      assert(@mail_server.last_delivery.text['Repeated 3 times since'])
+      @mail_server.last_delivery.wont_be_nil
+      @mail_server.last_delivery.text["Repeated 3 times since"].wont_be_nil
       @mail_server.clear!
     end
   end
 
-  def test_duplicate_emails_can_be_sent_after_threshold
+  it "will send duplicate emails after threshold" do
     event = Logging::LogEvent.new(nil, 4, "Some error\nSome Details", false)
 
     @appender.write(event)
-    assert(@mail_server.last_delivery)
+    @mail_server.last_delivery.wont_be_nil
     @mail_server.clear!
 
     Time.warp(@appender.duplicate_subject_delivery_threshold) do
       event = Logging::LogEvent.new(nil, 4, "Some OTHER error\nSome OTHER Details", false)
       @appender.write(event)
-      assert(@mail_server.last_delivery)
+      @mail_server.last_delivery.wont_be_nil
 
       @appender.write(event)
-      assert(@mail_server.last_delivery)
-      assert(!@mail_server.last_delivery.text['Repeated'])
+      @mail_server.last_delivery.wont_be_nil
+      @mail_server.last_delivery.text["Repeated"].must_be_nil
       @mail_server.clear!
     end
 

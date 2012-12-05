@@ -9,10 +9,9 @@ require "minitest/wscolor"
 require Pathname(__FILE__).dirname.parent + "lib/harbor"
 require "rack/test"
 require "harbor/logging"
+require "harbor/mailer"
 
 # require "harbor/xml_view"
-# require "harbor/mailer"
-# require "lib/harbor/logging/appenders/email"
 # require "harbor/test/test"
 
 module MiniTest

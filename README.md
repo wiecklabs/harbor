@@ -1,4 +1,4 @@
-== Welcome to Harbor!
+# Welcome to Harbor!
 
 For information on getting started, check out: http://wiecklabs.com/get-started
 

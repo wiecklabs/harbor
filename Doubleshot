@@ -12,11 +12,11 @@ Doubleshot.new do |config|
   # Doubleshot::Configuration::DEFAULT_WHITELIST.
   #   config.whitelist ".ext"
 
-  config.gem "builder", ">= 0"
-  config.gem "erubis", ">= 0"
-  config.gem "logging", ">= 0"
-  config.gem "mail_builder", ">= 0"
-  config.gem "rack", ">= 0"
+  config.gem "builder"
+  config.gem "erubis"
+  config.gem "logging"
+  config.gem "mail_builder19"
+  config.gem "rack"
   config.gem "i18n"
   config.gem "rake"
   config.gem "redis_directory", ">= 1.0.4"
