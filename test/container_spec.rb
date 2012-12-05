@@ -1,44 +1,48 @@
+#!/usr/bin/env jruby
+
 require "pathname"
 require Pathname(__FILE__).dirname + "helper"
 
-class ContainerTest < Test::Unit::TestCase
+describe Harbor::Container do
 
-  def test_registered_class_instantiation
+  it "must instantiate a registered class" do
     container = Harbor::Container.new
     service = Class.new
     container.register("service", service)
-    assert_kind_of(service, container.get("service"))
+    container.get("service").must_be_kind_of service
   end
-   
-  def test_registered_instance
+
+  it "must return registered instances" do
     container = Harbor::Container.new
     service = Class.new do
       attr_accessor :component
     end
     instance = service.new
     container.register("service", instance)
-    assert_equal(instance, container.get("service"))
+
+    container.get("service").must_be_same_as instance
   end
 
-  def test_registered_class_with_components
+  it "must instantiate a registered class with sub-components" do
     container = Harbor::Container.new
- 
+
     service = Class.new do
       attr_accessor :component
     end
     component = Class.new
- 
+
     container.register("service", service)
     container.register("component", component)
- 
+
     instance = container.get("service")
-    assert_kind_of(service, instance)
-    assert_kind_of(component, instance.component)
+
+    instance.must_be_kind_of service
+    instance.component.must_be_kind_of component
   end
 
-  def test_registered_class_with_optional_arguments
+  it "must instantiate registered services with get() components" do
     container = Harbor::Container.new
- 
+
     service = Class.new do
       attr_accessor :component
     end
@@ -46,14 +50,15 @@ class ContainerTest < Test::Unit::TestCase
 
     container.register("service", service)
     component_instance = component.new
-    
+
     instance = container.get("service", :component => component_instance)
-    assert_kind_of(service, instance)
-    assert_kind_of(component, instance.component)
-    assert_equal(component_instance, instance.component)
+
+    instance.must_be_kind_of service
+    instance.component.must_be_kind_of component
+    instance.component.must_be_same_as component_instance
   end
-  
-  def test_setup_block
+
+  it "must execute setup blocks" do
     container = Harbor::Container.new
 
     service = Class.new do
@@ -67,8 +72,8 @@ class ContainerTest < Test::Unit::TestCase
     end
 
     instance = container.get("service")
-    assert_kind_of(component, instance.component)
-    assert(instance.setup)
+    instance.component.must_be_kind_of component
+    instance.setup.must_equal true
   end
 
 end
