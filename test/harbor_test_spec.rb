@@ -1,84 +1,71 @@
-require "pathname"
-require Pathname(__FILE__).dirname + "helper"
-require "harbor/test/test"
+#!/usr/bin/env jruby
 
-class HarborTestTest < Test::Unit::TestCase
+require_relative "helper"
 
+describe Harbor::Test do
   include Harbor::Test
 
-  # ASSERTIONS
-  def test_assert_redirect_success
+  it "must assert redirect" do
     response = Harbor::Test::Response.new
     response.redirect "/"
 
-    assert_nothing_raised do
-      assert_redirect(response)
-    end
+    -> { assert_redirect(response) }.wont_raise
   end
 
-  def test_assert_redirect_failure
+  it "must assert redirect failure" do
     response = Harbor::Test::Response.new
 
-    assert_raises Test::Unit::AssertionFailedError do
-      assert_redirect(response)
-    end
+    -> { assert_redirect(response) }.must_raise MiniTest::Assertion
   end
 
-  def test_assert_success_success
+  it "must assert success" do
     response = Harbor::Test::Response.new
 
-    assert_nothing_raised do
-      assert_success(response)
-    end
+    -> { assert_success(response) }.wont_raise
   end
 
-  def test_assert_success_failure
+  it "must assert success failure" do
     response = Harbor::Test::Response.new
     response.redirect "/"
 
-    assert_raises Test::Unit::AssertionFailedError do
-      assert_success(response)
-    end
+    -> { assert_success(response) }.must_raise MiniTest::Assertion
   end
 
-  def test_assert_unauthorized_success
+  it "must assert unauthorized" do
     response = Harbor::Test::Response.new
     response.unauthorized
 
-    assert_nothing_raised do
-      assert_unauthorized(response)
-    end
+    -> { assert_unauthorized(response) }.wont_raise
   end
 
-  def test_assert_unauthorized_failure
+  it "must assert unauthorized failure" do
     response = Harbor::Test::Response.new
 
-    assert_raises Test::Unit::AssertionFailedError do
-      assert_unauthorized(response)
-    end
+    -> { assert_unauthorized(response) }.must_raise MiniTest::Assertion
   end
 
-  def test_request_env_is_not_nil
+  it "must not have a nil env" do
     container = Harbor::Container.new
     container.register(:request, Harbor::Test::Request)
 
     request = container.get(:request)
 
-    assert request.env
+    request.env.wont_be_nil
   end
 
-  def test_request_env_can_be_passed_to_container
+  it "must let env be overridden" do
     container = Harbor::Container.new
     container.register(:request, Harbor::Test::Request)
 
     request = container.get(:request, :env => { "REQUEST_METHOD" => "PUT" })
 
-    assert request.env
-    assert_equal "PUT", request.env["REQUEST_METHOD"]
-    assert_equal "PUT", request.request_method
+    request.env.wont_be_nil
+
+    request.env["REQUEST_METHOD"].must_equal "PUT"
+    request.request_method.must_equal "PUT"
   end
 
-  def test_response_context_can_be_accessed
+  it "must let response context be accessed" do
     Harbor::View::path.unshift Pathname(__FILE__).dirname + "views"
 
     container = Harbor::Container.new
@@ -87,10 +74,11 @@ class HarborTestTest < Test::Unit::TestCase
     response = container.get(:response)
     
     response.render "index", :var => "test"
-    assert_equal response.render_context[:var], "test"
+
+    response.render_context[:var].must_equal "test"
   end
 
-  def test_response_context_can_be_accessed_with_multiple_renders
+  it "must let response context be accessed with multiple render calls" do
     Harbor::View::path.unshift Pathname(__FILE__).dirname + "views"
 
     container = Harbor::Container.new
@@ -100,26 +88,26 @@ class HarborTestTest < Test::Unit::TestCase
     
     response.render "index", :var => "test1"
     response.render "index", :var => "test2"
-    
-    assert_equal response.render_context[:var], "test1"
-    assert_equal response.render_context(0)[:var], "test1"
-    assert_equal response.render_context(1)[:var], "test2"
+
+    response.render_context[:var].must_equal "test1"
+    response.render_context(0)[:var].must_equal "test1"
+    response.render_context(1)[:var].must_equal "test2"
   end
 
   # SESSION
-  def test_session
+  it "must provide a session" do
     container = Harbor::Container.new
     container.register(:request, Harbor::Test::Request)
 
     request = container.get(:request)
-    assert_equal Hash.new, request.session.data
+    request.session.data.must_equal Hash.new
 
     request = container.get(:request, :session => { :user => 1 })
-    assert_equal 1, request.session[:user]
+    request.session[:user].must_equal 1
   end
 
   # TEST CONTROLLER
-  def test_sample_controller
+  it "must test a controller" do
     controller = Class.new do
       attr_accessor :request, :response
 
@@ -136,10 +124,10 @@ class HarborTestTest < Test::Unit::TestCase
     hello = container.get(:hello_controller)
     hello.hello_world("Bob")
 
-    assert_equal "Hello World. My Name is Bob.\n", hello.response.buffer
+    hello.response.buffer.must_equal "Hello World. My Name is Bob.\n"
   end
 
-  def test_controller_with_throw_abort_request
+  it "must throw an abort_request in the controller" do
     controller = Class.new do
       attr_accessor :request, :response
 
@@ -156,12 +144,10 @@ class HarborTestTest < Test::Unit::TestCase
 
     hello = container.get(:hello_controller)
 
-    assert_throws :abort_request do
-      hello.hello_world("Bob")
-    end
+    -> { hello.hello_world("Bob") }.must_throw :abort_request
 
     assert_unauthorized hello.response
-    assert_equal "Unauthorized.\n", hello.response.buffer
+    hello.response.buffer.must_equal "Unauthorized.\n"
   end
 
 end

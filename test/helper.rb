@@ -10,12 +10,19 @@ require Pathname(__FILE__).dirname.parent + "lib/harbor"
 require "rack/test"
 require "harbor/logging"
 require "harbor/mailer"
-
-# require "harbor/xml_view"
-# require "harbor/test/test"
+require "harbor/test/test"
+require "harbor/xml_view"
 
 module MiniTest
   module Assertions
+
+    def assert_nothing_raised *args
+      yield
+      assert true, "Nothing raised"
+    rescue Exception => e
+      fail "Expected nothing raised, but got #{e.class}: #{e.message}"
+    end
+
     def assert_predicate o1, op, msg = nil
       msg = message(msg) { "Expected #{mu_pp(o1)} to be #{op}" }
       if !o1.respond_to?(op) && o1.respond_to?("#{op}?")
@@ -44,6 +51,8 @@ module MiniTest
     #   something.must :validate
     infect_an_assertion :assert_operator, :must, :reverse
     infect_an_assertion :refute_operator, :wont, :reverse
+
+    infect_an_assertion :assert_nothing_raised, :wont_raise
   end
 end
 

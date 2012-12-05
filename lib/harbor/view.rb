@@ -94,7 +94,7 @@ module Harbor
       if self.class.cache_templates?
         (self.class.__templates[full_path] ||= Erubis::FastEruby.new(::File.read(full_path), :filename => full_path)).evaluate(context)
       else
-        Erubis::FastEruby.new(::File.read(full_path), :filename => full_path).evaluate(context)
+        Erubis::FastEruby.new(::File.read(full_path.to_s), :filename => full_path.to_s).evaluate(context)
       end
     end
 
