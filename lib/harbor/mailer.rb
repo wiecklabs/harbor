@@ -4,6 +4,7 @@ gem "mail_builder"
 require "mail_builder"
 
 require Pathname(__FILE__).dirname + "mail_servers/abstract"
+require Pathname(__FILE__).dirname + "mail_servers/sendgrid"
 require Pathname(__FILE__).dirname + "mail_servers/sendmail"
 require Pathname(__FILE__).dirname + "mail_servers/smtp"
 require Pathname(__FILE__).dirname + "mail_servers/test"
