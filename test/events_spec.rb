@@ -1,7 +1,8 @@
-require "pathname"
-require Pathname(__FILE__).dirname + "helper"
+#!/usr/bin/env jruby
 
-class EventsTest < Test::Unit::TestCase
+require_relative "helper"
+
+describe Harbor::Events do
 
   class Application
     include Harbor::Events
@@ -100,68 +101,64 @@ class EventsTest < Test::Unit::TestCase
 
   end
 
-  def teardown
+  after do
     Application.clear_event_handlers!
     Controller.clear_event_handlers!
   end
 
-  def test_classy_event_handlers_with_zero_arguments
+  it "must call handlers" do
     Application.register_event_handler(:foo, Handler)
-
     Application.new.raise_event2(:foo, nil)
 
-    assert_equal true, Handler.called?
+    Handler.must_be :called
   end
 
-  def test_classy_event_handlers_with_one_argument
+  it "must call handlers with arguments" do
     Application.register_event_handler(:foo, HandlerOne)
-
     Application.new.raise_event2(:foo, nil)
 
-    assert_equal true, HandlerOne.called?
+    HandlerOne.must_be :called
   end
 
-  def test_event_named_by_string_can_be_handled_by_symbol
+  it "must normalize strings" do
     raised = false
     Application.register_event_handler('foo') { raised = true }
-
     Application.new.raise_event2(:foo, nil)
 
-    assert_equal true, raised
+    raised.must_equal true
   end
 
-  def test_event_named_by_symbol_can_be_handled_by_string
+  it "must normalize symbols" do
     raised = false
     Application.register_event_handler(:foo) { raised = true }
-
     Application.new.raise_event2('foo', nil)
 
-    assert_equal true, raised
+    raised.must_equal true
   end
 
-  def test_events_can_be_cleared
-    assert_nil Application.events['foo']
+  it "must clear events" do
+    Application.events['foo'].must_be_nil
 
     Application.register_event_handler('foo') { 1 + 1 }
 
-    assert_equal 1, Application.events['foo'].size
+    Application.events["foo"].size.must_equal 1
 
     Application.clear_event_handlers!
 
-    assert_nil Application.events['foo']
+    Application.events["foo"].must_be_nil
   end
 
-  def test_events_are_inherited
+  it "must inherit events" do
     not_found = false
     Application.register_event_handler(:not_found) { |event| not_found = true }
 
     my_application = Class.new(Application).new
     my_application.raise_event2(:not_found, nil)
 
-    assert_equal true, not_found
+    not_found.must_equal true
   end
 
-  def test_named_events_are_not_shared_across_classes
+  it "must not share named events among classes not in the same type-hierarchy" do
     raised_in_application = raised_in_controller = false
     Application.register_event_handler(:event_one) { raised_in_application = true }
     Controller.register_event_handler(:event_one) { raised_in_controller = true }
@@ -169,26 +166,26 @@ class EventsTest < Test::Unit::TestCase
     application = Application.new
     application.raise_event2(:event_one, nil)
 
-    assert_equal true, raised_in_application
-    assert_equal false, raised_in_controller
+    raised_in_application.must_equal true
+    raised_in_controller.must_equal false
   end
 
-  def test_registering_a_class_and_a_block_fails
-    assert_raises RuntimeError do
+  it "must fail if a block is passed" do
+    -> do
       Application.register_event_handler(:foo, Handler) { 1 + 1 }
-    end
+    end.must_raise RuntimeError
   end
 
-  def test_registering_something_other_than_a_class_or_block_fails
-    assert_raises RuntimeError do
+  it "requires a class be registered" do
+    -> do
       Application.register_event_handler(:foo, 321)
-    end
+    end.must_raise RuntimeError
   end
 
-  def test_registering_without_a_class_or_a_block_fails
-    assert_raises RuntimeError do
+  it "requires a Handler" do
+    -> do
       Application.register_event_handler(:foo)
-    end
+    end.must_raise RuntimeError
   end
 
 end

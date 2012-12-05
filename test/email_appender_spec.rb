@@ -1,8 +1,7 @@
 #!/usr/bin/env jruby
 
-require "pathname"
-require Pathname(__FILE__).dirname + "helper"
-require "lib/harbor/logging/appenders/email"
+require_relative "helper"
+require "harbor/logging/appenders/email"
 require "ostruct"
 
 describe Harbor::LogAppenders::Email do
