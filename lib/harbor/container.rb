@@ -5,22 +5,22 @@ module Harbor
   # Harbor::Container is an inversion of control container for simple
   # dependency injection. For more information on dependency injection, see
   # http://martinfowler.com/articles/injection.html.
-  # 
+  #
   # Simple Example:
-  # 
+  #
   #   services = Harbor::Container.new
   #   services.register("mailer", Harbor::Mailer)
-  # 
+  #
   #   class Controller
   #     attr_accessor :mailer
   #   end
-  # 
+  #
   #   services.register("Controller", Controller)
-  # 
+  #
   #   services.get("Controller") # => #<Controller: @mailer=#<Mailer>>
   ##
   class Container
-    
+
     class ServiceRegistration
 
       attr_reader :name, :service, :initializers
@@ -41,11 +41,11 @@ module Harbor
     # Retrieve a service by name from the set of registered services, initializing
     # any dependencies from the container, and optionally setting any additional
     # properties on the service.
-    # 
+    #
     #   class Controller
     #     attr_accessor :request, :response, :mailer
     #   end
-    # 
+    #
     #   services.get("Controller", :request => Request.new(env), :response => Response.new(request))
     ##
     def get(name, optional_properties = {})
@@ -93,11 +93,11 @@ module Harbor
 
     ##
     # Register a service by name, with an optional initializer block.
-    # 
+    #
     #   services.register("mail_server", Harbor::SendmailServer.new(:sendmail => "/sbin/sendmail"))
     #   services.register("mailer", Harbor::Mailer)
     #   services.get("mailer") # => #<Harbor::Mailer @from=nil @mail_server=#<SendmailServer...>>
-    # 
+    #
     #   services.register("mailer", Harbor::Mailer) { |mailer| mailer.from = "admin@example.com" }
     #   services.get("mailer") # => #<Harbor::Mailer @from="admin@example.com" @mail_server=#<SendmailServer...>>
     ##
@@ -107,11 +107,11 @@ module Harbor
       type_methods = service.is_a?(Class) ? service.instance_methods.grep(/\=$/) : []
 
       @services.values.each do |service_registration|
-        if service_registration.service.is_a?(Class) && service_registration.service.instance_methods.include?("#{name}=")
+        if service_registration.service.is_a?(Class) && service_registration.service.instance_methods.include?(:"#{name}=")
           dependencies(service_registration.name) << name
         end
 
-        if type_methods.include?("#{service_registration.name}=")
+        if type_methods.include?(:"#{service_registration.name}=")
           type_dependencies << service_registration.name
         end
       end
