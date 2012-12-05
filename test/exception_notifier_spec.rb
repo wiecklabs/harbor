@@ -1,8 +1,9 @@
-require "pathname"
-require Pathname(__FILE__).dirname + "helper"
+#!/usr/bin/env jruby
+
+require_relative "helper"
 require "harbor/exception_notifier"
 
-class ExceptionNotifierTest < Test::Unit::TestCase
+describe Harbor::ExceptionNotifier do
 
   class MockMailServer < Harbor::MailServers::Abstract
 
@@ -15,7 +16,7 @@ class ExceptionNotifierTest < Test::Unit::TestCase
     end
   end
 
-  def setup
+  before do
     @services = Harbor::Container.new
     @services.register("mail_server", MockMailServer.new)
     @services.register("mailer", Harbor::Mailer)
@@ -42,11 +43,11 @@ class ExceptionNotifierTest < Test::Unit::TestCase
     end
   end
 
-  def teardown
+  after do
     Harbor::Application.events.clear
   end
 
-  def test_uses_default_behavior_in_development
+  it "must suppress emails in development" do
     app = @application.new(@services, "development")
     rack_errors = StringIO.new
     app.call({
@@ -58,10 +59,10 @@ class ExceptionNotifierTest < Test::Unit::TestCase
       "rack.input" => ""
     })
 
-    assert_equal(0, @services.get("mail_server").mailings.size)
+    @services.get("mail_server").mailings.size.must_equal 0
   end
 
-  def test_sends_email_in_non_development_mode
+  it "must send email in production" do
     app = @application.new(@services, "production")
     rack_errors = StringIO.new
     app.call({
@@ -72,7 +73,6 @@ class ExceptionNotifierTest < Test::Unit::TestCase
       "rack.request.form_hash" => {}
     })
 
-    mailings = @services.get("mail_server").mailings
-    assert_equal(1, mailings.size)
+    @services.get("mail_server").mailings.size.must_equal 1
   end
 end
