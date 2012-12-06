@@ -6,7 +6,7 @@ module Harbor
       def initialize(config = {})
         required_keys = [:user_name, :password, :domain]
         missing_keys = config.keys - required_keys
-        raise ArgumentError("You must provide :#{missing_keys.join(",:")} in the Sendgrid config.") if missing_keys.any?
+        raise "ArgumentError: You must provide :#{missing_keys.join(",:")} in the Sendgrid config." if missing_keys.any?
 
         config[:delivery_method] ||= :smtp
         config[:address] ||= 'smtp.sendgrid.net'
@@ -26,7 +26,7 @@ module Harbor
       end
 
       def deliver(mailer)
-        raise ArgumentError("#{mailer.class} must be of type Harbor::Mailer") unless mailer.is_a? Harbor::Mailer
+        raise "ArgumentError: #{mailer.class} must be of type Harbor::Mailer" unless mailer.is_a? Harbor::Mailer
 
         Mail.deliver do
           to message.to
