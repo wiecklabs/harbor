@@ -1,40 +1,48 @@
-require "pathname"
-require Pathname(__FILE__).dirname + "helper"
-require "harbor/mailer"
+#!/usr/bin/env jruby
 
-class MailerTest < Test::Unit::TestCase
+require_relative "helper"
 
-  def test_tokenize_urls_with_plain_text
+# require "harbor/mailer"
+
+describe Harbor::Mailer do
+
+  it "must tokenize urls inside plain text portion of mailer" do
     mailer = Harbor::Mailer.new
     url = "http://test.com"
     mailer.text = url
     mailer.tokenize_urls!("http://m.wieck.com/m/%s?r=%s")
 
-    assert_equal("http://m.wieck.com/m/#{CGI.escape(mailer.envelope_id)}?r=#{CGI.escape([url].pack("m"))}", mailer.text)
+    mailer.text.must_equal(
+      "http://m.wieck.com/m/#{CGI.escape(mailer.envelope_id)}?r=#{CGI.escape([url].pack("m"))}"
+    )
   end
 
-  def test_tokenize_urls_with_html
+  it "must tokenize urls inside HTML portion of mailer" do
     mailer = Harbor::Mailer.new
     url = "http://test.com"
     mailer.html = "<a href=\"#{url}\">Link</a>"
     mailer.tokenize_urls!("http://m.wieck.com/m/%s?r=%s")
 
-    assert_equal("<a href=\"http://m.wieck.com/m/#{CGI.escape(mailer.envelope_id)}?r=#{CGI.escape([url].pack("m"))}\">Link</a>", mailer.html)
+    mailer.html.must_equal(
+      "<a href=\"http://m.wieck.com/m/#{CGI.escape(mailer.envelope_id)}?r=#{CGI.escape([url].pack("m"))}\">Link</a>"
+    )
   end
 
-  def test_tokenize_urls_with_https
+  it "must tokenize HTTPS urls" do
     mailer = Harbor::Mailer.new
     url = "https://test.com"
     mailer.text = url
     mailer.tokenize_urls!("http://m.wieck.com/m/%s?r=%s")
 
-    assert_equal("http://m.wieck.com/m/#{CGI.escape(mailer.envelope_id)}?r=#{CGI.escape([url].pack("m"))}", mailer.text)
+    mailer.text.must_equal(
+      "http://m.wieck.com/m/#{CGI.escape(mailer.envelope_id)}?r=#{CGI.escape([url].pack("m"))}"
+    )
   end
 
   ##
   # Fixing an issue reported by Drew where links would be blown away.
   # 
-  def test_tokenize_urls_with_link_as_name
+  it "must not munge URLs used as anchor tag inner-text" do
     mailer = Harbor::Mailer.new
     destination_url = "http://test.com"
 
@@ -42,43 +50,45 @@ class MailerTest < Test::Unit::TestCase
     mailer.tokenize_urls!("http://m.wieck.com/m/%s?r=%s")
 
     url = "http://m.wieck.com/m/#{CGI.escape(mailer.envelope_id)}?r=#{CGI.escape([destination_url].pack("m"))}"
-    assert_equal("<a href=\"#{url}\">#{destination_url}</a>", mailer.html)
+    mailer.html.must_equal "<a href=\"#{url}\">#{destination_url}</a>"
   end
 
   ##
   # Fixing an issue where the regex wasn't robust enough to handle tags after the link tag
   # 
-  def test_tokenize_urls_with_tags_after_anchor_tag
+  it "must tokenize urls with other elements after the anchor on the same line" do
     mailer = Harbor::Mailer.new
     url = "http://test.com"
     mailer.html = "<p><a href=\"#{url}\">Link</a></p>"
     mailer.tokenize_urls!("http://m.wieck.com/m/%s?r=%s")
 
-    assert_equal("<p><a href=\"http://m.wieck.com/m/#{CGI.escape(mailer.envelope_id)}?r=#{CGI.escape([url].pack("m"))}\">Link</a></p>", mailer.html)
+    mailer.html.must_equal(
+      "<p><a href=\"http://m.wieck.com/m/#{CGI.escape(mailer.envelope_id)}?r=#{CGI.escape([url].pack("m"))}\">Link</a></p>"
+    )
   end
 
-  def test_mail_filter_overrides_recipient_address_and_sets_overridden_header
+  it "must use mail-filters to set overridden recipient address" do
     filter = Harbor::MailFilters::DeliveryAddressFilter.new("dev@example.com", /@example.com/)
     mailer = Harbor::Mailer.new
     
     mailer.text = "asdf"
     mailer.to = "test@notexample.com"
     mailer = filter.apply(mailer)
-    
-    assert_not_equal('test@notexample.com', mailer.to)
-    assert_equal('test@notexample.com', mailer.get_header('X-Overridden-To'))
-    assert_equal('dev@example.com', mailer.to)
-    assert_not_equal('dev@example.com', mailer.get_header('X-Overridden-To'))
+
+    mailer.to.wont_equal "test@notexample.com"
+    mailer.get_header('X-Overridden-To').must_equal 'test@notexample.com'
+    mailer.to.must_equal "dev@example.com"
+    mailer.get_header('X-Overridden-To').wont_equal 'dev@example.com'
   end
 
-  def test_mail_filter_does_not_override_whitelisted_address
+  it "must not override whitelisted addresses when using mail-filters" do
     filter = Harbor::MailFilters::DeliveryAddressFilter.new("test@example.com", /@example.com/)
     mailer = Harbor::Mailer.new
     
     mailer.to = "dev@example.com"
     mailer = filter.apply(mailer)
-    
-    assert_not_equal('test@example.com', mailer.to)
-    assert_equal('dev@example.com', mailer.to)
+
+    mailer.to.wont_equal "test@example.com"
+    mailer.to.must_equal "dev@example.com"
   end
 end
