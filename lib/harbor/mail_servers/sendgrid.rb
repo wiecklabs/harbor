@@ -33,21 +33,21 @@ module Harbor
         raise "ArgumentError: #{mailer.class} must be of type Harbor::Mailer" unless mailer.is_a? Harbor::Mailer
 
         Mail.deliver do
-          to message.to
+          to mailer.to
 
-          from message.from
+          from mailer.from
 
-          subject message.subject
+          subject mailer.subject
 
           text_part do
-            body message.text
+            body mailer.text
           end
 
           html_part do
-            body message.html
+            body mailer.html
           end
 
-          message.attachments.each do |attachment|
+          mailer.attachments.each do |attachment|
             add_file( :filename => attachment.name, :content => File.read( attachment.file ), :type => attachment.type )
           end
         end
