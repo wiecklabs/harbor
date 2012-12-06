@@ -4,8 +4,12 @@ module Harbor
   module MailServers
     class Sendgrid < Abstract
       def initialize(config = {})
-        required_keys = [:user_name, :password, :domain]
-        missing_keys = config.keys - required_keys
+        missing_keys = []
+        [:user_name, :password, :domain].each do |required_key|
+          missing_keys << required_key unless config.keys.include? required_key
+        end
+
+        # TODO: Add ArgumentError class.
         raise "ArgumentError: You must provide :#{missing_keys.join(",:")} in the Sendgrid config." if missing_keys.any?
 
         config[:delivery_method] ||= :smtp
