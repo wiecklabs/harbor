@@ -1,7 +1,8 @@
-require "pathname"
-require Pathname(__FILE__).dirname + "helper"
+#!/usr/bin/env jruby
 
-class PluginListTest < Test::Unit::TestCase
+require_relative "helper"
+
+describe Harbor::PluginList do
   
   class TestPlugin < Harbor::Plugin
     attr_accessor :plugin_type
@@ -11,23 +12,23 @@ class PluginListTest < Test::Unit::TestCase
     end
   end
   
-  def setup
+  before do
     @map = Harbor::PluginList.new
   end
 
-  def test_appending_a_plugin
+  it "must append" do
     @map << TestPlugin
     @map << "Sample String Plugin"
-    
-    assert_equal(2, @map.size)
+
+    @map.size.must_equal 2
   end
 
-  def test_clearing_plugins
+  it "must clear" do
     @map << TestPlugin
     @map << "Sample String Plugin"
     @map.clear
 
-    assert_equal(0, @map.size)
+    @map.must_be_empty
   end
   
 end

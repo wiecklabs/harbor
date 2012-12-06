@@ -16,6 +16,10 @@ module Harbor
     def size
       @plugins.size
     end
+
+    def empty?
+      @plugins.empty?
+    end
     
     def clear
       @plugins.clear
