@@ -46,6 +46,10 @@ module Harbor
           html_part do
             body message.html
           end
+
+          message.attachments.each do |attachment|
+            add_file( :filename => attachment.name, :content => File.read( attachment.file ), :type => attachment.type )
+          end
         end
       end
     end
