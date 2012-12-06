@@ -97,7 +97,7 @@ on\r
 EOF
     Rack::Request.new Rack::MockRequest.env_for("/",
                       "CONTENT_TYPE" => "multipart/form-data, boundary=AaB03x",
-                      "CONTENT_LENGTH" => input.size,
+                      "CONTENT_LENGTH" => input.bytesize,
                       :input => input)
   end
 
