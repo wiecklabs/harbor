@@ -2,8 +2,6 @@
 
 require_relative "helper"
 
-# require "harbor/mailer"
-
 describe Harbor::Mailer do
 
   it "must tokenize urls inside plain text portion of mailer" do
