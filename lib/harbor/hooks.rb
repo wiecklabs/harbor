@@ -45,7 +45,7 @@ module Harbor
           @after = superclass.hooks[method_name].after_hooks.dup
         end
 
-        bind! if target.instance_methods(false).include?(method_name.to_s)
+        bind! if target.instance_methods(false).include?(method_name)
       end
 
       def before_hooks
