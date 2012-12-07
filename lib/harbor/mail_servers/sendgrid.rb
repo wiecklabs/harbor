@@ -46,9 +46,10 @@ module Harbor
           html_part do
             body mailer.html
           end
+          html_part.content_type = "text/html; charset=UTF-8"
 
           mailer.attachments.each do |attachment|
-            add_file( :filename => attachment.name, :content => File.read( attachment.file ), :type => attachment.type )
+            add_file( :filename => attachment.name.to_s, :content => ::File.read( attachment.file.to_s ), :type => attachment.type.to_s )
           end
         end
       end
