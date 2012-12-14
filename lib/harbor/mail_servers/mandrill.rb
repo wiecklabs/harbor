@@ -2,7 +2,7 @@ require 'mail'
 
 module Harbor
   module MailServers
-    class Sendgrid < Abstract
+    class Mandrill < Abstract
       def initialize(config = {})
         missing_keys = []
         [:user_name, :password, :domain].each do |required_key|
@@ -10,10 +10,10 @@ module Harbor
         end
 
         # TODO: Add ArgumentError class.
-        raise "ArgumentError: You must provide :#{missing_keys.join(",:")} in the Sendgrid config." if missing_keys.any?
+        raise "ArgumentError: You must provide :#{missing_keys.join(",:")} in the Mandrill config." if missing_keys.any?
 
         config[:delivery_method] ||= :smtp
-        config[:address] ||= 'smtp.sendgrid.net'
+        config[:address] ||= 'smtp.mandrillapp.com'
         config[:port] ||= 587
         config[:authentication] ||= 'plain'
         config[:enable_starttls_auto] ||= true
