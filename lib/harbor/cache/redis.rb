@@ -57,7 +57,6 @@ class Harbor::Cache::Redis
       matches.each do |match|
         @redis.srem(TRACKER_KEY_NAME, match)
       end
-      @redis.srem(TRACKER_KEY_NAME, *matches)
       @redis.del(*matches)
     end
   end
