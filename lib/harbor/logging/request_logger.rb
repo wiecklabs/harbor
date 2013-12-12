@@ -2,9 +2,9 @@ module Harbor
   class RequestLogger
     ##
     # Logs requests and their params the configured request logger.
-    # 
+    #
     # Format:
-    # 
+    #
     #   #application      #time                   #duration   #ip              #method #uri      #status   #params
     #   [PhotoManagement] [04-02-2009 @ 14:22:40] [0.12s]     [64.134.226.23] [GET]    /products (200)     {"order" => "desc"}
     ##
@@ -33,3 +33,4 @@ end
 
 Harbor::Application.register_event_handler(:request_complete) { |event| Harbor::RequestLogger.info(event) }
 Harbor::Application.register_event_handler(:exception) { |event| Harbor::RequestLogger.error(event) }
+Harbor::Application.register_event_handler(:bad_request) { |event| Harbor::RequestLogger.error(event) }

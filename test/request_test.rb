@@ -26,6 +26,16 @@ class RequestTest < Test::Unit::TestCase
     assert_equal(4, request.fetch('servings', 4))
   end
 
+  def test_get_params_raises_on_bad_input
+    request = get("/", { 'QUERY_STRING' => 'somekey=%%' })
+    assert_raise(Harbor::BadRequestParametersError) { request.params }
+  end
+
+  def test_post_params_raises_on_bad_input
+    request = post("/", { :input => 'somekey=%a' })
+    assert_raise(Harbor::BadRequestParametersError) { request.params }
+  end
+
   def get(path, options = {})
     request(path, "GET", options)
   end

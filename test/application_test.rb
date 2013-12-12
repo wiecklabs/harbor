@@ -67,4 +67,24 @@ class ApplicationTest < Test::Unit::TestCase
     assert_match(/From public/, body.to_s)
   end
 
+  def test_bad_request_rendered_for_invalid_querytring_input
+    result = @application.call({
+      "PATH_INFO" => "/",
+      "REQUEST_METHOD" => "GET",
+      "QUERY_STRING" => "somekey=%%"
+    })
+
+    assert_match(/occurred that prevented the request from being processed/, @error_log.string)
+  end
+
+  def test_bad_request_rendered_for_invalid_post_body
+    result = @application.call({
+      "PATH_INFO" => "/",
+      "REQUEST_METHOD" => "POST",
+      "rack.input" => StringIO.new("somekey=%%")
+    })
+
+    assert_match(/occurred that prevented the request from being processed/, @error_log.string)
+  end
+
 end

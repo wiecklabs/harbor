@@ -26,6 +26,22 @@ module Harbor
   def self.env_path
     @env_path ||= Pathname(__FILE__).dirname.parent + "env"
   end
+
+  class BadRequestParametersError < StandardError
+    def initialize(error)
+      super(<<-MSG.gsub(/^\s+/x, ''))
+        Non-fatal exception #{error.class} occurred that prevented the request from being processed.
+
+        Message:
+        #{error.message}
+
+        Backtrace:
+        -------------------------------------------------
+        #{error.backtrace.join("\n\t")}
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      MSG
+    end
+  end
 end
 
 require "harbor/configuration"

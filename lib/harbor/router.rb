@@ -94,6 +94,8 @@ module Harbor
 
       # No routes matched, so return false
       false
+    rescue ArgumentError => e
+      raise BadRequestParametersError.new(e)
     end
 
     private
