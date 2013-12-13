@@ -27,19 +27,18 @@ module Harbor
     @env_path ||= Pathname(__FILE__).dirname.parent + "env"
   end
 
-  class BadRequestParametersError < StandardError
-    def initialize(error)
-      super(<<-MSG.gsub(/^\s+/x, ''))
-        Non-fatal exception #{error.class} occurred that prevented the request from being processed.
+  class BadRequestError < StandardError
+    attr_reader :request, :inner_exception
+    def initialize(reason, request, exception = nil)
+      @request = request
+      @inner_exception = exception
+      super(reason)
+    end
+  end
 
-        Message:
-        #{error.message}
-
-        Backtrace:
-        -------------------------------------------------
-        #{error.backtrace.join("\n\t")}
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-      MSG
+  class BadRequestParametersError < BadRequestError
+    def initialize(request, error)
+      super("Couldn't parse request parameters.", request, error)
     end
   end
 end

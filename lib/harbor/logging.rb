@@ -21,6 +21,12 @@ Logging.configure do
     appenders 'error'
   end
 
+  logger 'bad-request' do
+    additive false
+    level :error
+    appenders 'error'
+  end
+
   appender 'app' do
     type 'File'
     filename 'log/app.log'
@@ -33,6 +39,7 @@ Logging.configure do
 
   appender 'error' do
     type 'File'
+    layout :type => 'Pattern', :pattern => '[%d] %-5l %c: %m\n', :date_pattern => "%Y-%m-%d %H:%M:%S %z"
     filename 'log/error.log'
   end
 

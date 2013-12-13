@@ -1,5 +1,5 @@
 module Harbor
-  class Cascade
+  class Cascade < Application
 
     def initialize(environment, services, application, *ports)
       unless services.is_a?(Harbor::Container)
@@ -55,6 +55,9 @@ module Harbor
         application.dispatch_request(handler, request, response)
       end
 
+      response.to_a
+    rescue BadRequestError => e
+      handle_bad_request(e, request, response)
       response.to_a
     end
 

@@ -28,9 +28,14 @@ module Harbor
     def self.error(event)
       Logging::Logger['error'].error { event.trace }
     end
+
+    def self.bad_request(event)
+      Logging::Logger['bad-request'].error { event.trace }
+    end
+
   end
 end
 
 Harbor::Application.register_event_handler(:request_complete) { |event| Harbor::RequestLogger.info(event) }
 Harbor::Application.register_event_handler(:exception) { |event| Harbor::RequestLogger.error(event) }
-Harbor::Application.register_event_handler(:bad_request) { |event| Harbor::RequestLogger.error(event) }
+Harbor::Application.register_event_handler(:bad_request) { |event| Harbor::RequestLogger.bad_request(event) }

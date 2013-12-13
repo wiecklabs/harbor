@@ -102,7 +102,7 @@ module Harbor
       rescue EOFError => e
         self.GET
       rescue ArgumentError => e
-        raise BadRequestParametersError.new(e)
+        raise BadRequestParametersError.new(self, e)
       end
 
       params || {}

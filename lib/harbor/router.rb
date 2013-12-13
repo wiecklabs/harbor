@@ -95,7 +95,9 @@ module Harbor
       # No routes matched, so return false
       false
     rescue ArgumentError => e
-      raise BadRequestParametersError.new(e)
+      # Capture ArgumentError, likely raised by URI while decoding form
+      # or querystring input
+      raise BadRequestParametersError.new(request, e)
     end
 
     private

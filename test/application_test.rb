@@ -20,7 +20,12 @@ class ApplicationTest < Test::Unit::TestCase
 
     logger = Logging::Logger['error']
     logger.clear_appenders
-    logger.add_appenders Logging::Appenders::IO.new('error', @error_log)
+    error_appender = Logging::Appenders::IO.new('error', @error_log)
+    logger.add_appenders error_appender
+
+    logger = Logging::Logger['bad-request']
+    logger.clear_appenders
+    logger.add_appenders error_appender
 
     @application = MyApplication.new(Harbor::Container.new, @router)
   end
@@ -74,7 +79,7 @@ class ApplicationTest < Test::Unit::TestCase
       "QUERY_STRING" => "somekey=%%"
     })
 
-    assert_match(/occurred that prevented the request from being processed/, @error_log.string)
+    assert_match(/bad-request/, @error_log.string)
   end
 
   def test_bad_request_rendered_for_invalid_post_body
@@ -84,7 +89,7 @@ class ApplicationTest < Test::Unit::TestCase
       "rack.input" => StringIO.new("somekey=%%")
     })
 
-    assert_match(/occurred that prevented the request from being processed/, @error_log.string)
+    assert_match(/bad-request/, @error_log.string)
   end
 
 end

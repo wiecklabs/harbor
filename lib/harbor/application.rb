@@ -10,6 +10,7 @@ require Pathname(__FILE__).dirname + "zipped_io"
 require Pathname(__FILE__).dirname + "events" + "dispatch_request_event"
 require Pathname(__FILE__).dirname + "events" + "not_found_event"
 require Pathname(__FILE__).dirname + "events" + "application_exception_event"
+require Pathname(__FILE__).dirname + "events" + "bad_request_event"
 require Pathname(__FILE__).dirname + "events" + "session_created_event_context"
 require Pathname(__FILE__).dirname + "event_context"
 require Pathname(__FILE__).dirname + "messages"
@@ -61,18 +62,13 @@ module Harbor
           return response.to_a
         end
 
-        begin
-          handler = @router.match(request)
-          dispatch_request(handler, request, response)
-        rescue BadRequestParametersError => e
-          # We need to capture BadRequestParametersError here because it could
-          # be raised during the route-matching process, outside of the
-          # dispatch_request cycle.
-          handle_bad_request(e, request, response)
-        end
-
+        handler = @router.match(request)
+        dispatch_request(handler, request, response)
       end
 
+      response.to_a
+    rescue BadRequestError => e
+      handle_bad_request(e, request, response)
       response.to_a
     end
 
@@ -84,10 +80,12 @@ module Harbor
       dispatch_request_event = Events::DispatchRequestEvent.new(request, response)
       raise_event2(:request_dispatch, dispatch_request_event)
 
-      return handle_not_found(request, response) unless handler
-
-      handler.call(request, response)
-    rescue BadRequestParametersError => e
+      if handler
+        handler.call(request, response)
+      else
+        handle_not_found(request, response)
+      end
+    rescue BadRequestError => e
       handle_bad_request(e, request, response)
     rescue StandardError, LoadError, SyntaxError => e
       handle_exception(e, request, response)
@@ -151,24 +149,24 @@ module Harbor
       nil
     end
 
-    def handle_bad_request(exception, request, response)
+    def handle_bad_request(bad_request_exception, request, response)
       response.flush
       response.status = 400
 
       if environment == "development"
         response.content_type = "text/plain"
-        response.puts "Bad Request\n\n#{exception.message}"
+        response.puts "Bad Request\n\n#{bad_request_exception}"
       else
         response.layout = "layouts/exception" if Harbor::View.exists?("layouts/exception")
 
         if Harbor::View.exists?("exceptions/400.html.erb")
-          response.render "exceptions/400.html.erb", :exception => exception
+          response.render "exceptions/400.html.erb"
         else
           response.puts "We're sorry, but something went wrong."
         end
       end
 
-      raise_event2(:bad_request, ApplicationExceptionEvent.new(request, response, exception))
+      raise_event2(:bad_request, BadRequestEvent.new(request, response, bad_request_exception))
 
       nil
     end
