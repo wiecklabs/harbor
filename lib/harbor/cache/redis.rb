@@ -51,14 +51,9 @@ class Harbor::Cache::Redis
   end
 
   def delete_matching(key_regex)
-    if (matches = keys_matching(key_regex)).empty?
-      nil
-    else
-      matches.each do |match|
-        @redis.srem(TRACKER_KEY_NAME, match)
-      end
-      @redis.srem(TRACKER_KEY_NAME, *matches)
-      @redis.del(*matches)
+    if (matches = keys_matching(key_regex)).any?
+      @redis.del(matches)
+      @redis.srem(TRACKER_KEY_NAME, matches)
     end
   end
 
