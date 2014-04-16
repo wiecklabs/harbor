@@ -1,105 +1,68 @@
 require "thread"
+require Pathname(__FILE__).dirname + "logging"
 require Pathname(__FILE__).dirname + "cache/item"
 
 module Harbor
 
   class Cache
 
-    def self.redis(connection, name = nil)
+    def self.redis(connection, name = nil, logger = nil)
       require "harbor/cache/redis"
-      self.new(Harbor::Cache::Redis.new(connection, name))
+      self.new(Harbor::Cache::Redis.new(connection, name, logger), logger)
     end
-    
+
     class PutArgumentError < ArgumentError; end
 
-    attr_accessor :logger, :store
-
-    def initialize(store)
+    def initialize(store, logger = nil)
       raise ArgumentError.new("Harbor::Cache.new expects a non-null 'store' parameter") unless store
-      logger.debug "INIT: #{store.inspect}" if logger
 
+      @logger = logger || Logging::Logger[self]
       @store = store
-      @semaphore = Mutex.new
+      @logger.debug "HC:INIT #{@store.inspect}"
     end
 
-    def put(key, content, ttl, maximum_age = nil)
+    def put(key, content, ttl)
       raise PutArgumentError.new("Harbor::Cache::Memory#put expects a String value for 'key', got #{key}") unless key.is_a?(String)
       raise PutArgumentError.new("Harbor::Cache::Memory#put expects a Fixnum value greater than 0 for 'ttl', got #{ttl}") unless ttl.is_a?(Fixnum) && ttl > 0
-      raise PutArgumentError.new("Harbor::Cache::Memory#put expects nil, or a Fixnum value greater than 0 for 'maximum_age', got #{maximum_age}") unless maximum_age.nil? || (maximum_age.is_a?(Fixnum) && maximum_age > 0)
-      raise PutArgumentError.new("Harbor::Cache::Memory#put expects a maximum_age greater than the ttl, got ttl: #{ttl}, maximum_age: #{maximum_age}") if maximum_age && ttl && (maximum_age <= ttl)
 
-      @semaphore.synchronize do
-        # Prevent multiple writes of similar content to the cache
-        return true if (cached_item = @store.get(key)) && cached_item.fresh? && cached_item.content.hash == content.hash
-
-        logger.debug "PUT: #{key}  (ttl:#{ttl.inspect} maximum_age:#{maximum_age.inspect})" if logger
-        # crappy hack because Sam isn't here, the rescue below eats the exceptions, and somehow @store is a Harbor::Cache and not a Harbor::Cache::Redis. TODO: FIX
-        if @store.is_a?(Harbor::Cache) and @store.store.is_a?(Harbor::Cache::Redis)
-          @store.store.put(key, ttl, maximum_age, content, Time.now)
-        else
-          @store.put(key, ttl, maximum_age, content, Time.now)
-        end
-      end
+      @logger.debug "HC:PUT #{key.inspect} (ttl: #{ttl.inspect})"
+      @store.put(key, ttl, nil, content, Time.now)
     rescue
-      log("Harbor::Cache#put unable to store cached content.", $!)
-
       raise if $!.is_a?(PutArgumentError)
+      log_fatal("Unable to store cached content.", $!)
     ensure
       content
     end
 
     def get(key)
-      if item = @store.get(key)
-        logger.debug "HIT: #{key.inspect}" if logger
-        if item.fresh?
-          logger.debug "BUMP: #{key.inspect}" if logger
-          @semaphore.synchronize do
-            @store.bump(key)
-          end
-
-          item
-        else
-          delete(key)
-
-          item = nil
-        end
-      else
-        item = nil
-      end
+      @logger.debug "HC:GET #{key.inspect}"
+      @store.get(key)
     rescue
-      log("Harbor::Cache#get unable to retrieve cached content.", $!)
-    ensure
-      defined?(item) ? item : nil
+      log_fatal("Unable to retrieve cached content.", $!)
     end
 
     def delete(key)
-      logger.debug "DELETE: #{key.inspect}" if logger
-      @semaphore.synchronize do
-        @store.delete(key)
-      end
+      @logger.debug "HC:DELETE #{key.inspect}"
+      @store.delete(key)
     rescue
-      log("Harbor::Cache#put unable to delete cached content.", $!)
+      log_fatal("Unable to delete cached content.", $!)
     ensure
       nil
     end
 
     def delete_matching(key)
-      logger.debug "DELETE MATCHING: #{key.inspect}" if logger
-      @semaphore.synchronize do
-        @store.delete_matching(key)
-      end
+      @logger.debug "HC:DELETE MATCHING #{key.inspect}"
+      @store.delete_matching(key)
     rescue
-      log("Harbor::Cache#put unable to delete cached content.", $!)
+      log_fatal("Unable to delete cached content.", $!)
     ensure
       nil
     end
 
     private
 
-    def log(message, error)
-      if @logger
-        @logger.fatal("#{message} #{$!}\n#{$!.message}\nBacktrace:\n#{$!.backtrace.join("\n")}")
-      end
+    def log_fatal(message, error)
+      @logger.fatal("HC:ERROR - #{message} #{error}\n#{error.message}\nBacktrace:\n#{error.backtrace.join("\n")}")
     end
 
   end
