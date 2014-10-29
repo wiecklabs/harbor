@@ -333,7 +333,7 @@ module Harbor
         end
 
 
-        http_only = value[:http_only] ? "; HTTPOnly=" : nil
+        http_only = value[:http_only] ? "; HttpOnly" : nil
         # According to RFC 2109, we need dashes here.
         # N.B.: cgi.rb uses spaces...
         expires_on = if (defined?(DateTime) && value[:expires].is_a?(DateTime))
