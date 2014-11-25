@@ -332,8 +332,10 @@ module Harbor
           path      = "; path=/"
         end
 
-
+        # http://en.wikipedia.org/wiki/HTTP_cookie#Secure_and_HttpOnly
         http_only = value[:http_only] ? "; HttpOnly" : nil
+        secure = value[:secure] ? "; secure" : nil
+
         # According to RFC 2109, we need dashes here.
         # N.B.: cgi.rb uses spaces...
         expires_on = if (defined?(DateTime) && value[:expires].is_a?(DateTime))
@@ -352,7 +354,7 @@ module Harbor
       value = [value]  unless Array === value
       cookie = Rack::Utils.escape(key) + "=" +
         value.map { |v| Rack::Utils.escape v }.join("&") +
-        "#{domain}#{path}#{expires}#{http_only}"
+        "#{domain}#{path}#{expires}#{http_only}#{secure}"
 
       case self["Set-Cookie"]
       when Array

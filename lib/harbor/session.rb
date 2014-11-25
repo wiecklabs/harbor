@@ -11,6 +11,7 @@ module Harbor
       :domain => nil,
       :path => "/",
       :expire_after => nil,
+      :secure => false,
       :store => Cookie
     }
 
@@ -78,6 +79,7 @@ module Harbor
         cookie[:value] = @store.commit_session(@data, @request)
       end
       cookie[:http_only] = true
+      cookie[:secure] = @options[:secure]
       cookie
     end
 
