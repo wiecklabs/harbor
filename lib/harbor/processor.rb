@@ -5,8 +5,8 @@ module Harbor
 
     def self.new(*args)
       raise "You must subclass Harbor::Processor and implement #reserve and #process" if self == Harbor::Processor
-      raise "You must implement #{self}#reserve" unless instance_methods(false).include?("reserve")
-      raise "You must implement #{self}#process" unless instance_methods(false).include?("process")
+      raise "You must implement #{self}#reserve" unless instance_methods(false).map(&:to_s).include?("reserve")
+      raise "You must implement #{self}#process" unless instance_methods(false).map(&:to_s).include?("process")
 
       processor = allocate
 
@@ -32,7 +32,7 @@ module Harbor
 
     ##
     # Accepts an instance of OptionParser for wiring up options, like:
-    # 
+    #
     #   processor = MyProcessor.new
     #   OptionParser.new do |opts|
     #     opts.banner = "Usage: my_processor [options]"

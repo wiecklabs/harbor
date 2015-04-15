@@ -67,6 +67,9 @@ module Harbor
       end
 
       response.to_a
+    rescue BadRequestParametersError => e
+      handle_bad_request(e, request, response)
+      response.to_a
     rescue BadRequestError => e
       handle_bad_request(e, request, response)
       response.to_a

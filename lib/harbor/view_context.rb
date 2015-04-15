@@ -30,9 +30,10 @@ module Harbor
 
     def plugin(name, variables = {})
       if (plugin_list = Harbor::View::plugins(name)).any?
-        plugin_list.map do |plugin|
-          Plugin::prepare(plugin, self, variables)
-        end
+        plugin_list.render(self, variables)
+        # plugin_list.map do |plugin|
+        #   Plugin::prepare(plugin, self, variables)
+        # end
       else
         []
       end

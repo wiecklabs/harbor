@@ -19,7 +19,7 @@ class HarborTestTest < Test::Unit::TestCase
   def test_assert_redirect_failure
     response = Harbor::Test::Response.new
 
-    assert_raises Test::Unit::AssertionFailedError do
+    assert_raises MiniTest::Assertion do
       assert_redirect(response)
     end
   end
@@ -36,7 +36,7 @@ class HarborTestTest < Test::Unit::TestCase
     response = Harbor::Test::Response.new
     response.redirect "/"
 
-    assert_raises Test::Unit::AssertionFailedError do
+    assert_raises MiniTest::Assertion do
       assert_success(response)
     end
   end
@@ -53,7 +53,7 @@ class HarborTestTest < Test::Unit::TestCase
   def test_assert_unauthorized_failure
     response = Harbor::Test::Response.new
 
-    assert_raises Test::Unit::AssertionFailedError do
+    assert_raises MiniTest::Assertion do
       assert_unauthorized(response)
     end
   end
@@ -85,7 +85,7 @@ class HarborTestTest < Test::Unit::TestCase
     container.register(:request, Harbor::Test::Request)
     container.register(:response, Harbor::Test::Response)
     response = container.get(:response)
-    
+
     response.render "index", :var => "test"
     assert_equal response.render_context[:var], "test"
   end
@@ -97,10 +97,10 @@ class HarborTestTest < Test::Unit::TestCase
     container.register(:request, Harbor::Test::Request)
     container.register(:response, Harbor::Test::Response)
     response = container.get(:response)
-    
+
     response.render "index", :var => "test1"
     response.render "index", :var => "test2"
-    
+
     assert_equal response.render_context[:var], "test1"
     assert_equal response.render_context(0)[:var], "test1"
     assert_equal response.render_context(1)[:var], "test2"

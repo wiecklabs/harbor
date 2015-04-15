@@ -89,7 +89,7 @@ module Harbor
     end
 
     def health_check?
-      !params["health_check"].nil?
+      @env["QUERY_STRING"] && !@env["QUERY_STRING"]["health_check"].nil?
     end
 
     def params

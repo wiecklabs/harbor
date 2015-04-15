@@ -1,8 +1,8 @@
 module Harbor
   class PluginList
-    
+
     include Enumerable
-    
+
     def initialize
       @plugins = []
     end
@@ -12,11 +12,11 @@ module Harbor
         yield plugin
       end
     end
-    
+
     def size
       @plugins.size
     end
-    
+
     def clear
       @plugins.clear
     end
@@ -33,6 +33,30 @@ module Harbor
 
       @plugins << plugin
     end
-    
+
+    def render(view_context, variables = {})
+      Renderer.new(@plugins, view_context, variables)
+    end
+
+  end
+
+  class PluginList::Renderer
+
+    include Enumerable
+
+    def initialize(plugins, view_context, variables)
+      @rendered_plugins = plugins.map { |plugin| Plugin::prepare(plugin, view_context, variables) }
+    end
+
+    def each
+      @rendered_plugins.each do |rendered_plugin|
+        yield rendered_plugin
+      end
+    end
+
+    def to_s
+      @rendered_plugins.join
+    end
+
   end
 end

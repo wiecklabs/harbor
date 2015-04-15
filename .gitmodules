@@ -1,0 +1,3 @@
+[submodule "lib/mail_builder"]
+	path = lib/mail_builder
+	url = git@github.com:wiecklabs/mail_builder.git

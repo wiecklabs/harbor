@@ -18,7 +18,7 @@ class ResponseTest < Test::Unit::TestCase
   def test_content_buffer
     @response.puts "Hello World"
     @response.print("Hello World\n")
-    assert_equal((["Hello World\n"] * 2), @response.buffer.to_a)
+    assert_equal((["Hello World\n"] * 2), @response.buffer.lines.to_a)
   end
 
   def test_default_status
@@ -53,7 +53,11 @@ class ResponseTest < Test::Unit::TestCase
     @response['Set-Cookie'] = nil
 
     @response.set_cookie('session_id', { :http_only => true, :value => '1234', :domain => 'www.example.com', :path => '/test', :expires => cookie_expires_on})
-    assert_equal("session_id=1234; domain=www.example.com; path=/test; expires=#{expires_gmt_string}; HTTPOnly=", @response['Set-Cookie'])
+    assert_equal("session_id=1234; domain=www.example.com; path=/test; expires=#{expires_gmt_string}; HttpOnly", @response['Set-Cookie'])
+    @response['Set-Cookie'] = nil
+
+    @response.set_cookie('session_id', { :http_only => true, :secure => true, :value => '1234', :domain => 'www.example.com', :path => '/test', :expires => cookie_expires_on})
+    assert_equal("session_id=1234; domain=www.example.com; path=/test; expires=#{expires_gmt_string}; HttpOnly; secure", @response['Set-Cookie'])
     @response['Set-Cookie'] = nil
   end
 
