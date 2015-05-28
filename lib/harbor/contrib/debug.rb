@@ -94,9 +94,12 @@ module Harbor
   }
 
   #logger ul {
-    margin: 0; padding: 0; list-style: none; overflow: auto;
-    width: 233px;
+    padding: 0;
+    list-style: none;
+    overflow: auto;
+    display: table;
     margin: 0 auto;
+
     -webkit-border-top-right-radius: 5px;
     -webkit-border-top-left-radius: 5px;
     -moz-border-radius-topright: 5px;
@@ -132,7 +135,7 @@ module Harbor
     -moz-border-radius-topright: 5px;
   }
 
-  #logger ul li { float: left; border-right: 1px solid #111; }
+  #logger ul li { float: left; }
   #logger ul li:last-of-type { border: 0; }
   #logger ul li a {
     padding: 6px 10px; display: block; text-decoration: none; width: 77px; text-align: center; font-weight: bold;
