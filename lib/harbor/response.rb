@@ -1,5 +1,5 @@
 require "stringio"
-require Pathname(__FILE__).dirname + "view"
+require "harbor/view"
 
 module Harbor
   class Response

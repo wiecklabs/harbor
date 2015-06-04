@@ -49,8 +49,8 @@ module Harbor
       @@generators
     end
 
-    require Pathname(__FILE__).dirname + "generator/help"
-    require Pathname(__FILE__).dirname + "generator/setup"
+    require "harbor/generator/help"
+    require "harbor/generator/setup"
   end
 
 end

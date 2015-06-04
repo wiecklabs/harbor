@@ -2,12 +2,12 @@ module Harbor
   module Contrib
     class Stats
 
-      require Pathname(__FILE__).dirname.expand_path + "stats/models/user_agent"
-      require Pathname(__FILE__).dirname.expand_path + "stats/models/page_view"
-      require Pathname(__FILE__).dirname.expand_path + "stats/response"
+      require "harbor/contrib/stats/models/user_agent"
+      require "harbor/contrib/stats/models/page_view"
+      require "harbor/contrib/stats/response"
 
       def self.orm=(orm)
-        require Pathname(__FILE__).dirname.expand_path + "stats/orm/#{orm}"
+        require "harbor/contrib/stats/orm/#{orm}"
 
         @orm = const_get(orm.gsub(/(^|_)(.)/) { $2.upcase })
       end
@@ -15,15 +15,15 @@ module Harbor
       def self.orm
         @orm
       end
-      
+
       def self.denied_ips
         @@denied_ips ||= []
       end
-      
+
       def self.denied_ips=(ips)
         @@denied_ips = ips
       end
-      
+
       def self.known_bots
         @@bots ||= [
           /yahoo.*slurp/i,
@@ -64,11 +64,11 @@ module Harbor
           /psbot/
         ]
       end
-      
+
       def self.known_bots=(bots)
         @@bots = bots
       end
-      
+
       def self.denied_user?(remote_ip, user_agent)
         known_bots.any? { |bot| user_agent =~ bot } || denied_ips.include?(remote_ip)
       end
@@ -80,7 +80,7 @@ end
 Harbor::Session.register_event_handler(:session_created) do |event|
   if orm = Harbor::Contrib::Stats.orm
     orm::UserAgent.create(event.session_id, event.remote_ip, event.user_agent) unless Harbor::Contrib::Stats.denied_user?(event.remote_ip, event.user_agent)
-  else    
+  else
     warn "Harbor::Contrib::Stats::orm must be set to generate statistics."
   end
 end
@@ -97,7 +97,7 @@ Harbor::Application.register_event_handler(:request_complete) do |event|
         orm::PageView.create(session.id, request.uri, request.referrer) if %w(text/html text/xml text/json).include?(response.content_type) && response.status == 200 && request.health_check? == false && (response.headers.delete(Harbor::Response::STATS_HEADER) != Harbor::Response::NO_STAT)
       end
     end
-  else    
+  else
     warn "Harbor::Contrib::Stats::orm must be set to generate statistics."
   end
 end

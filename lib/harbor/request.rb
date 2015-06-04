@@ -1,5 +1,5 @@
 require "rack/request"
-require Pathname(__FILE__).dirname + "session"
+require "harbor/session"
 
 module Harbor
   class Request < Rack::Request

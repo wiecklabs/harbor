@@ -1,5 +1,5 @@
 require "thread"
-require Pathname(__FILE__).dirname + "cache/item"
+require "harbor/cache/item"
 
 module Harbor
 
@@ -9,7 +9,7 @@ module Harbor
       require "harbor/cache/redis"
       self.new(Harbor::Cache::Redis.new(connection, name))
     end
-    
+
     class PutArgumentError < ArgumentError; end
 
     attr_accessor :logger, :store
@@ -106,6 +106,8 @@ module Harbor
 
 end
 
-Dir[Pathname(__FILE__).dirname + "cache" + "*.rb"].each do |file|
-  require Pathname(file).dirname + File.basename(file)
-end
+require "harbor/cache/disk"
+require "harbor/cache/memory"
+require "harbor/cache/redis"
+
+require "harbor/cache/item"

@@ -1,5 +1,5 @@
-require Pathname(__FILE__).dirname + 'session/abstract'
-require Pathname(__FILE__).dirname + 'session/cookie'
+require "harbor/session/abstract"
+require "harbor/session/cookie"
 
 module Harbor
 

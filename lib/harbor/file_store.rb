@@ -1,9 +1,9 @@
 module Harbor
   class FileStore
 
-    require Pathname(__FILE__).dirname + "file_store/file"
-    require Pathname(__FILE__).dirname + "file_store/local"
-    
+    require "harbor/file_store/file"
+    require "harbor/file_store/local"
+
     @@registrations = []
 
     def self.register(name, store)
@@ -18,7 +18,7 @@ module Harbor
     def self.[](name)
       file_stores[name]
     end
-    
+
     def self.exists?(path)
       @@registrations.each do |registration|
         if file_stores[registration].exists?(path) == true
@@ -27,7 +27,7 @@ module Harbor
       end
       false
     end
-    
+
     def self.get(path)
       @@registrations.each do |registration|
         if file_stores[registration].exists?(path) == true

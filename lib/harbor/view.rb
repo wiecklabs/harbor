@@ -1,11 +1,8 @@
-require "rubygems"
-
-gem "erubis"
 require "erubis"
 
-require Pathname(__FILE__).dirname + "view_context"
-require Pathname(__FILE__).dirname + "layouts"
-require Pathname(__FILE__).dirname + "plugin_list"
+require "harbor/view_context"
+require "harbor/layouts"
+require "harbor/plugin_list"
 
 module Harbor
   class View

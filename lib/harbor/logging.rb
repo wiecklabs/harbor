@@ -1,6 +1,5 @@
-gem "logging"
 require "logging"
-require Pathname(__FILE__).dirname + "logging/request_logger"
+require "harbor/logging/request_logger"
 
 Logging.configure do
 
