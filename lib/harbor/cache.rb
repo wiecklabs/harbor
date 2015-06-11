@@ -52,11 +52,6 @@ module Harbor
       if item = @store.get(key)
         logger.debug "HIT: #{key.inspect}" if logger
         if item.fresh?
-          logger.debug "BUMP: #{key.inspect}" if logger
-          @semaphore.synchronize do
-            @store.bump(key)
-          end
-
           item
         else
           delete(key)
