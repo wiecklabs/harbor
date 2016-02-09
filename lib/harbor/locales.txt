@@ -1,27 +1,27 @@
 # This is a pipe-delimited file with values of
-# LanguageAbbreviation|CultureCode|Description
+# LanguageAbbreviation|CultureCode|Description|NativeSpelling
 
-US|en-US|English (US)
-AU|en-AU|English (AU)
-UK|en-GB|English (UK)
-JP|ja|Japanese (JP)
-IN|hi-IN|Hindi (IN)
-KO|ko-KR|Korean (KO)
-MY|ms-MY|Malay (MY)
-TH|th-TH|Thai (TH)
-PK|ur-PK|Urdu (PK)
-VN|vi|Vietnamese (VN)
-ID|id-ID|Indonesian (ID)
-HK|zh-HK|Chinese (HK)
-CN|zh-CN|Chinese (CN)
-FR|fr-FR|French (FR)
-DE|de-DE|German (DE)
-IT|it-IT|Italian (IT)
-SP|es-ES|Spanish (SP)
-MX|es-MX|Spanish (MX)
-PT|pt|Portuguese (PT)
-PS|ps|Pakistani (PS)
-AF|af|Pashto (AF)
-SA|ar-SA|Arabic (SA)
-ENC|en-CA|English (CA)
-FRC|fr-CA|French (CA)
+US|en-US|English (US)|English
+AU|en-AU|English (AU)|English
+UK|en-GB|English (UK)|English
+JP|ja|Japanese (JP)|日本語
+IN|hi-IN|Hindi (IN)|हिन्दी
+KO|ko-KR|Korean (KO)|한국어
+MY|ms-MY|Malay (MY)|بهاس ملايو
+TH|th-TH|Thai (TH)|ภาษาไทย
+PK|ur-PK|Urdu (PK)|اُردُو
+VN|vi|Vietnamese (VN)|tiếng Việt
+ID|id-ID|Indonesian (ID)|Bahasa Indonesia
+HK|zh-HK|Chinese (HK)|
+CN|zh-CN|Chinese (CN)|
+FR|fr-FR|French (FR)|français
+DE|de-DE|German (DE)|Deutsch
+IT|it-IT|Italian (IT)|Italiano
+SP|es-ES|Spanish (SP)|Español
+MX|es-MX|Spanish (MX)|Español
+PT|pt|Portuguese (PT)|português
+PS|ps|Pakistani (PS)|
+AF|af|Pashto (AF)|پښتو
+SA|ar-SA|Arabic (SA)|العربية/عربي
+ENC|en-CA|English (CA)|English
+FRC|fr-CA|French (CA)|français

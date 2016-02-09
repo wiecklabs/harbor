@@ -8,7 +8,7 @@ module Harbor
         ::File.read(Pathname(__FILE__).dirname + "locales.txt").split("\n").each do |line|
           next if line =~ /^\s*(\#.*)?$/
           values = line.split(/\|/).map { |value| value.strip }
-          @locales[values[1]] = Locale.new(values[1], values[0], values[2])
+          @locales[values[1]] = Locale.new(values[1], values[0], values[2], values[3])
         end
       end
 
