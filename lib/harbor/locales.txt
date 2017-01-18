@@ -18,6 +18,7 @@ FR|fr-FR|French (FR)|français
 DE|de-DE|German (DE)|Deutsch
 IT|it-IT|Italian (IT)|Italiano
 SP|es-ES|Spanish (SP)|Español
+AR|es-AR|Spanish (AR)|Español
 MX|es-MX|Spanish (MX)|Español
 PT|pt|Portuguese (PT)|português
 PS|ps|Pakistani (PS)|
