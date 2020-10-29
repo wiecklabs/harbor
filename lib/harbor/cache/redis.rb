@@ -26,7 +26,6 @@ class Harbor::Cache::Redis
         @redis.srem(TRACKER_KEY_NAME, key)
         nil
       else
-        @redis.expire(key, item.ttl)
         item
       end
     else
@@ -52,8 +51,11 @@ class Harbor::Cache::Redis
 
   def delete_matching(key_regex)
     if (matches = keys_matching(key_regex)).any?
-      @redis.del(matches)
-      @redis.srem(TRACKER_KEY_NAME, matches)
+      @redis.del(*matches)
+
+      matches.each do |key|
+        @redis.srem(TRACKER_KEY_NAME, key)
+      end
     end
   end
 

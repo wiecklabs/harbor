@@ -206,7 +206,7 @@ module Harbor
     end
 
     HEADER_BLACKLIST = ['X-Sendfile', "Content-Disposition"]
-    def redirect(url, params = nil)
+    def redirect(url, params = nil, http_redirect_status = 303)
       url = URI.parse(url)
       params ||= {}
 
@@ -221,7 +221,7 @@ module Harbor
 
       url.query = Rack::Utils::build_query(params) if params && params.any?
 
-      self.status = 303
+      self.status = http_redirect_status
       self.headers.merge!({
         "Location" => url.to_s,
         "Content-Type" => "text/html"
@@ -233,6 +233,10 @@ module Harbor
 
     def redirect!(url, params = nil)
       redirect(url, params) and throw(:abort_request)
+    end
+
+    def perm_redirect!(url, params = nil)
+      redirect(url, params, 301) and throw(:abort_request)
     end
 
     def abort!(code)

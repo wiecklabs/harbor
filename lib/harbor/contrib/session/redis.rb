@@ -58,7 +58,8 @@ module Harbor
         private
 
         def self.expire_after
-          @expire_after ||= (Harbor::Session.options[:expire_after] || 3600)
+          #Set session timeout to 1 week (604800 seconds)
+          @expire_after ||= (Harbor::Session.options[:expire_after] || 604800)
         end
 
         if RUBY_PLATFORM =~ /java/
