@@ -1,3 +1,5 @@
+require "logging"
+
 module Harbor
   module LogAppenders
 

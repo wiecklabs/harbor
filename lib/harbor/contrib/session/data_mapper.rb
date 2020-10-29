@@ -8,15 +8,15 @@ module Harbor
       ##
       # This is a database backed session handle for DataMapper. You can use it
       # instead of the builtin Harbor::Session::Cookie by doing:
-      # 
+      #
       #   Harbor::Session.configure do |session|
       #     session[:store] = Harbor::Contrib::Session::DataMapper
       #   end
-      # 
+      #
       # A basic Session resource is defined for you.
       ##
       class DataMapper < Harbor::Session::Abstract
-        
+
         class SessionHash < Hash
           def initialize(instance)
             super()
@@ -68,8 +68,8 @@ module Harbor
 
     class ::Session #:nodoc:
       include DataMapper::Resource
-      
-      property :id, String, :key => true, :default => lambda { `uuidgen`.chomp }
+
+      property :id, String, :key => true, :default => lambda { UUID.generate }
       property :data, DataMapper::Property::Object, :default => lambda { {} }
       property :created_at, DateTime
       property :updated_at, DateTime

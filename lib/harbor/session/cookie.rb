@@ -8,12 +8,12 @@ module Harbor
     class Cookie < Abstract
       def self.load_session(delegate, cookie, request = nil)
         cookie = super
-        
+
         unless cookie[:session_id]
-          cookie[:session_id] = `uuidgen`.chomp
+          cookie[:session_id] = UUID.generate
           delegate.session_created(cookie[:session_id], request.remote_ip, request.env["HTTP_USER_AGENT"])
         end
-        
+
         cookie
       end
     end

@@ -1,15 +1,17 @@
 class Harbor::File::Checksum::QuickZipCrc
 
   def compute(path)
-    if hex = `crc32 #{Shellwords.escape(path)}`.scan(/(?!0x)[0-9A-Z]{8}/)[0]
-      hex.downcase
-    else
-      nil
+    raise ArgumentError, "Argument `path` refers to a file that doesn't exist: #{path}" unless File.file?(path)
+    inputStream = java.io.BufferedInputStream.new(java.io.FileInputStream.new(path))
+    crc = java.util.zip.CRC32.new
+
+    until (data = inputStream.read) == -1 do
+      crc.update(data)
     end
+
+    crc.getValue.to_s(16).downcase
   end
 
 end
-
-warn "crc32 not found, please download and build from http://kremlor.net/projects/crc32/" unless (`which crc32` && $?.exitstatus == 0)
 
 Harbor::File::Checksum.register(:pkzip, Harbor::File::Checksum::QuickZipCrc)

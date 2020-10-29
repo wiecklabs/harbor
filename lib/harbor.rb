@@ -6,6 +6,7 @@ $:.unshift(Pathname(__FILE__).dirname.expand_path.to_s)
 require "harbor/version"
 require "harbor/support/array"
 require "harbor/support/blank"
+require "harbor/support/uuid"
 require "harbor/container"
 require "harbor/locale"
 require "harbor/hooks"

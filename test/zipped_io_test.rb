@@ -15,7 +15,7 @@ class ZippedIOTest < Test::Unit::TestCase
     file2 = Harbor::File.new(Pathname(__FILE__).dirname + "application_test.rb")
     zip = Harbor::ZippedIO.new([file, file2])
     size = zip.size
-    ::File.open("/tmp/ziptest_#{`uuidgen`.chomp}.zip", "w") do |file|
+    ::File.open("/tmp/ziptest_#{UUID.generate}.zip", "w") do |file|
       zip.each do |data|
         file.write(data)
       end
